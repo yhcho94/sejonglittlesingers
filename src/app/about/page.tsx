@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
-import { conductor } from "@/lib/conductor";
+import { assistantConductors, conductor, type BioSection, type StaffMember } from "@/lib/staff";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -128,27 +128,28 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="card">
-          <h2 className="text-xl font-bold text-navy">지휘자 소개</h2>
-          <p className="mt-2">
-            <span className="rounded-full bg-cream px-3 py-1 text-sm font-medium text-navy">{conductor.role}</span>
-            {conductor.name && <span className="ml-2 text-lg font-bold">{conductor.name}</span>}
-          </p>
-          <div className="mt-6 grid gap-x-10 gap-y-8 md:grid-cols-2">
-            {conductor.sections.map((section) => (
-              <div key={section.title}>
-                <h3 className="border-b border-line pb-2 text-sm font-bold tracking-wide text-gold">{section.title}</h3>
-                <ul className="mt-3 space-y-2 text-sm leading-relaxed">
-                  {section.items.map((item) => (
-                    <li key={item} className="flex gap-2">
-                      <span className="text-ink-soft" aria-hidden>
-                        ·
-                      </span>
-                      <span>{item}</span>
-                    </li>
+        <section className="space-y-6">
+          <h2 className="text-xl font-bold text-navy">지휘자 · 강사진</h2>
+
+          <article className="card">
+            <StaffHeading member={conductor} />
+            <div className="mt-6 grid gap-x-10 gap-y-8 md:grid-cols-2">
+              {conductor.sections.map((section) => (
+                <BioList key={section.title} section={section} />
+              ))}
+            </div>
+          </article>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {assistantConductors.map((member) => (
+              <article key={member.name} className="card">
+                <StaffHeading member={member} />
+                <div className="mt-5 space-y-6">
+                  {member.sections.map((section) => (
+                    <BioList key={section.title} section={section} />
                   ))}
-                </ul>
-              </div>
+                </div>
+              </article>
             ))}
           </div>
         </section>
@@ -160,5 +161,35 @@ export default function AboutPage() {
         </section>
       </div>
     </>
+  );
+}
+
+function StaffHeading({ member }: { member: StaffMember }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <h3 className="text-lg font-bold">{member.name}</h3>
+      <span className="rounded-full bg-cream px-3 py-1 text-xs font-medium text-navy">{member.role}</span>
+      {member.className && (
+        <span className="rounded-full bg-gold-soft px-3 py-1 text-xs font-medium text-ink">{member.className}</span>
+      )}
+    </div>
+  );
+}
+
+function BioList({ section }: { section: BioSection }) {
+  return (
+    <div>
+      <h4 className="border-b border-line pb-2 text-sm font-bold tracking-wide text-gold">{section.title}</h4>
+      <ul className="mt-3 space-y-2 text-sm leading-relaxed">
+        {section.items.map((item) => (
+          <li key={item} className="flex gap-2">
+            <span className="text-ink-soft" aria-hidden>
+              ·
+            </span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
