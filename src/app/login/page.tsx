@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
     <div className="mx-auto max-w-md px-4 py-16">
       <h1 className="mb-6 text-2xl font-bold text-navy">로그인</h1>
       {linkError && (
-        <p className="mb-4 rounded-lg bg-gold-soft px-3 py-2 text-sm">
+        <p className="mb-4 rounded-sm bg-gold-soft px-3 py-2 text-sm">
           메일 링크를 처리하지 못했습니다. 링크가 만료되었거나 다른 브라우저에서 열렸을 수 있습니다.
           가입 인증 메일이었다면 인증은 완료되었을 수 있으니 로그인을 시도해 보세요.
         </p>

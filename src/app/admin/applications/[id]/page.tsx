@@ -92,7 +92,7 @@ export default async function AdminApplicationDetail({
             <h2 className="mb-3 font-bold text-navy">사진</h2>
             {photoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element -- 만료되는 서명 URL 이라 이미지 최적화를 거치지 않음
-              <img src={photoUrl} alt={`${app.child_name} 신청 사진`} className="w-full rounded-lg" />
+              <img src={photoUrl} alt={`${app.child_name} 신청 사진`} className="w-full rounded-sm" />
             ) : (
               <p className="text-sm text-ink-soft">첨부된 사진이 없습니다.</p>
             )}

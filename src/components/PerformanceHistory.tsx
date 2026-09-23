@@ -9,7 +9,7 @@ const BADGE: Record<NonNullable<HistoryItem["kind"]>, { label: string; className
 // 연도별 공연 이력. 최근 연도만 펼쳐 두고 이전 연도는 접어 둡니다.
 export function PerformanceHistory() {
   return (
-    <div className="divide-y divide-line rounded-2xl border border-line bg-white">
+    <div className="divide-y divide-line border border-line bg-white">
       {history.map(({ year, items }, index) => (
         <details key={year} open={index === 0} className="group px-5 py-4 sm:px-6">
           <summary className="flex cursor-pointer list-none items-center justify-between">
@@ -30,17 +30,21 @@ export function PerformanceHistory() {
                   }`}
                   aria-hidden
                 />
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  {item.date && <span className="w-11 shrink-0 text-sm tabular-nums text-ink-soft">{item.date}</span>}
-                  <span className="font-medium">
-                    {item.kind && (
-                      <span className={`mr-2 rounded px-1.5 py-0.5 text-xs font-bold ${BADGE[item.kind].className}`}>
-                        {BADGE[item.kind].label}
-                      </span>
+                <div className="grid grid-cols-[2.75rem_1fr] items-baseline gap-x-3 sm:grid-cols-[3.25rem_1fr]">
+                  <span className="text-sm tabular-nums text-ink-soft">{item.date}</span>
+                  <div className="min-w-0">
+                    <span className="font-medium">
+                      {item.kind && (
+                        <span className={`mr-2 px-1.5 py-0.5 text-xs font-bold ${BADGE[item.kind].className}`}>
+                          {BADGE[item.kind].label}
+                        </span>
+                      )}
+                      {item.title}
+                    </span>
+                    {item.place && (
+                      <span className="mt-0.5 block text-sm text-ink-soft sm:ml-2 sm:mt-0 sm:inline">{item.place}</span>
                     )}
-                    {item.title}
-                  </span>
-                  {item.place && <span className="text-sm text-ink-soft">{item.place}</span>}
+                  </div>
                 </div>
               </li>
             ))}

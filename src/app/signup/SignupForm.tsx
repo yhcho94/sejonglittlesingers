@@ -33,7 +33,7 @@ export function SignupForm() {
         <input id="password_confirm" name="password_confirm" type="password" required minLength={8} autoComplete="new-password" className="input" />
       </div>
 
-      <div className="space-y-3 rounded-lg bg-cream p-4 text-sm">
+      <div className="space-y-3 rounded-sm bg-cream p-4 text-sm">
         <p className="font-medium">개인정보 수집·이용 동의 (필수)</p>
         <ul className="list-disc space-y-1 pl-5 text-ink-soft">
           <li>수집 항목: 보호자 이름, 연락처, 이메일</li>

@@ -9,9 +9,9 @@ export const metadata: Metadata = { title: "개인정보처리방침" };
 export default function PrivacyPage() {
   return (
     <>
-      <PageHeader title="개인정보처리방침" />
+      <PageHeader eyebrow="Privacy Policy" title="개인정보처리방침" />
       <div className="mx-auto max-w-3xl px-4 py-10">
-        <p className="mb-6 rounded-lg border border-dashed border-gold bg-gold-soft p-4 text-sm">
+        <p className="mb-6 rounded-sm border border-dashed border-gold bg-gold-soft p-4 text-sm">
           이 문서는 <strong>초안</strong>입니다. 표시된 항목(보유 기간, 국외 이전, 시행일)을 채우고 법률 검토를 거친 뒤
           확정해 주세요.
         </p>

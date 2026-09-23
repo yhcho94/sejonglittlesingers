@@ -27,7 +27,7 @@ export default async function AdminNoticesPage() {
             {notices.map((n) => (
               <li key={n.id} className="flex items-center justify-between gap-4 py-3">
                 <Link href={`/admin/notices/${n.id}`} className="min-w-0 truncate hover:text-navy">
-                  {n.is_pinned && <span className="mr-2 text-xs text-gold">[고정]</span>}
+                  {n.is_pinned && <span className="mr-2 text-xs text-gold-deep">[고정]</span>}
                   {!n.is_published && <span className="mr-2 text-xs text-ink-soft">[비공개]</span>}
                   {n.title}
                 </Link>

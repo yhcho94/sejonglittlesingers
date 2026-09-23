@@ -1,54 +1,75 @@
 import Link from "next/link";
 import { InstallButton } from "@/components/InstallButton";
+import { NAV } from "@/lib/nav";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
 
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-line bg-white">
-      <div className="mx-auto grid max-w-6xl gap-6 px-4 py-10 text-sm text-ink-soft md:grid-cols-2">
-        <div>
-          <p className="text-base font-bold text-navy">{site.name}</p>
-          <p className="mt-1">{site.nameEn}</p>
-          <div className="mt-4 flex flex-wrap gap-4">
-            <a href={site.links.cafe} target="_blank" rel="noopener noreferrer" className="hover:text-navy hover:underline">
+    <footer className="bg-navy-dark text-white/75">
+      <div className="container-page grid gap-12 py-14 md:grid-cols-12 md:py-16">
+        <div className="md:col-span-5">
+          <p className="font-[family-name:var(--font-serif)] text-2xl font-bold text-white">{site.name}</p>
+          <p className="eyebrow mt-2 text-[10px] text-gold">{site.nameEn}</p>
+          <p className="mt-6 max-w-sm text-sm leading-relaxed">
+            음악을 통해 아이들의 감성과 협동심을 키우는 세종시 어린이 합창단
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3 text-sm">
+            <a href={site.links.youtube} target="_blank" rel="noopener noreferrer" className="btn-ghost-light px-4 py-2 text-xs">
+              YouTube
+            </a>
+            <a href={site.links.cafe} target="_blank" rel="noopener noreferrer" className="btn-ghost-light px-4 py-2 text-xs">
               네이버 카페
             </a>
-            <a href={site.links.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-navy hover:underline">
-              유튜브
+          </div>
+        </div>
+
+        <nav className="md:col-span-3" aria-label="바로가기">
+          <p className="eyebrow text-[10px] text-gold">Menu</p>
+          <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm md:grid-cols-1">
+            {NAV.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="hover:text-white">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="space-y-4 text-sm md:col-span-4">
+          <p className="eyebrow text-[10px] text-gold">Contact</p>
+          <div>
+            <p className="text-white/50">입단 · 공연 문의 (문자 메시지)</p>
+            <a href={smsHref} className="mt-1 inline-block text-lg text-white hover:text-gold">
+              단장 {site.contact.phone}
             </a>
           </div>
-          <InstallButton className="btn-outline mt-4 px-3 py-1.5 text-sm" />
-        </div>
-        <div className="space-y-1 md:text-right">
-          <p>
-            주소:{" "}
-            <a href={mapHref} target="_blank" rel="noopener noreferrer" className="hover:text-navy hover:underline">
-              {site.contact.address}
-            </a>
-          </p>
-          <p>
-            입단·공연 문의: 단장{" "}
-            <a href={smsHref} className="hover:text-navy hover:underline">
-              {site.contact.phone}
-            </a>{" "}
-            (문자 메시지)
-          </p>
-          <p>
-            이메일:{" "}
-            <a href={mailHref} className="hover:text-navy hover:underline">
+          <div>
+            <p className="text-white/50">이메일</p>
+            <a href={mailHref} className="mt-1 inline-block hover:text-white">
               {site.contact.email}
             </a>
-          </p>
-          <p className="pt-2">
-            <Link href="/privacy" className="font-bold text-ink hover:underline">
-              개인정보처리방침
-            </Link>
-          </p>
+          </div>
+          <div>
+            <p className="text-white/50">연습 장소</p>
+            <a href={mapHref} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block hover:text-white">
+              {site.contact.address}
+            </a>
+          </div>
         </div>
       </div>
-      <p className="pb-6 text-center text-xs text-ink-soft">
-        © {site.nameEn}. All rights reserved.
-      </p>
+
+      <div className="border-t border-white/10">
+        <div className="container-page flex flex-col gap-4 py-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link href="/privacy" className="font-bold text-white/80 hover:text-white">
+              개인정보처리방침
+            </Link>
+            <span>© {site.nameEn}</span>
+          </div>
+          <InstallButton className="btn-ghost-light self-start px-4 py-2 text-xs sm:self-auto" />
+        </div>
+      </div>
     </footer>
   );
 }

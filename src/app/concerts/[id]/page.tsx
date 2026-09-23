@@ -48,7 +48,7 @@ export default async function ConcertDetailPage({ params }: PageProps<"/concerts
         )}
 
         {embed && (
-          <div className="mt-8 aspect-video overflow-hidden rounded-xl bg-black">
+          <div className="mt-8 aspect-video overflow-hidden rounded-sm bg-black">
             <iframe
               src={embed}
               title={`${concert.title} 영상`}

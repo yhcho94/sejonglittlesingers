@@ -9,12 +9,12 @@ export default async function PressPage() {
 
   return (
     <>
-      <PageHeader title="보도자료" description="언론에 소개된 세종리틀싱어즈의 소식입니다." />
+      <PageHeader eyebrow="Press" title="보도자료" description="언론에 소개된 세종리틀싱어즈의 소식입니다." />
       <div className="mx-auto max-w-4xl px-4 py-10">
         {items.length === 0 ? (
           <p className="card text-center text-ink-soft">등록된 보도자료가 없습니다.</p>
         ) : (
-          <ul className="divide-y divide-line rounded-2xl border border-line bg-white">
+          <ul className="divide-y divide-line rounded-sm border border-line bg-white">
             {items.map((item) => (
               <li key={item.id}>
                 <a

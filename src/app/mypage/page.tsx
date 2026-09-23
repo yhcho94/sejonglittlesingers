@@ -26,7 +26,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
 
   return (
     <>
-      <PageHeader title="마이페이지" />
+      <PageHeader eyebrow="My Page" title="마이페이지" />
       <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 md:grid-cols-3">
         <section className="card md:col-span-2">
           <div className="mb-4 flex items-center justify-between">
@@ -34,7 +34,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             <Link href="/apply" className="btn-primary px-3 py-1.5 text-sm">새 신청</Link>
           </div>
           {applied && (
-            <p className="mb-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">
+            <p className="mb-4 rounded-sm bg-green-50 px-3 py-2 text-sm text-green-800">
               입단 신청이 접수되었습니다. 심사 결과는 이 화면에서 확인할 수 있습니다.
             </p>
           )}

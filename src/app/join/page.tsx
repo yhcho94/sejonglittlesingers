@@ -27,11 +27,11 @@ export default async function JoinPage() {
 
   return (
     <>
-      <PageHeader title="입단 안내" description="노래를 사랑하는 어린이 단원을 기다립니다." />
+      <PageHeader eyebrow="Audition" title="입단 안내" description="노래를 사랑하는 어린이 단원을 기다립니다." />
 
       <div className="mx-auto max-w-4xl space-y-14 px-4 py-12">
         {recruitment?.is_open && (
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-navy px-6 py-5 text-white">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-sm bg-navy px-6 py-5 text-white">
             <div>
               <p className="text-sm font-medium text-gold">단원 모집 중</p>
               {recruitment.period && <p className="mt-1 text-lg">{recruitment.period}</p>}
@@ -45,7 +45,7 @@ export default async function JoinPage() {
         <section>
           <h2 className="mb-5 text-xl font-bold text-navy">모집 요강</h2>
           {overview.length ? (
-            <dl className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2">
+            <dl className="grid gap-px overflow-hidden rounded-sm border border-line bg-line sm:grid-cols-2">
               {overview.map((item) => (
                 <div key={item.label} className="bg-white p-6">
                   <dt className="text-sm text-ink-soft">{item.label}</dt>
@@ -54,7 +54,7 @@ export default async function JoinPage() {
               ))}
             </dl>
           ) : (
-            <p className="rounded-2xl border border-line bg-white p-6 text-ink-soft">
+            <p className="rounded-sm border border-line bg-white p-6 text-ink-soft">
               모집 요강을 준비하고 있습니다. 입단 문의: 단장{" "}
               <a href={smsHref} className="underline">{site.contact.phone}</a> (문자 메시지)
             </p>
@@ -73,7 +73,7 @@ export default async function JoinPage() {
           <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((step, i) => (
               <li key={step.title} className="card relative">
-                <span className="text-sm font-bold text-gold">STEP {i + 1}</span>
+                <span className="eyebrow text-gold-deep">Step {i + 1}</span>
                 <p className="mt-2 font-bold">{step.title}</p>
                 <p className="mt-2 text-sm leading-relaxed text-ink-soft">{step.body}</p>
               </li>
@@ -102,7 +102,7 @@ export default async function JoinPage() {
           </section>
         )}
 
-        <section className="rounded-2xl border border-line bg-white p-8 text-center">
+        <section className="rounded-sm border border-line bg-white p-8 text-center">
           <p className="text-lg font-bold text-navy">입단 신청은 온라인으로 받습니다</p>
           <p className="mt-2 text-sm text-ink-soft">보호자 회원가입 후 신청할 수 있습니다.</p>
           <p className="mt-1 text-sm text-ink-soft">

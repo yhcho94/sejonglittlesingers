@@ -12,11 +12,11 @@ export function NoticeList({ notices }: { notices: Notice[] }) {
         <li key={notice.id}>
           <Link
             href={`/notices/${notice.id}`}
-            className="flex items-center justify-between gap-4 py-4 hover:text-navy"
+            className="flex items-center justify-between gap-4 py-4 transition hover:text-navy"
           >
             <span className="flex min-w-0 items-center gap-2">
               {notice.is_pinned && (
-                <span className="shrink-0 rounded bg-gold-soft px-2 py-0.5 text-xs font-medium text-ink">
+                <span className="shrink-0 border border-gold-deep px-1.5 py-0.5 text-[11px] font-medium text-gold-deep">
                   중요
                 </span>
               )}
