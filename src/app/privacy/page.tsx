@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
-import { Placeholder } from "@/components/Placeholder";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = { title: "개인정보처리방침" };
@@ -12,8 +11,7 @@ export default function PrivacyPage() {
       <PageHeader eyebrow="Privacy Policy" title="개인정보처리방침" />
       <div className="mx-auto max-w-3xl px-4 py-10">
         <p className="mb-6 rounded-sm border border-dashed border-gold bg-gold-soft p-4 text-sm">
-          이 문서는 <strong>초안</strong>입니다. 표시된 항목(보유 기간, 국외 이전, 시행일)을 채우고 법률 검토를 거친 뒤
-          확정해 주세요.
+          이 문서는 <strong>초안</strong>입니다. 법률 검토를 거친 뒤 확정해 주세요.
         </p>
 
         <article className="card space-y-8 leading-relaxed [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-navy [&_li]:ml-5 [&_li]:list-disc">
@@ -27,7 +25,9 @@ export default function PrivacyPage() {
             <ul>
               <li>회원 관리: 보호자 회원 식별, 본인 확인, 부정 이용 방지</li>
               <li>입단 신청 처리: 신청 접수, 심사, 결과 안내</li>
+              <li>단원 관리: 단원 명부·사진 관리, 반 편성, 연습·공연 운영</li>
               <li>합창단 운영: 연습·공연 일정 등 운영 관련 안내</li>
+              <li>단원 소개: 보호자가 동의한 경우에 한해 홈페이지 &lsquo;단원 소개&rsquo; 화면에 단원 이름과 반을 게시</li>
             </ul>
           </section>
 
@@ -65,6 +65,7 @@ export default function PrivacyPage() {
                   </li>
                 </ul>
               </li>
+              <li>단원 명부 정보: 단원 활동 종료(퇴단) 후 1년</li>
               <li>관계 법령에 따라 보존할 필요가 있는 경우 해당 법령에서 정한 기간 동안 보관합니다.</li>
             </ul>
           </section>
@@ -100,7 +101,7 @@ export default function PrivacyPage() {
                     <td>홈페이지 호스팅, 서버 기능(회원가입·신청서 접수 처리 등) 실행</td>
                   </tr>
                   <tr>
-                    <td>Supabase <Placeholder>계약 법인명 확인 필요 (Supabase Pte. Ltd. 또는 Supabase, Inc.)</Placeholder></td>
+                    <td>Supabase Pte. Ltd.</td>
                     <td>회원 인증, 데이터베이스 및 첨부파일(사진) 저장·관리</td>
                   </tr>
                   <tr>
@@ -146,15 +147,15 @@ export default function PrivacyPage() {
                     </td>
                   </tr>
                   <tr>
-                    <td>Supabase (privacy@supabase.com)</td>
+                    <td>Supabase Pte. Ltd. (privacy@supabase.com)</td>
                     <td>
-                      운영 법인 소재국 <Placeholder>싱가포르 또는 미국 확인 필요</Placeholder>. 데이터 저장 위치는
-                      대한민국(서울 리전)이며, 운영 법인이 국외에서 접근할 수 있음
+                      싱가포르(운영 법인 소재국). 데이터 저장 위치는 대한민국(서울 리전)이며, 운영 법인과 모회사(Supabase,
+                      Inc., 미국)가 국외에서 접근할 수 있음
                     </td>
                     <td>서비스 이용 시 정보통신망을 통해 암호화 전송(HTTPS)</td>
                     <td>
                       보호자: 이름, 연락처, 이메일, 비밀번호(암호화) / 단원: 이름, 생년월일, 학교, 학년, 주소, 음악 경력, 지원
-                      동기, 사진(선택) / 접속 기록
+                      동기, 사진(선택) / 단원 명부: 성별, 반, 파트, 기수, 입단·퇴단일, 사진, 보호자 이름·연락처 / 접속 기록
                     </td>
                     <td>회원 인증, 데이터 저장·관리</td>
                     <td>이 방침 3.에서 정한 보유 기간 또는 위탁계약 종료 시까지 (접속 기록은 1일 후 자동 삭제)</td>
@@ -233,6 +234,7 @@ export default function PrivacyPage() {
             <ul>
               <li>성명: {site.privacyOfficer.name}</li>
               <li>연락처: {site.privacyOfficer.contact}</li>
+              <li>이메일: {site.contact.email}</li>
             </ul>
           </section>
 
@@ -249,7 +251,7 @@ export default function PrivacyPage() {
           <section>
             <h2>13. 시행일</h2>
             <p>
-              이 개인정보처리방침은 <Placeholder>시행일 입력 필요</Placeholder>부터 적용됩니다.
+              이 개인정보처리방침은 2026년 10월 1일부터 적용됩니다.
             </p>
           </section>
         </article>
