@@ -11,9 +11,10 @@
    - `0002_recruitment_faq_concerts.sql`: 입단 안내, FAQ, 공연 일정
    - `0003_purge_rejected.sql`: 반려된 입단 신청 정보 파기 (반려 즉시 상세 정보 삭제, 5일 후 기록 삭제)
    - `0004_press.sql`: 보도자료 (초기 기사 16건 포함)
+   - `0005_singers.sql`: 단원 명부(관리자 전용), 단원 사진 저장소 `singer-photos`(비공개), 공개 '단원 소개'용 통계 함수
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
-4. 두 파일 모두 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.
+4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.
 
 ## 2. Supabase: 로그인 링크 주소 설정
 

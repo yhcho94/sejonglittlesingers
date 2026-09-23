@@ -1,0 +1,166 @@
+// 엑셀 일괄 등록: 양식 열과 한 줄씩 검사하는 로직 (화면·서버 공통, 테스트 가능하도록 순수 함수)
+import { CLASS_NAMES, STATUS_LABEL, type SingerStatus } from "./singers";
+
+export const IMPORT_COLUMNS = [
+  "이름*",
+  "생년월일*",
+  "성별",
+  "반",
+  "학교",
+  "학년(예외만)",
+  "파트",
+  "기수",
+  "입단일",
+  "상태",
+  "보호자 이름",
+  "보호자 연락처",
+  "보호자 가입 이메일",
+  "이름 공개 동의",
+  "비고",
+] as const;
+
+// 읽을 때는 머리글 끝의 '*' 를 뗀 이름으로 찾습니다.
+const col = (c: string) => c.replace(/\*$/, "");
+
+export const IMPORT_EXAMPLE: Record<string, string> = {
+  "이름*": "(예시) 홍길동",
+  "생년월일*": "2016-05-20",
+  성별: "여",
+  반: "화음반",
+  학교: "세종소담초등학교",
+  "학년(예외만)": "",
+  파트: "소프라노",
+  기수: "4",
+  입단일: "2026-03-07",
+  상태: "활동",
+  "보호자 이름": "홍부모",
+  "보호자 연락처": "010-0000-0000",
+  "보호자 가입 이메일": "",
+  "이름 공개 동의": "X",
+  비고: "이 예시 줄은 지우고 입력하세요",
+};
+
+export const IMPORT_NOTES = [
+  "세종리틀싱어즈 단원 일괄 등록 양식 작성 안내",
+  "",
+  "· 첫 번째 시트(단원 입력)의 2번째 줄부터 한 줄에 한 명씩 입력합니다. 머리글(1번째 줄)은 바꾸지 마세요.",
+  "· 이름*, 생년월일* 은 필수입니다. 생년월일·입단일은 2016-05-20 처럼 입력합니다.",
+  "· 성별: 여 / 남,  반: 울림반 / 화음반 / 선율반,  상태: 활동 / 휴단 / 퇴단 (비우면 활동)",
+  "· 학년(예외만): 비우면 출생연도로 자동 계산합니다. 조기·유예 입학 등 예외일 때만 미취학, 초1~초6, 중1~중3, 고1~고3 으로 입력하세요.",
+  "· 보호자 가입 이메일: 보호자가 홈페이지에 가입했다면 가입 이메일을 넣으면 회원과 연결됩니다.",
+  "· 이름 공개 동의: 보호자가 '단원 소개' 화면 이름 공개에 동의한 경우만 O 로 입력합니다. (비우면 비공개)",
+  "· 한 줄이라도 오류가 있으면 아무것도 등록되지 않습니다. 오류 줄을 고친 뒤 다시 올려 주세요.",
+  "· 이미 등록된 단원(이름+생년월일 동일)은 중복 오류로 표시됩니다.",
+  "· 이 파일에는 아동 개인정보가 들어가므로 등록 후 PC 에서 삭제해 주세요.",
+];
+
+export type ImportedSinger = {
+  name: string;
+  birthdate: string;
+  gender: "여" | "남" | null;
+  class_name: string | null;
+  school: string | null;
+  grade_override: number | null;
+  part: string | null;
+  cohort: number | null;
+  joined_on: string | null;
+  status: SingerStatus;
+  guardian_name: string | null;
+  guardian_phone: string | null;
+  guardian_email: string | null;
+  name_public: boolean;
+  notes: string | null;
+};
+
+export function parseGrade(v: string): number | null | undefined {
+  const s = v.replace(/\s|학년/g, "");
+  if (!s) return null;
+  if (s === "미취학" || s === "유치") return 0;
+  const m = /^(초|중|고)([1-6])$/.exec(s);
+  if (!m) return undefined;
+  const n = Number(m[2]);
+  if (m[1] === "초") return n;
+  if (n > 3) return undefined;
+  return m[1] === "중" ? 6 + n : 9 + n;
+}
+
+function validDate(v: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const d = new Date(`${v}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v;
+}
+
+// 2016.5.20 / 2016/05/20 / 20160520, 엑셀 날짜 일련번호(예: 42510)도 받아 줍니다.
+export function normalizeDate(v: string) {
+  const s = v.trim();
+  if (/^\d{5}$/.test(s)) {
+    return new Date(Date.UTC(1899, 11, 30) + Number(s) * 86400000).toISOString().slice(0, 10);
+  }
+  const m = /^(\d{4})[.\-/ ]\s*(\d{1,2})[.\-/ ]\s*(\d{1,2})\.?$/.exec(s) ?? /^(\d{4})(\d{2})(\d{2})$/.exec(s);
+  if (!m) return s;
+  return `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}`;
+}
+
+const STATUS_BY_LABEL = Object.fromEntries(Object.entries(STATUS_LABEL).map(([k, l]) => [l, k])) as Record<string, SingerStatus>;
+
+export function parseImportRow(values: Record<string, string>): { singer?: ImportedSinger; errors: string[] } {
+  const get = (c: (typeof IMPORT_COLUMNS)[number]) => (values[col(c)] ?? "").trim();
+  const opt = (c: (typeof IMPORT_COLUMNS)[number], max: number) => get(c).slice(0, max) || null;
+  const errors: string[] = [];
+
+  const name = get("이름*");
+  if (!name) errors.push("이름이 없습니다");
+  else if (name.length > 50) errors.push("이름이 너무 깁니다");
+
+  const birthdate = normalizeDate(get("생년월일*"));
+  if (!birthdate) errors.push("생년월일이 없습니다");
+  else if (!validDate(birthdate)) errors.push(`생년월일 형식 오류(${birthdate})`);
+
+  const gender = get("성별");
+  if (gender && gender !== "여" && gender !== "남") errors.push("성별은 여/남");
+
+  const className = get("반");
+  if (className && !(CLASS_NAMES as readonly string[]).includes(className)) errors.push(`반 이름 오류(${className})`);
+
+  const grade = parseGrade(get("학년(예외만)"));
+  if (grade === undefined) errors.push("학년 형식 오류(예: 초3)");
+
+  const cohortRaw = get("기수").replace(/기$/, "");
+  const cohort = cohortRaw ? Number(cohortRaw) : null;
+  if (cohort !== null && (!Number.isInteger(cohort) || cohort < 1 || cohort > 99)) errors.push("기수는 1~99 숫자");
+
+  const joined = get("입단일") ? normalizeDate(get("입단일")) : "";
+  if (joined && !validDate(joined)) errors.push(`입단일 형식 오류(${joined})`);
+
+  const statusRaw = get("상태");
+  const status = statusRaw ? STATUS_BY_LABEL[statusRaw] : "active";
+  if (!status) errors.push("상태는 활동/휴단/퇴단");
+
+  const email = get("보호자 가입 이메일").toLowerCase();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push("보호자 이메일 형식 오류");
+
+  const pub = get("이름 공개 동의").toUpperCase();
+  if (pub && !["O", "X", "Y", "N", "동의", "비동의"].includes(pub)) errors.push("이름 공개 동의는 O/X");
+
+  if (errors.length) return { errors };
+  return {
+    errors,
+    singer: {
+      name,
+      birthdate,
+      gender: gender ? (gender as "여" | "남") : null,
+      class_name: className || null,
+      school: opt("학교", 100),
+      grade_override: grade ?? null,
+      part: opt("파트", 20),
+      cohort,
+      joined_on: joined || null,
+      status,
+      guardian_name: opt("보호자 이름", 50),
+      guardian_phone: opt("보호자 연락처", 20),
+      guardian_email: email || null,
+      name_public: ["O", "Y", "동의"].includes(pub),
+      notes: opt("비고", 2000),
+    },
+  };
+}

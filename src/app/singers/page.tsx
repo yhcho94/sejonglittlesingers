@@ -1,0 +1,153 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { PageHeader } from "@/components/PageHeader";
+import { getPublicSingers } from "@/lib/content";
+import { gradeCode, gradeLabel } from "@/lib/singers";
+import { organization } from "@/lib/staff";
+
+export const metadata: Metadata = {
+  title: "단원 소개",
+  description: "세종리틀싱어즈의 울림반·화음반·선율반 단원들을 소개합니다.",
+};
+
+// 공개 화면에는 교사진만 표시 (학부모 임원 이름은 싣지 않음)
+const TEACHER_ROLES = ["부지휘자", "반주자", "보컬트레이너", "이론선생님"];
+
+function gradeRange(codes: number[]) {
+  if (!codes.length) return "";
+  const min = Math.min(...codes);
+  const max = Math.max(...codes);
+  return min === max ? gradeLabel(min) : `${gradeLabel(min)} ~ ${gradeLabel(max)}`;
+}
+
+export default async function SingersPage() {
+  const data = await getPublicSingers();
+  // 공개 통계는 생년월일이 아닌 출생연도만 받으므로 7월 1일로 두고 학년을 계산합니다.
+  const rows = (data?.stats ?? []).map((s) => ({
+    className: s.class_name,
+    grade: gradeCode(`${s.birth_year}-07-01`, s.grade_override),
+  }));
+  const total = rows.length;
+
+  const gradeCounts = new Map<number, number>();
+  for (const r of rows) gradeCounts.set(r.grade, (gradeCounts.get(r.grade) ?? 0) + 1);
+  const grades = [...gradeCounts.entries()].sort((a, b) => a[0] - b[0]);
+  const maxGrade = Math.max(1, ...grades.map(([, v]) => v));
+
+  return (
+    <>
+      <PageHeader
+        eyebrow="Our Singers"
+        title="단원 소개"
+        description="노래를 사랑하는 세종의 아이들이 울림반·화음반·선율반에서 함께 화음을 만들어 갑니다."
+      />
+
+      <section className="section-y">
+        <div className="container-page">
+          {total > 0 && (
+            <div className="mb-12 flex flex-wrap items-end gap-x-10 gap-y-4 border-b border-line pb-10">
+              <div>
+                <p className="eyebrow text-gold-deep">Singers</p>
+                <p className="mt-2 font-[family-name:var(--font-display)] text-6xl font-semibold text-navy md:text-7xl">
+                  {total}
+                  <span className="ml-1 font-sans text-xl font-medium text-ink-soft">명</span>
+                </p>
+              </div>
+              <p className="max-w-md pb-2 leading-relaxed text-ink-soft">
+                현재 활동 중인 단원 수입니다. 미취학 어린이부터 초·중학생까지, 연령과 수준에 맞춘 3개 반에서 노래합니다.
+              </p>
+            </div>
+          )}
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {organization.classes.map((c) => {
+              const inClass = rows.filter((r) => r.className === c.name);
+              const names = (data?.names ?? []).filter((n) => n.class_name === c.name);
+              const teachers = c.members.filter((m) => TEACHER_ROLES.includes(m.role));
+              return (
+                <article key={c.name} className="flex flex-col border border-line bg-white">
+                  <div className="h-1" style={{ background: c.color }} />
+                  <div className="flex flex-1 flex-col p-6 md:p-8">
+                    <div className="flex items-baseline justify-between gap-4">
+                      <h2 className="text-2xl font-bold text-navy">{c.name}</h2>
+                      {inClass.length > 0 && (
+                        <p className="text-sm text-ink-soft">
+                          <strong className="text-2xl font-semibold text-ink">{inClass.length}</strong>명
+                        </p>
+                      )}
+                    </div>
+                    {inClass.length > 0 && (
+                      <p className="mt-1 text-sm text-ink-soft">{gradeRange(inClass.map((r) => r.grade))}</p>
+                    )}
+
+                    <dl className="mt-6 space-y-1.5 border-t border-line pt-5 text-sm">
+                      {teachers.map((t) => (
+                        <div key={`${t.role}-${t.name}`} className="flex gap-3">
+                          <dt className="w-24 shrink-0 text-ink-soft">{t.role}</dt>
+                          <dd className="font-medium">{t.name}</dd>
+                        </div>
+                      ))}
+                    </dl>
+
+                    {names.length > 0 && (
+                      <div className="mt-6 border-t border-line pt-5">
+                        <p className="eyebrow text-gold-deep">Members</p>
+                        <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 text-sm">
+                          {names.map((n, i) => (
+                            <li key={`${n.name}-${i}`}>{n.name}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          {grades.length > 0 && (
+            <div className="mt-12 border border-line bg-white p-6 md:p-8">
+              <h2 className="text-xl font-bold text-navy">학년별 단원</h2>
+              <p className="mt-1 text-sm text-ink-soft">활동 단원 기준 · 출생연도로 계산한 학년</p>
+              <ul className="mt-6 space-y-1.5">
+                {grades.map(([g, v]) => (
+                  <li
+                    key={g}
+                    title={`${gradeLabel(g)} ${v}명`}
+                    className="grid grid-cols-[6.5rem_1fr] items-center gap-3 text-sm"
+                  >
+                    <span className="text-ink-soft">{gradeLabel(g)}</span>
+                    <span className="flex items-center gap-2">
+                      <span
+                        className="h-4 rounded-r-[4px] bg-navy"
+                        style={{ width: `calc((100% - 3.5rem) * ${v / maxGrade})` }}
+                      />
+                      <span className="tabular-nums">
+                        {v}
+                        <span className="text-xs text-ink-soft">명</span>
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {total === 0 && (
+            <p className="mt-10 text-center text-sm text-ink-soft">단원 현황은 준비 중입니다.</p>
+          )}
+
+          <div className="mt-12 flex flex-col items-start justify-between gap-6 border-t border-line pt-10 md:flex-row md:items-center">
+            <p className="max-w-2xl text-xs leading-relaxed text-ink-soft">
+              단원의 개인정보 보호를 위해 이 화면에는 반별·학년별 인원만 공개하며, 단원 이름은 보호자가 공개에 동의한 경우에만
+              게시합니다. 사진·생년월일·학교 등 다른 정보는 공개하지 않습니다.
+            </p>
+            <Link href="/join" className="btn-primary shrink-0">
+              입단 안내 보기
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

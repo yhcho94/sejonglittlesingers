@@ -41,7 +41,7 @@ export async function Header() {
   return (
     <>
       {/* PC 상단 보조 줄: 계정 · 공식 채널 · 주소 복사 */}
-      <div className="hidden h-[var(--util-h)] border-b border-line/70 bg-ivory lg:block">
+      <div data-print-hide className="hidden h-[var(--util-h)] border-b border-line/70 bg-ivory lg:block">
         <div className="container-page flex h-full items-center justify-end gap-6 text-xs">
           <div className="flex items-center gap-4">{accountLinks}</div>
           <span className="h-3 w-px bg-line" aria-hidden />
@@ -52,7 +52,7 @@ export async function Header() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-30 h-[var(--header-h)] border-b border-line/80 bg-ivory/90 backdrop-blur-md">
+      <header data-print-hide className="sticky top-0 z-30 h-[var(--header-h)] border-b border-line/80 bg-ivory/90 backdrop-blur-md">
         <div className="container-page flex h-full items-center justify-between gap-6">
           <Link href="/" className="flex flex-col leading-none" aria-label={`${site.name} 홈`}>
             <span className="font-[family-name:var(--font-serif)] text-lg font-bold tracking-tight text-navy lg:text-xl">

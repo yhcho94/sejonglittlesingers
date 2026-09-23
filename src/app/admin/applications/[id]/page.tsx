@@ -37,6 +37,12 @@ export default async function AdminApplicationDetail({
     photoUrl = data?.signedUrl ?? null;
   }
 
+  // 승인된 신청이면 단원 명부 등록 여부 확인 (0005 미실행이면 무시)
+  const { data: singer } =
+    app.status === "approved"
+      ? await supabase.from("singers").select("id").eq("application_id", app.id).maybeSingle()
+      : { data: null };
+
   const rows: [string, string | null][] = [
     ["생년월일", app.child_birthdate],
     ["학교", app.school],
@@ -99,6 +105,23 @@ export default async function AdminApplicationDetail({
           </section>
         </div>
       </div>
+
+      {app.status === "approved" && (
+        <section className="card mt-6 flex flex-wrap items-center justify-between gap-3 border-gold/50 bg-gold-soft/40">
+          <p className="text-sm">
+            {singer ? "단원 명부에 등록된 신청입니다." : "승인된 신청입니다. 단원 명부에 등록하면 반·사진 관리와 명부 조회를 할 수 있습니다."}
+          </p>
+          {singer ? (
+            <Link href={`/admin/singers/${singer.id}`} className="btn-outline">
+              단원 정보 보기
+            </Link>
+          ) : (
+            <Link href={`/admin/singers/new?application=${app.id}`} className="btn-primary">
+              단원으로 등록
+            </Link>
+          )}
+        </section>
+      )}
 
       <section className="card mt-6">
         <ReviewForm id={app.id} status={app.status} note={app.admin_note} />

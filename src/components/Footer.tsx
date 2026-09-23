@@ -6,7 +6,7 @@ import { mailHref, mapHref, site, smsHref } from "@/lib/site";
 
 export function Footer() {
   return (
-    <footer className="bg-navy-dark text-white/75">
+    <footer data-print-hide className="bg-navy-dark text-white/75">
       <div className="container-page grid gap-12 py-14 md:grid-cols-12 md:py-16">
         <div className="md:col-span-5">
           <p className="font-[family-name:var(--font-serif)] text-2xl font-bold text-white">{site.name}</p>
