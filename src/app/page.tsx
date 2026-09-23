@@ -39,8 +39,8 @@ export default async function HomePage() {
           <p className="text-sm tracking-[0.2em] text-gold">{site.nameEn.toUpperCase()}</p>
           <h1 className="mt-4 text-4xl font-bold leading-tight md:text-5xl">{site.name}</h1>
           <p className="mt-6 max-w-xl text-lg text-white/85">
-            {/* TODO: 합창단 대표 문구로 교체 */}
-            [대표 문구 입력 필요]
+            음악을 통해 아이들의 감성과 협동심을 키우는
+            <br className="hidden sm:block" /> 세종시 어린이 합창단
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link href="/join" className="btn bg-gold px-6 py-3 text-ink hover:bg-gold/90">

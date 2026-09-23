@@ -9,6 +9,14 @@ export function Footer() {
         <div>
           <p className="text-base font-bold text-navy">{site.name}</p>
           <p className="mt-1">{site.nameEn}</p>
+          <div className="mt-4 flex flex-wrap gap-4">
+            <a href={site.links.cafe} target="_blank" rel="noopener noreferrer" className="hover:text-navy hover:underline">
+              네이버 카페
+            </a>
+            <a href={site.links.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-navy hover:underline">
+              유튜브
+            </a>
+          </div>
           <InstallButton className="btn-outline mt-4 px-3 py-1.5 text-sm" />
         </div>
         <div className="space-y-1 md:text-right">
