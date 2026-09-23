@@ -12,13 +12,13 @@ export default function PrivacyPage() {
       <PageHeader title="개인정보처리방침" />
       <div className="mx-auto max-w-3xl px-4 py-10">
         <p className="mb-6 rounded-lg border border-dashed border-gold bg-gold-soft p-4 text-sm">
-          이 문서는 <strong>초안</strong>입니다. 운영 주체(단체명), 보유 기간, 보호책임자 등 표시된 항목을 채우고
-          법률 검토를 거친 뒤 확정해 주세요.
+          이 문서는 <strong>초안</strong>입니다. 표시된 항목(보유 기간, 국외 이전, 시행일)을 채우고 법률 검토를 거친 뒤
+          확정해 주세요.
         </p>
 
         <article className="card space-y-8 leading-relaxed [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-navy [&_li]:ml-5 [&_li]:list-disc">
           <p>
-            <Placeholder>운영 주체명</Placeholder>(이하 &quot;합창단&quot;)은 「개인정보 보호법」에 따라 정보주체의
+            {site.name}(이하 &quot;합창단&quot;)은 「개인정보 보호법」에 따라 정보주체의
             개인정보를 보호하고 관련 고충을 원활하게 처리하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다.
           </p>
 
@@ -49,7 +49,17 @@ export default function PrivacyPage() {
                 회원 정보: 회원 탈퇴 시까지 <Placeholder>세부 기간 확인 필요</Placeholder>
               </li>
               <li>
-                입단 신청 정보: <Placeholder>예: 반려 시 즉시 파기, 승인 시 단원 활동 종료 후 ○년</Placeholder>
+                입단 신청 정보
+                <ul className="mt-1">
+                  <li>심사 대기 중 신청을 취소한 경우: 즉시 파기</li>
+                  <li>
+                    반려된 경우: 사진과 선택 항목(학교·학년·주소·음악 경력·지원 동기)은 반려 즉시 파기하고, 결과 안내를 위한
+                    최소 정보(단원 이름·생년월일·심사 결과)는 반려 후 5일 이내에 파기
+                  </li>
+                  <li>
+                    승인된 경우: 단원 활동 종료 후 <Placeholder>보유 기간 확인 필요</Placeholder>
+                  </li>
+                </ul>
               </li>
               <li>관계 법령에 따라 보존할 필요가 있는 경우 해당 법령에서 정한 기간 동안 보관합니다.</li>
             </ul>

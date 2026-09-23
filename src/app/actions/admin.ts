@@ -68,6 +68,17 @@ export async function reviewApplication(_prev: FormState, formData: FormData): P
   const note = String(formData.get("admin_note") ?? "").trim().slice(0, 2000);
   if (!Number.isSafeInteger(id) || !STATUSES.includes(status)) return { error: "잘못된 요청입니다." };
 
+  // 반려하면 DB 가 사진 경로와 선택 항목을 지우므로, 사진 파일은 여기서 저장소에서 삭제합니다.
+  let photoToRemove: string | null = null;
+  if (status === "rejected") {
+    const { data: current } = await admin.supabase
+      .from("applications")
+      .select("status, photo_path")
+      .eq("id", id)
+      .maybeSingle();
+    if (current && current.status !== "rejected") photoToRemove = current.photo_path;
+  }
+
   const { error } = await admin.supabase
     .from("applications")
     .update({
@@ -79,8 +90,16 @@ export async function reviewApplication(_prev: FormState, formData: FormData): P
     .eq("id", id);
 
   if (error) return { error: "저장하지 못했습니다." };
+  if (photoToRemove) {
+    await admin.supabase.storage.from("application-photos").remove([photoToRemove]);
+  }
   revalidatePath("/admin", "layout");
-  return { success: "심사 결과를 저장했습니다. 신청자는 마이페이지에서 확인할 수 있습니다." };
+  return {
+    success:
+      status === "rejected"
+        ? "반려 처리했습니다. 사진과 상세 정보는 삭제되었고, 신청 기록은 5일 후 삭제됩니다."
+        : "심사 결과를 저장했습니다. 신청자는 마이페이지에서 확인할 수 있습니다.",
+  };
 }
 
 export async function deleteApplication(formData: FormData) {

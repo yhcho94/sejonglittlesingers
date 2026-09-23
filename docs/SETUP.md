@@ -9,6 +9,7 @@
 2. `supabase/migrations/` 폴더의 파일을 **번호 순서대로** 하나씩, 내용 **전체**를 붙여넣고 **Run**
    - `0001_init.sql`: 회원, 공지사항, 입단 신청, 사진 저장소
    - `0002_recruitment_faq_concerts.sql`: 입단 안내, FAQ, 공연 일정
+   - `0003_purge_rejected.sql`: 반려된 입단 신청 정보 파기 (반려 즉시 상세 정보 삭제, 5일 후 기록 삭제)
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 두 파일 모두 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.

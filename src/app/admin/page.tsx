@@ -12,6 +12,8 @@ async function count(table: "applications" | "profiles" | "notices", status?: st
 
 export default async function AdminHome() {
   await requireAdmin();
+  // 반려 후 5일이 지난 신청 기록 정리 (개인정보처리방침의 파기 기한)
+  await (await createClient()).rpc("purge_rejected_applications");
   const [pending, approved, members, notices] = await Promise.all([
     count("applications", "pending"),
     count("applications", "approved"),

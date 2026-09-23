@@ -31,6 +31,10 @@ export function ReviewForm({
         <label htmlFor="admin_note" className="label">신청자에게 보일 안내 문구 (선택)</label>
         <textarea id="admin_note" name="admin_note" rows={3} maxLength={2000} defaultValue={note ?? ""} className="input" />
       </div>
+      <p className="rounded-lg bg-gold-soft px-3 py-2 text-xs">
+        반려하면 개인정보처리방침에 따라 사진과 상세 정보(학교·학년·주소·경력·지원 동기)가 즉시 삭제되고, 신청
+        기록은 5일 후 자동 삭제됩니다. 되돌릴 수 없습니다.
+      </p>
       <FormMessage state={state} />
       <SubmitButton className="btn-primary" pendingText="저장 중...">결과 저장</SubmitButton>
     </form>
