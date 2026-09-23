@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { assistantConductors, conductor, type BioSection, type StaffMember } from "@/lib/staff";
-import { site } from "@/lib/site";
+import { mailHref, mapHref, site, telHref } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "합창단 소개",
@@ -155,9 +155,30 @@ export default function AboutPage() {
         </section>
 
         <section className="card">
-          <h2 className="text-xl font-bold text-navy">오시는 길</h2>
-          <p className="mt-4">주소: {site.contact.address}</p>
-          <p className="mt-1">문의: {site.contact.phone}</p>
+          <h2 className="text-xl font-bold text-navy">오시는 길 · 문의</h2>
+          <dl className="mt-4 space-y-2">
+            <div className="flex gap-3">
+              <dt className="w-14 shrink-0 text-ink-soft">연습 장소</dt>
+              <dd>
+                {site.contact.address}{" "}
+                <a href={mapHref} target="_blank" rel="noopener noreferrer" className="ml-1 text-sm text-navy underline">
+                  지도 보기
+                </a>
+              </dd>
+            </div>
+            <div className="flex gap-3">
+              <dt className="w-14 shrink-0 text-ink-soft">전화</dt>
+              <dd>
+                <a href={telHref} className="hover:underline">{site.contact.phone}</a>
+              </dd>
+            </div>
+            <div className="flex gap-3">
+              <dt className="w-14 shrink-0 text-ink-soft">이메일</dt>
+              <dd>
+                <a href={mailHref} className="hover:underline">{site.contact.email}</a>
+              </dd>
+            </div>
+          </dl>
         </section>
       </div>
     </>

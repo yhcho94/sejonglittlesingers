@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { InstallButton } from "@/components/InstallButton";
-import { site } from "@/lib/site";
+import { mailHref, mapHref, site, telHref } from "@/lib/site";
 
 export function Footer() {
   return (
@@ -20,9 +20,21 @@ export function Footer() {
           <InstallButton className="btn-outline mt-4 px-3 py-1.5 text-sm" />
         </div>
         <div className="space-y-1 md:text-right">
-          <p>주소: {site.contact.address}</p>
           <p>
-            전화: {site.contact.phone} · 이메일: {site.contact.email}
+            주소:{" "}
+            <a href={mapHref} target="_blank" rel="noopener noreferrer" className="hover:text-navy hover:underline">
+              {site.contact.address}
+            </a>
+          </p>
+          <p>
+            전화:{" "}
+            <a href={telHref} className="hover:text-navy hover:underline">
+              {site.contact.phone}
+            </a>{" "}
+            · 이메일:{" "}
+            <a href={mailHref} className="hover:text-navy hover:underline">
+              {site.contact.email}
+            </a>
           </p>
           <p className="pt-2">
             <Link href="/privacy" className="font-bold text-ink hover:underline">
