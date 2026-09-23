@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured, missingSupabaseEnv } from "@/lib/supabase/env";
 import { safeNext } from "@/lib/auth";
 import type { FormState } from "@/lib/types";
+import { PASSWORD_HINT, passwordProblem } from "@/lib/password";
 
 // 어떤 배포에서 설정이 빠졌는지 알 수 있도록 Vercel 이 제공하는 공개 정보(환경, 커밋)를 함께 표시합니다.
 const DEPLOY_INFO = [process.env.VERCEL_ENV, process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7)]
@@ -63,9 +64,9 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   if (!email || !guardianName || !phone) return { error: "필수 항목을 모두 입력해 주세요." };
   if (guardianName.length > 50) return { error: "이름은 50자 이내로 입력해 주세요." };
   if (!PHONE_RE.test(phone)) return { error: "연락처는 숫자와 '-'만 사용해 입력해 주세요." };
-  if (typeof password !== "string" || password.length < 8) {
-    return { error: "비밀번호는 8자 이상이어야 합니다." };
-  }
+  if (typeof password !== "string") return { error: "비밀번호를 입력해 주세요." };
+  const problem = passwordProblem(password);
+  if (problem) return { error: problem };
   if (password !== passwordConfirm) return { error: "비밀번호 확인이 일치하지 않습니다." };
   if (formData.get("agree_privacy") !== "on") {
     return { error: "개인정보 수집·이용에 동의해야 가입할 수 있습니다." };
@@ -85,7 +86,7 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   });
 
   if (error) {
-    if (error.code === "weak_password") return { error: "더 안전한 비밀번호를 사용해 주세요." };
+    if (error.code === "weak_password") return { error: `더 안전한 비밀번호를 사용해 주세요. (${PASSWORD_HINT})` };
     if (error.code === "over_email_send_rate_limit") {
       return { error: "잠시 후 다시 시도해 주세요. (메일 발송 한도 초과)" };
     }
@@ -127,15 +128,17 @@ export async function requestPasswordReset(
 export async function updatePassword(_prev: FormState, formData: FormData): Promise<FormState> {
   if (!isSupabaseConfigured) return { error: NOT_CONFIGURED };
   const password = formData.get("password");
-  if (typeof password !== "string" || password.length < 8) {
-    return { error: "비밀번호는 8자 이상이어야 합니다." };
-  }
+  if (typeof password !== "string") return { error: "비밀번호를 입력해 주세요." };
+  const problem = passwordProblem(password);
+  if (problem) return { error: problem };
   if (password !== formData.get("password_confirm")) {
     return { error: "비밀번호 확인이 일치하지 않습니다." };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password });
+  if (error?.code === "weak_password") return { error: `더 안전한 비밀번호를 사용해 주세요. (${PASSWORD_HINT})` };
+  if (error?.code === "same_password") return { error: "이전과 다른 비밀번호를 입력해 주세요." };
   if (error) {
     return { error: "비밀번호를 변경하지 못했습니다. 재설정 링크를 다시 요청해 주세요." };
   }
