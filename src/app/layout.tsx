@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { site } from "@/lib/site";
 import "./globals.css";
+import { REVEAL_BOOT_SCRIPT, RevealObserver } from "@/components/Reveal";
 
 const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
@@ -50,8 +51,17 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${notoSansKr.variable} ${notoSerifKr.variable} ${cormorant.variable} h-full antialiased`}>
+    // js-reveal 클래스는 화면을 그리기 전에 스크립트가 붙이므로 서버 HTML 과 달라도 경고하지 않습니다.
+    <html
+      lang="ko"
+      suppressHydrationWarning
+      className={`${notoSansKr.variable} ${notoSerifKr.variable} ${cormorant.variable} h-full antialiased`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: REVEAL_BOOT_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col">
+        <RevealObserver />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

@@ -117,3 +117,67 @@
     background: #fff;
   }
 }
+
+/*
+ * 움직임: 스크롤 등장 · 대표 사진 천천히 확대 · 첫 화면 글자 등장
+ * '동작 줄이기'를 켠 사용자와 인쇄에서는 모두 끕니다.
+ */
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@utility animate-hero-zoom {
+  animation: hero-zoom 9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@utility animate-rise {
+  animation: rise-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+[data-reveal] {
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js-reveal [data-reveal]:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-zoom,
+  .animate-rise {
+    animation: none;
+  }
+  [data-reveal] {
+    transition: none;
+  }
+  .js-reveal [data-reveal]:not(.is-visible) {
+    opacity: 1;
+    transform: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+@media print {
+  .js-reveal [data-reveal]:not(.is-visible) {
+    opacity: 1;
+    transform: none;
+  }
+}

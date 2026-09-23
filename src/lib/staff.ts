@@ -49,6 +49,7 @@ export const conductor: StaffMember = {
         "계룡시어린이뮤지컬 합창단 상임 지휘자 역임",
         "경찰대학교 강사역임",
         "세종하모니앙상블 대표역임",
+        "세종사계절하모니합창단 지휘자 역임",
       ],
     },
     {
@@ -56,7 +57,6 @@ export const conductor: StaffMember = {
       items: [
         "세종드림예술기획 대표",
         "세종리틀싱어즈 단장 및 상임지휘자",
-        "세종사계절하모니합창단 예술감독 및 상임지휘자",
         "싱싱콰이어 지휘자",
         "클래시컬쇼콰이어그룹 튀김소보체 단원",
         "세종시 음악협회 회원",
@@ -126,7 +126,7 @@ export const assistantConductors: StaffMember[] = [
   },
 ];
 
-// 2026 조직도. 합창단 제공 조직도 기준. (선율반 보컬트레이너는 합창단 요청으로 추가)
+// 2026 조직도. 합창단 제공 조직도 기준 (울림반 이론선생님·선율반 구성은 합창단 요청으로 수정)
 // 학부모대표 옆의 '○○ 어머니' 표기는 아동 이름이 드러나므로 공개 홈페이지에는 싣지 않습니다.
 export const accompanists: StaffMember[] = [
   {
@@ -330,7 +330,7 @@ export const organization = {
         { role: "학부모대표", name: "국지은" },
         { role: "부대표", name: "안가영" },
         { role: "반주자", name: "정연수" },
-        { role: "이론선생님", name: "박세연" },
+        { role: "이론선생님", name: "최오늘" },
       ],
     },
     {
@@ -348,7 +348,6 @@ export const organization = {
       color: "#3f6b4f",
       members: [
         { role: "부지휘자", name: "서지선" },
-        { role: "보컬트레이너", name: "이정윤" },
         { role: "학부모대표", name: "김소영" },
         { role: "부대표", name: "이은희" },
         { role: "반주자", name: "배성희" },
