@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
-import { Placeholder } from "@/components/Placeholder";
+import { conductor } from "@/lib/conductor";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -129,10 +129,28 @@ export default function AboutPage() {
         </section>
 
         <section className="card">
-          <h2 className="text-xl font-bold text-navy">지휘자 · 강사진</h2>
-          <p className="mt-4">
-            <Placeholder>지휘자·강사 소개 입력 필요 (공개 동의 받은 정보만 게재)</Placeholder>
+          <h2 className="text-xl font-bold text-navy">지휘자 소개</h2>
+          <p className="mt-2">
+            <span className="rounded-full bg-cream px-3 py-1 text-sm font-medium text-navy">{conductor.role}</span>
+            {conductor.name && <span className="ml-2 text-lg font-bold">{conductor.name}</span>}
           </p>
+          <div className="mt-6 grid gap-x-10 gap-y-8 md:grid-cols-2">
+            {conductor.sections.map((section) => (
+              <div key={section.title}>
+                <h3 className="border-b border-line pb-2 text-sm font-bold tracking-wide text-gold">{section.title}</h3>
+                <ul className="mt-3 space-y-2 text-sm leading-relaxed">
+                  {section.items.map((item) => (
+                    <li key={item} className="flex gap-2">
+                      <span className="text-ink-soft" aria-hidden>
+                        ·
+                      </span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section className="card">
