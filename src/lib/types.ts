@@ -48,3 +48,35 @@ export const STATUS_LABEL: Record<ApplicationStatus, string> = {
 
 // 서버 액션 결과 (폼에 표시)
 export type FormState = { error?: string; success?: string } | undefined;
+
+export type Recruitment = {
+  is_open: boolean;
+  period: string | null;
+  target: string | null;
+  schedule: string | null;
+  place: string | null;
+  fee: string | null;
+  audition: string | null;
+  classes: string | null;
+  notes: string | null;
+  updated_at: string;
+};
+
+export type Faq = {
+  id: number;
+  question: string;
+  answer: string;
+  sort_order: number;
+  is_published: boolean;
+};
+
+export type Concert = {
+  id: number;
+  title: string;
+  starts_at: string;
+  venue: string | null;
+  description: string | null;
+  ticket_url: string | null;
+  video_url: string | null;
+  is_published: boolean;
+};

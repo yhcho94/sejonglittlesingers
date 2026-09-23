@@ -6,9 +6,12 @@
 ## 1. Supabase: DB 만들기 (최초 1회)
 
 1. Supabase 대시보드에서 프로젝트 → **SQL Editor** → **New query**
-2. `supabase/migrations/0001_init.sql` 파일 내용을 **전체** 붙여넣고 **Run**
-3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications` 테이블이,
+2. `supabase/migrations/` 폴더의 파일을 **번호 순서대로** 하나씩, 내용 **전체**를 붙여넣고 **Run**
+   - `0001_init.sql`: 회원, 공지사항, 입단 신청, 사진 저장소
+   - `0002_recruitment_faq_concerts.sql`: 입단 안내, FAQ, 공연 일정
+3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
+4. 이미 실행한 파일은 다시 실행하지 않습니다. (새 번호 파일만 실행)
 
 ## 2. Supabase: 로그인 링크 주소 설정
 
@@ -44,8 +47,8 @@ Vercel **Settings → Environment Variables** 에 추가합니다. (Production, 
 
 ## 5. Vercel: 프레임워크 설정
 
-**Settings → Build and Deployment → Framework Preset** 을 **Next.js** 로 변경합니다.
-(코드가 없을 때 프로젝트를 만들어 `Other` 로 되어 있을 수 있음)
+`vercel.json` 에 `"framework": "nextjs"` 를 지정해 두었으므로 대시보드의 Framework Preset 이 `Other` 여도 Next.js 로 빌드됩니다.
+(대시보드에서도 **Settings → Build and Deployment → Framework Preset** 을 **Next.js** 로 맞춰 두면 더 명확합니다.)
 
 `vercel.json` 에서 서버 실행 지역을 서울(`icn1`)로 지정했습니다. Supabase(서울)와 가까워 빠르고, 요청 처리도 국내에서 이루어집니다.
 
@@ -63,7 +66,13 @@ update public.profiles set role = 'admin' where email = '관리자이메일@exam
 
 ## 7. 내용 채우기
 
-사이트 곳곳의 **노란 점선 상자(입력 필요)** 는 실제 정보로 바꿔야 하는 자리입니다.
+**관리자 화면에서 입력** (코드 수정 불필요)
+- 입단 안내(모집 대상·일정·장소·회비·반 구성·오디션, 모집 중 배너): 관리자 → 입단 안내
+- 자주 묻는 질문: 관리자 → FAQ
+- 공연 일정(예매 링크, YouTube 영상): 관리자 → 공연 일정
+- 공지사항: 관리자 → 공지사항
+
+**코드에서 수정** — 사이트 곳곳의 **노란 점선 상자(입력 필요)** 는 실제 정보로 바꿔야 하는 자리입니다.
 
 - 연락처·주소·개인정보 보호책임자: `src/lib/site.ts`
 - 소개·연혁·지휘자: `src/app/about/page.tsx`

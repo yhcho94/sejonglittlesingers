@@ -5,8 +5,9 @@ import { site } from "@/lib/site";
 
 const NAV = [
   { href: "/about", label: "합창단 소개" },
+  { href: "/join", label: "입단 안내" },
+  { href: "/concerts", label: "공연 일정" },
   { href: "/notices", label: "공지사항" },
-  { href: "/apply", label: "입단 신청" },
 ];
 
 export async function Header() {
