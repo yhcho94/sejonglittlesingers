@@ -17,6 +17,12 @@ export const metadata: Metadata = {
     template: `%s | ${site.name}`,
   },
   description: site.description,
+  openGraph: {
+    siteName: site.name,
+    locale: "ko_KR",
+    type: "website",
+    images: [{ url: "/images/hero.jpg", width: 960, height: 640, alt: site.name }],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import heroImage from "../../public/images/hero.jpg";
 import { NoticeList } from "@/components/NoticeList";
 import { Placeholder } from "@/components/Placeholder";
 import { listPublishedNotices } from "@/lib/notices";
@@ -10,11 +12,23 @@ export default async function HomePage() {
   return (
     <>
       {/* 대표 영역 */}
-      <section className="bg-navy text-white">
-        <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+      <section className="relative isolate overflow-hidden bg-navy-dark text-white">
+        <Image
+          src={heroImage}
+          alt="세종리틀싱어즈 단원들이 무대에서 노래하는 모습"
+          fill
+          priority
+          placeholder="blur"
+          sizes="100vw"
+          className="-z-10 object-cover object-[50%_45%]"
+        />
+        {/* 글자가 잘 읽히도록 아래쪽을 어둡게 */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-navy-dark via-navy-dark/55 to-navy-dark/10" />
+        <div className="absolute inset-0 -z-10 hidden bg-gradient-to-r from-navy-dark/70 via-navy-dark/20 to-transparent md:block" />
+        <div className="mx-auto flex min-h-[72vh] max-w-6xl flex-col justify-end px-4 pb-16 pt-40 md:min-h-[80vh] md:pb-20">
           <p className="text-sm tracking-[0.2em] text-gold">{site.nameEn.toUpperCase()}</p>
           <h1 className="mt-4 text-4xl font-bold leading-tight md:text-5xl">{site.name}</h1>
-          <p className="mt-6 max-w-xl text-lg text-white/80">
+          <p className="mt-6 max-w-xl text-lg text-white/85">
             {/* TODO: 합창단 대표 문구로 교체 */}
             [대표 문구 입력 필요]
           </p>
