@@ -6,12 +6,14 @@ export type StaffMember = {
   name: string;
   role: string;
   className?: string; // 담당 반
+  website?: string; // 개인 홈페이지
   sections: BioSection[];
 };
 
 export const conductor: StaffMember = {
   name: "지정윤",
   role: "단장 · 상임지휘자",
+  website: "https://sopranoji.vercel.app/",
   sections: [
     {
       title: "학력",

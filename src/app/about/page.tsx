@@ -193,6 +193,16 @@ function StaffHeading({ member }: { member: StaffMember }) {
       {member.className && (
         <span className="rounded-full bg-gold-soft px-3 py-1 text-xs font-medium text-ink">{member.className}</span>
       )}
+      {member.website && (
+        <a
+          href={member.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-auto text-sm font-medium text-navy underline underline-offset-4"
+        >
+          개인 홈페이지 ↗
+        </a>
+      )}
     </div>
   );
 }
