@@ -4,24 +4,12 @@ import { useActionState, useState } from "react";
 import { saveSinger } from "@/app/actions/singers";
 import { FormMessage, SubmitButton } from "@/components/form";
 import { MediaConsentFields } from "@/components/MediaConsentFields";
+import { resizeImage } from "@/lib/image-resize";
 import { createClient } from "@/lib/supabase/client";
 import { CLASS_NAMES, STATUS_LABEL, gradeCode, gradeLabel, type Singer } from "@/lib/singers";
 import type { GuardianProfile } from "@/lib/singers-data";
 
 type Initial = Partial<Singer> & { application_id?: number | null };
-
-// 사진을 가로·세로 최대 800px JPEG 로 줄입니다. (다시 저장하면서 위치정보 등 EXIF 도 제거됨)
-async function resizePhoto(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-  const scale = Math.min(1, 800 / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bitmap.width * scale);
-  canvas.height = Math.round(bitmap.height * scale);
-  canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  return new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("변환 실패"))), "image/jpeg", 0.85),
-  );
-}
 
 export function SingerForm({
   initial,
@@ -51,7 +39,7 @@ export function SingerForm({
     }
     setUploading(true);
     try {
-      const blob = await resizePhoto(file);
+      const { blob } = await resizeImage(file, 800);
       const path = `singers/${crypto.randomUUID()}.jpg`;
       const { error } = await createClient()
         .storage.from("singer-photos")

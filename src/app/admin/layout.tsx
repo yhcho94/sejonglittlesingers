@@ -15,6 +15,7 @@ const NAV = [
   { href: "/admin/recruitment", label: "입단 안내" },
   { href: "/admin/faqs", label: "FAQ" },
   { href: "/admin/concerts", label: "공연 일정" },
+  { href: "/admin/gallery", label: "사진 갤러리" },
   { href: "/admin/notices", label: "공지사항" },
   { href: "/admin/press", label: "보도자료" },
 ];
