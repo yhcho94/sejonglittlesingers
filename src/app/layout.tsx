@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     siteName: site.name,
     locale: "ko_KR",
     type: "website",
-    images: [{ url: "/images/hero.jpg", width: 960, height: 640, alt: site.name }],
+    images: [{ url: "/images/og.jpg", width: 1200, height: 630, alt: `${site.name} 공연 모습` }],
   },
 };
 

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import Link from "next/link";
 import { ConcertCard } from "@/components/ConcertCard";
 import { CountUp } from "@/components/CountUp";
@@ -8,7 +8,15 @@ import { history } from "@/lib/history";
 import { listPublishedNotices } from "@/lib/notices";
 import { site, smsHref } from "@/lib/site";
 import { organization } from "@/lib/staff";
+import heroMobileImage from "../../public/images/hero-mobile.jpg";
 import heroImage from "../../public/images/hero.jpg";
+
+// 대표 사진 (화면 크기별로 다른 사진: Next.js getImageProps 아트 디렉션)
+const heroCommon = { alt: "", priority: true, quality: 80 } as const;
+const {
+  props: { srcSet: heroDesktop },
+} = getImageProps({ ...heroCommon, src: heroImage, sizes: "65vw" });
+const { props: heroImg } = getImageProps({ ...heroCommon, src: heroMobileImage, sizes: "100vw" });
 
 // 합창단이 제공한 소개 글의 수치
 const STATS: { value: string; unit?: string; label: string; count?: boolean }[] = [
@@ -64,18 +72,18 @@ export default async function HomePage() {
       {/* 휴대폰·태블릿: 사진 아래에 글자 / PC: 왼쪽 글자, 오른쪽 사진 (아이들을 가리지 않도록) */}
       <section className="bg-navy-dark text-white lg:grid lg:min-h-[min(calc(100svh-var(--header-h)-var(--util-h)),820px)] lg:grid-cols-[calc(max(2rem,(100vw-72rem)/2+2rem)+28rem)_1fr]">
         <div className="relative aspect-[16/9] overflow-hidden lg:order-2 lg:aspect-auto">
-          <Image
-            src={heroImage}
-            alt="세종리틀싱어즈 단원들이 무대에서 노래하는 모습"
-            fill
-            priority
-            placeholder="blur"
-            sizes="(min-width: 1024px) 65vw, 100vw"
-            className="animate-hero-zoom object-cover object-[50%_85%] lg:object-[50%_60%]"
-          />
+          {/* 휴대폰·태블릿은 무대를 확대한 사진, PC 는 전체 사진 */}
+          <picture>
+            <source media="(min-width: 1024px)" srcSet={heroDesktop} sizes="65vw" />
+            <img
+              {...heroImg}
+              alt="세종리틀싱어즈 단원들이 콘서트홀 무대에서 노래하고 관객이 환호하는 모습"
+              className="animate-hero-zoom absolute inset-0 h-full w-full object-cover object-[50%_40%] lg:object-[48%_58%]"
+            />
+          </picture>
           {/* 사진과 글자 영역이 자연스럽게 이어지도록 */}
           <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-navy-dark to-transparent lg:hidden" />
-          <div className="absolute inset-y-0 left-0 hidden w-1/4 bg-gradient-to-r from-navy-dark to-transparent lg:block" />
+          <div className="absolute inset-y-0 left-0 hidden w-1/6 bg-gradient-to-r from-navy-dark to-transparent lg:block" />
         </div>
 
         <div className="flex items-center lg:order-1">
