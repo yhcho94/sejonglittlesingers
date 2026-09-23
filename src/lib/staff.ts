@@ -125,3 +125,45 @@ export const assistantConductors: StaffMember[] = [
     ],
   },
 ];
+
+// 2026 조직도. 합창단 제공 조직도 기준.
+// 학부모대표 옆의 '○○ 어머니' 표기는 아동 이름이 드러나므로 공개 홈페이지에는 싣지 않습니다.
+export const organization = {
+  year: 2026,
+  director: { role: "단장", name: "지정윤" },
+  office: { role: "사무국장", name: "박성희" },
+  classes: [
+    {
+      name: "울림반",
+      color: "#1f6fa8",
+      members: [
+        { role: "부지휘자", name: "오승하" },
+        { role: "학부모대표", name: "국지은" },
+        { role: "부대표", name: "안가영" },
+        { role: "반주자", name: "정연수" },
+        { role: "이론선생님", name: "박세연" },
+      ],
+    },
+    {
+      name: "화음반",
+      color: "#8a2b3d",
+      members: [
+        { role: "부지휘자", name: "김연주" },
+        { role: "학부모대표", name: "박지윤" },
+        { role: "반주자", name: "박선희" },
+        { role: "이론선생님", name: "전하영" },
+      ],
+    },
+    {
+      name: "선율반",
+      color: "#3f6b4f",
+      members: [
+        { role: "부지휘자", name: "서지선" },
+        { role: "학부모대표", name: "김소영" },
+        { role: "부대표", name: "이은희" },
+        { role: "반주자", name: "배성희" },
+        { role: "이론선생님", name: "조애린" },
+      ],
+    },
+  ],
+};

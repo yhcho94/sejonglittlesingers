@@ -25,5 +25,7 @@ export const TODO = "[입력 필요]";
 
 // 전화·지도 링크용
 export const telHref = `tel:${site.contact.phone.replaceAll("-", "")}`;
+// 입단·공연 문의는 단장에게 문자 메시지로 받습니다.
+export const smsHref = `sms:${site.contact.phone.replaceAll("-", "")}`;
 export const mailHref = `mailto:${site.contact.email}`;
 export const mapHref = `https://map.naver.com/p/search/${encodeURIComponent(site.contact.address)}`;

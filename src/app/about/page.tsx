@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
-import { assistantConductors, conductor, type BioSection, type StaffMember } from "@/lib/staff";
-import { mailHref, mapHref, site, telHref } from "@/lib/site";
+import { OrgChart } from "@/components/OrgChart";
+import { assistantConductors, conductor, organization, type BioSection, type StaffMember } from "@/lib/staff";
+import { mailHref, mapHref, site, smsHref } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "합창단 소개",
@@ -132,6 +133,11 @@ export default function AboutPage() {
           </div>
         </section>
 
+        <section>
+          <h2 className="mb-5 text-xl font-bold text-navy">{organization.year} 조직도</h2>
+          <OrgChart />
+        </section>
+
         <section className="space-y-6">
           <h2 className="text-xl font-bold text-navy">지휘자 · 강사진</h2>
 
@@ -162,7 +168,7 @@ export default function AboutPage() {
           <h2 className="text-xl font-bold text-navy">오시는 길 · 문의</h2>
           <dl className="mt-4 space-y-2">
             <div className="flex gap-3">
-              <dt className="w-14 shrink-0 text-ink-soft">연습 장소</dt>
+              <dt className="w-14 shrink-0 text-ink-soft">장소</dt>
               <dd>
                 {site.contact.address}{" "}
                 <a href={mapHref} target="_blank" rel="noopener noreferrer" className="ml-1 text-sm text-navy underline">
@@ -171,9 +177,11 @@ export default function AboutPage() {
               </dd>
             </div>
             <div className="flex gap-3">
-              <dt className="w-14 shrink-0 text-ink-soft">전화</dt>
+              <dt className="w-14 shrink-0 text-ink-soft">문의</dt>
               <dd>
-                <a href={telHref} className="hover:underline">{site.contact.phone}</a>
+                입단·공연 문의: 단장{" "}
+                <a href={smsHref} className="font-medium hover:underline">{site.contact.phone}</a>
+                <span className="ml-1 text-sm text-ink-soft">(문자 메시지로 보내 주세요)</span>
               </dd>
             </div>
             <div className="flex gap-3">

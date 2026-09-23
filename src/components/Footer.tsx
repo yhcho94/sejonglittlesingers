@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { InstallButton } from "@/components/InstallButton";
-import { mailHref, mapHref, site, telHref } from "@/lib/site";
+import { mailHref, mapHref, site, smsHref } from "@/lib/site";
 
 export function Footer() {
   return (
@@ -27,11 +27,14 @@ export function Footer() {
             </a>
           </p>
           <p>
-            전화:{" "}
-            <a href={telHref} className="hover:text-navy hover:underline">
+            입단·공연 문의: 단장{" "}
+            <a href={smsHref} className="hover:text-navy hover:underline">
               {site.contact.phone}
             </a>{" "}
-            · 이메일:{" "}
+            (문자 메시지)
+          </p>
+          <p>
+            이메일:{" "}
             <a href={mailHref} className="hover:text-navy hover:underline">
               {site.contact.email}
             </a>
