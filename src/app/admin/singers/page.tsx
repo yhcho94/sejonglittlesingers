@@ -10,7 +10,8 @@ import {
   gradeCode,
   gradeLabel,
   groupSingers,
-  manAge,
+  birthLabel,
+  singerAge,
   parseFilter,
   VIEWS,
 } from "@/lib/singers";
@@ -97,8 +98,8 @@ export default async function AdminSingersPage({ searchParams }: PageProps<"/adm
                               </td>
                               <td className="px-3 py-2.5">{s.class_name ?? "-"}</td>
                               <td className="px-3 py-2.5">{gradeLabel(gradeCode(s.birthdate, s.grade_override))}</td>
-                              <td className="px-3 py-2.5">{manAge(s.birthdate)}세</td>
-                              <td className="px-3 py-2.5 tabular-nums">{s.birthdate}</td>
+                              <td className="px-3 py-2.5">{singerAge(s) === null ? "-" : `${singerAge(s)}세`}</td>
+                              <td className="px-3 py-2.5 tabular-nums">{birthLabel(s)}</td>
                               <td className="px-3 py-2.5">{s.school ?? "-"}</td>
                               <td className="px-3 py-2.5">
                                 {guardian?.guardian_name ?? s.guardian_name ?? "-"}

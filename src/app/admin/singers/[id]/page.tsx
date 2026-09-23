@@ -5,7 +5,7 @@ import { ConfirmButton } from "@/components/ConfirmButton";
 import { StatusBadge } from "@/components/StatusBadge";
 import { requireAdmin } from "@/lib/auth";
 import { formatDate, formatDateTime } from "@/lib/format";
-import { gradeCode, gradeLabel, manAge } from "@/lib/singers";
+import { birthLabel, gradeCode, gradeLabel, singerAge } from "@/lib/singers";
 import { getSinger, guardianMap, signedPhotoUrls, singersOfGuardian } from "@/lib/singers-data";
 import { createClient } from "@/lib/supabase/server";
 import type { ApplicationStatus } from "@/lib/types";
@@ -49,7 +49,11 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
   const rows: [string, React.ReactNode][] = [
     ["반", singer.class_name],
     ["학년", `${grade}${singer.grade_override !== null ? " (직접 지정)" : ""}`],
-    ["생년월일", `${singer.birthdate} (만 ${manAge(singer.birthdate)}세)`],
+    [
+      "생년월일",
+      singer.birth_year_only ? `${birthLabel(singer)} (생일 미입력)` : `${singer.birthdate} (만 ${singerAge(singer)}세)`,
+    ],
+    ["가입경로", singer.join_source],
     ["성별", singer.gender],
     ["학교", singer.school],
     ["파트", singer.part],

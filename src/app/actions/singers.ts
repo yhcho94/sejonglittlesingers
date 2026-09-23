@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_NAMES } from "@/lib/singers";
 import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
+import { JOIN_SOURCES } from "@/lib/join-source";
 import { parseImportRow } from "@/lib/singers-import";
 import { readSheet } from "@/lib/singers-xlsx";
 import type { FormState } from "@/lib/types";
@@ -71,7 +72,8 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
   const media = readMediaConsent(formData);
   const values = {
     name,
-    birthdate: birth.value,
+    // 출생연도만 아는 경우 그해 1월 1일로 저장 (화면에는 'OOOO년생'으로 표시)
+    birthdate: formData.get("birth_year_only") === "on" ? `${birth.value.slice(0, 4)}-01-01` : birth.value,
     gender: gender === "여" || gender === "남" ? gender : null,
     school: text(formData, "school", 100),
     grade_override: grade.value,
@@ -85,6 +87,8 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
     guardian_name: text(formData, "guardian_name", 50),
     guardian_phone: text(formData, "guardian_phone", 20),
     photo_path: photoPath || null,
+    birth_year_only: formData.get("birth_year_only") === "on",
+    join_source: (JOIN_SOURCES as readonly string[]).includes(String(formData.get("join_source"))) ? String(formData.get("join_source")) : null,
     // 초상권 동의 (③ 이름 표시 = 단원 소개 이름 공개)
     consent_media_channels: media.channels,
     consent_media_press: media.press,

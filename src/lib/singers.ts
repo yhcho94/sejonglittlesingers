@@ -10,7 +10,8 @@ export type SingerStatus = keyof typeof STATUS_LABEL;
 export type Singer = {
   id: number;
   name: string;
-  birthdate: string; // YYYY-MM-DD
+  birthdate: string; // YYYY-MM-DD (출생연도만 알면 그해 01-01)
+  birth_year_only: boolean;
   gender: "여" | "남" | null;
   school: string | null;
   grade_override: number | null;
@@ -28,12 +29,13 @@ export type Singer = {
   consent_media_channels: boolean;
   consent_media_press: boolean;
   consent_updated_at: string | null;
+  join_source: string | null;
   application_id: number | null;
   notes: string | null;
 };
 
 export const SINGER_COLUMNS =
-  "id, name, birthdate, gender, school, grade_override, class_name, part, cohort, joined_on, left_on, status, guardian_id, guardian_name, guardian_phone, photo_path, name_public, consent_media_channels, consent_media_press, consent_updated_at, application_id, notes";
+  "id, name, birthdate, gender, school, grade_override, class_name, part, cohort, joined_on, left_on, status, guardian_id, guardian_name, guardian_phone, photo_path, name_public, consent_media_channels, consent_media_press, consent_updated_at, birth_year_only, join_source, application_id, notes";
 
 // 한국 시간 기준 오늘 (연·월·일)
 export function todayKst(now = new Date()) {
@@ -68,6 +70,16 @@ export function manAge(birthdate: string, now = new Date()) {
   let age = year - by;
   if (month < bm || (month === bm && day < bd)) age -= 1;
   return age;
+}
+
+// 단원의 만 나이 (출생연도만 알면 계산하지 않음)
+export function singerAge(s: Pick<Singer, "birthdate" | "birth_year_only">, now = new Date()) {
+  return s.birth_year_only ? null : manAge(s.birthdate, now);
+}
+
+// 생년월일 표시: 2016-05-20 또는 2016년생
+export function birthLabel(s: Pick<Singer, "birthdate" | "birth_year_only">) {
+  return s.birth_year_only ? `${s.birthdate.slice(0, 4)}년생` : s.birthdate;
 }
 
 // ── 보기(조회 방법) ──────────────────────────────
@@ -148,8 +160,10 @@ export function groupSingers(singers: Singer[], view: View, now = new Date()): G
         return { key: `g${g}`, label: gradeLabel(g), order: g };
       }
       case "age": {
-        const a = manAge(s.birthdate, now);
-        return { key: `a${a}`, label: `만 ${a}세`, order: a };
+        const a = singerAge(s, now);
+        return a === null
+          ? { key: "a-none", label: "생일 미입력 (출생연도만)", order: 999 }
+          : { key: `a${a}`, label: `만 ${a}세`, order: a };
       }
       case "birthYear": {
         const y = Number(s.birthdate.slice(0, 4));
@@ -182,8 +196,8 @@ export function rosterRow(s: Singer, guardian?: { guardian_name: string; phone: 
     이름: s.name,
     반: s.class_name ?? "",
     학년: gradeLabel(gradeCode(s.birthdate, s.grade_override, now)),
-    "만 나이": manAge(s.birthdate, now),
-    생년월일: s.birthdate,
+    "만 나이": singerAge(s, now) ?? "",
+    생년월일: birthLabel(s),
     성별: s.gender ?? "",
     학교: s.school ?? "",
     파트: s.part ?? "",
@@ -193,6 +207,7 @@ export function rosterRow(s: Singer, guardian?: { guardian_name: string; phone: 
     보호자: guardian?.guardian_name ?? s.guardian_name ?? "",
     "보호자 연락처": guardian?.phone ?? s.guardian_phone ?? "",
     "보호자 이메일": guardian?.email ?? "",
+    가입경로: s.join_source ?? "",
     "초상권 동의": consentSummary(s).detail || "미동의",
     비고: s.notes ?? "",
   };

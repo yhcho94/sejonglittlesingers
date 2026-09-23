@@ -50,6 +50,7 @@ export default async function AdminApplicationDetail({
     ["주소", app.address],
     ["음악 경력", app.experience],
     ["지원 동기", app.motivation],
+    ["가입경로", app.join_source ? `${app.join_source}${app.join_source_detail ? ` (${app.join_source_detail})` : ""}` : null],
   ];
 
   return (

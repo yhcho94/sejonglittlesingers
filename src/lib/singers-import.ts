@@ -1,4 +1,5 @@
 // 엑셀 일괄 등록: 양식 열과 한 줄씩 검사하는 로직 (화면·서버 공통, 테스트 가능하도록 순수 함수)
+import { normalizeJoinSource } from "./join-source";
 import { CLASS_NAMES, STATUS_LABEL, type SingerStatus } from "./singers";
 
 export const IMPORT_COLUMNS = [
@@ -15,6 +16,7 @@ export const IMPORT_COLUMNS = [
   "보호자 이름",
   "보호자 연락처",
   "보호자 가입 이메일",
+  "가입경로",
   "초상권① 공식채널",
   "초상권② 언론홍보",
   "초상권③ 이름표시",
@@ -38,6 +40,7 @@ export const IMPORT_EXAMPLE: Record<string, string> = {
   "보호자 이름": "홍부모",
   "보호자 연락처": "010-0000-0000",
   "보호자 가입 이메일": "",
+  가입경로: "지인 소개",
   "초상권① 공식채널": "O",
   "초상권② 언론홍보": "X",
   "초상권③ 이름표시": "X",
@@ -49,6 +52,8 @@ export const IMPORT_NOTES = [
   "",
   "· 첫 번째 시트(단원 입력)의 2번째 줄부터 한 줄에 한 명씩 입력합니다. 머리글(1번째 줄)은 바꾸지 마세요.",
   "· 이름*, 생년월일* 은 필수입니다. 생년월일·입단일은 2016-05-20 처럼 입력합니다.",
+  "· 생일을 모르면 생년월일 칸에 출생연도만 2021 또는 21년생 처럼 입력하세요. (명부에 '2021년생'으로 표시)",
+  "· 가입경로: 지인 소개 / 인터넷 검색 / SNS / 네이버 카페·블로그 / 유튜브 / 공연 관람 / 유치원·학교 안내 / 기타 (비워도 됨)",
   "· 성별: 여 / 남,  반: 울림반 / 화음반 / 선율반,  상태: 활동 / 휴단 / 퇴단 (비우면 활동)",
   "· 학년(예외만): 비우면 출생연도로 자동 계산합니다. 조기·유예 입학 등 예외일 때만 미취학, 초1~초6, 중1~중3, 고1~고3 으로 입력하세요.",
   "· 보호자 가입 이메일: 보호자가 홈페이지에 가입했다면 가입 이메일을 넣으면 회원과 연결됩니다.",
@@ -61,6 +66,8 @@ export const IMPORT_NOTES = [
 export type ImportedSinger = {
   name: string;
   birthdate: string;
+  birth_year_only: boolean;
+  join_source: string | null;
   gender: "여" | "남" | null;
   class_name: string | null;
   school: string | null;
@@ -118,8 +125,13 @@ export function parseImportRow(values: Record<string, string>): { singer?: Impor
   if (!name) errors.push("이름이 없습니다");
   else if (name.length > 50) errors.push("이름이 너무 깁니다");
 
-  const birthdate = normalizeDate(get("생년월일*"));
-  if (!birthdate) errors.push("생년월일이 없습니다");
+  // 출생연도만 있는 경우: 2021 / 21년생 / 2021년생
+  const birthRaw = get("생년월일*").replace(/\s/g, "");
+  const yearOnly = /^(?:(\d{4})|(\d{2})년생|(\d{4})년생)$/.exec(birthRaw);
+  const birthYear = yearOnly ? Number(yearOnly[1] ?? yearOnly[3] ?? `20${yearOnly[2]}`) : null;
+  const birthdate = birthYear ? `${birthYear}-01-01` : normalizeDate(get("생년월일*"));
+  if (!birthRaw) errors.push("생년월일이 없습니다");
+  else if (birthYear !== null && (birthYear < 1990 || birthYear > 2100)) errors.push(`출생연도 오류(${birthRaw})`);
   else if (!validDate(birthdate)) errors.push(`생년월일 형식 오류(${birthdate})`);
 
   const gender = get("성별");
@@ -161,6 +173,8 @@ export function parseImportRow(values: Record<string, string>): { singer?: Impor
     singer: {
       name,
       birthdate,
+      birth_year_only: birthYear !== null,
+      join_source: normalizeJoinSource(get("가입경로")),
       gender: gender ? (gender as "여" | "남") : null,
       class_name: className || null,
       school: opt("학교", 100),
