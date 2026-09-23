@@ -14,6 +14,7 @@
    - `0005_singers.sql`: 단원 명부(관리자 전용), 단원 사진 저장소 `singer-photos`(비공개), 공개 '단원 소개'용 통계 함수
    - `0006_retention.sql`: 회원 탈퇴, 퇴단 1년 후 자동 삭제, 사진 삭제 대기열, 매일 새벽 예약 작업(pg_cron)
    - `0007_purge_left_applications.sql`: 퇴단 1년 후 삭제 시 연결된 입단 신청서도 함께 삭제
+   - `0008_media_consent.sql`: 초상권(사진·영상) 이용 동의 항목·변경 기록, 보호자 마이페이지 동의 변경
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.

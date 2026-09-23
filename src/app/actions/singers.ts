@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_NAMES } from "@/lib/singers";
+import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
 import { parseImportRow } from "@/lib/singers-import";
 import { readSheet } from "@/lib/singers-xlsx";
 import type { FormState } from "@/lib/types";
@@ -67,6 +68,7 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
   if (guardianId && !UUID_RE.test(guardianId)) return { error: "보호자 선택이 올바르지 않습니다." };
   if (photoPath && !PHOTO_RE.test(photoPath)) return { error: "사진 정보가 올바르지 않습니다. 다시 올려 주세요." };
 
+  const media = readMediaConsent(formData);
   const values = {
     name,
     birthdate: birth.value,
@@ -83,7 +85,11 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
     guardian_name: text(formData, "guardian_name", 50),
     guardian_phone: text(formData, "guardian_phone", 20),
     photo_path: photoPath || null,
-    name_public: formData.get("name_public") === "on",
+    // 초상권 동의 (③ 이름 표시 = 단원 소개 이름 공개)
+    consent_media_channels: media.channels,
+    consent_media_press: media.press,
+    name_public: media.name,
+    consent_version: MEDIA_CONSENT_VERSION,
     notes: text(formData, "notes", 2000),
   };
 
@@ -189,7 +195,11 @@ export async function importSingers(_prev: ImportState, formData: FormData): Pro
   // 한 번의 요청으로 모두 넣으므로, 실패하면 전부 등록되지 않습니다.
   const values = parsed.map(({ singer }) => {
     const { guardian_email, ...rest } = singer!;
-    return { ...rest, guardian_id: guardian_email ? byEmail.get(guardian_email)! : null };
+    return {
+      ...rest,
+      guardian_id: guardian_email ? byEmail.get(guardian_email)! : null,
+      consent_version: MEDIA_CONSENT_VERSION,
+    };
   });
   const { error } = await supabase.from("singers").insert(values);
   if (error) return { error: "등록하지 못했습니다. 입력값을 확인해 주세요." };

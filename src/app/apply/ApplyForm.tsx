@@ -6,6 +6,7 @@ import { submitApplication } from "@/app/actions/applications";
 import { FormMessage, SubmitButton } from "@/components/form";
 import { createClient } from "@/lib/supabase/client";
 import type { FormState } from "@/lib/types";
+import { MediaConsentFields } from "@/components/MediaConsentFields";
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 const PHOTO_TYPES: Record<string, string> = {
@@ -119,6 +120,11 @@ export function ApplyForm({ userId }: { userId: string }) {
           <input type="checkbox" name="consent_photo" required={hasPhoto} className="mt-1" />
           <span>({hasPhoto ? "사진 첨부 시 필수" : "선택"}) 아동 사진의 수집·이용에 동의합니다. 사진은 입단 심사 목적으로만 사용하며 외부에 공개하지 않습니다.</span>
         </label>
+      </fieldset>
+
+      <fieldset className="space-y-3 rounded-sm border border-line p-4">
+        <legend className="px-1 text-sm font-medium">초상권(사진·영상) 이용 동의 (선택)</legend>
+        <MediaConsentFields />
       </fieldset>
 
       <FormMessage state={state} />

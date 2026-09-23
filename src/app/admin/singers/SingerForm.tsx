@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { saveSinger } from "@/app/actions/singers";
 import { FormMessage, SubmitButton } from "@/components/form";
+import { MediaConsentFields } from "@/components/MediaConsentFields";
 import { createClient } from "@/lib/supabase/client";
 import { CLASS_NAMES, STATUS_LABEL, gradeCode, gradeLabel, type Singer } from "@/lib/singers";
 import type { GuardianProfile } from "@/lib/singers-data";
@@ -226,14 +227,23 @@ export function SingerForm({
           <label htmlFor="notes" className="label">비고</label>
           <textarea id="notes" name="notes" rows={3} maxLength={2000} defaultValue={initial.notes ?? ""} className="input" />
         </div>
-        <label className="flex items-start gap-2 text-sm">
-          <input type="checkbox" name="name_public" defaultChecked={initial.name_public ?? false} className="mt-1" />
-          <span>
-            보호자가 <strong>이름 공개에 동의</strong>함 — 공개 &lsquo;단원 소개&rsquo; 화면에 이름과 반이 표시됩니다.
-            (사진·생년월일 등 다른 정보는 공개되지 않습니다)
-          </span>
-        </label>
       </div>
+
+      <fieldset className="space-y-3 border-t border-line pt-6">
+        <legend className="mb-2 pt-6 font-bold text-navy">초상권(사진·영상) 이용 동의</legend>
+        <p className="text-xs text-ink-soft">
+          보호자에게 동의를 받은 항목만 체크하세요 (입단 신청서·종이 동의서 등). 보호자가 마이페이지에서 바꾸면 이곳에도
+          반영되며, 모든 변경은 동의 기록에 남습니다.
+        </p>
+        <MediaConsentFields
+          showNotice={false}
+          defaults={{
+            channels: initial.consent_media_channels ?? false,
+            press: initial.consent_media_press ?? false,
+            name: initial.name_public ?? false,
+          }}
+        />
+      </fieldset>
 
       <FormMessage state={state} />
       <SubmitButton className="btn-primary px-8" pendingText="저장 중...">

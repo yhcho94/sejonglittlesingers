@@ -1,4 +1,5 @@
 // 단원 명부 계산 로직 (학년·나이·묶음 보기). 화면·엑셀·통계에서 함께 씁니다.
+import { consentSummary } from "./media-consent";
 
 export const CLASS_NAMES = ["울림반", "화음반", "선율반"] as const;
 export type ClassName = (typeof CLASS_NAMES)[number];
@@ -24,12 +25,15 @@ export type Singer = {
   guardian_phone: string | null;
   photo_path: string | null;
   name_public: boolean;
+  consent_media_channels: boolean;
+  consent_media_press: boolean;
+  consent_updated_at: string | null;
   application_id: number | null;
   notes: string | null;
 };
 
 export const SINGER_COLUMNS =
-  "id, name, birthdate, gender, school, grade_override, class_name, part, cohort, joined_on, left_on, status, guardian_id, guardian_name, guardian_phone, photo_path, name_public, application_id, notes";
+  "id, name, birthdate, gender, school, grade_override, class_name, part, cohort, joined_on, left_on, status, guardian_id, guardian_name, guardian_phone, photo_path, name_public, consent_media_channels, consent_media_press, consent_updated_at, application_id, notes";
 
 // 한국 시간 기준 오늘 (연·월·일)
 export function todayKst(now = new Date()) {
@@ -189,6 +193,7 @@ export function rosterRow(s: Singer, guardian?: { guardian_name: string; phone: 
     보호자: guardian?.guardian_name ?? s.guardian_name ?? "",
     "보호자 연락처": guardian?.phone ?? s.guardian_phone ?? "",
     "보호자 이메일": guardian?.email ?? "",
+    "초상권 동의": consentSummary(s).detail || "미동의",
     비고: s.notes ?? "",
   };
 }

@@ -34,6 +34,9 @@ export type Application = {
   consent_privacy: boolean;
   consent_guardian: boolean;
   consent_photo: boolean;
+  consent_media_channels?: boolean;
+  consent_media_press?: boolean;
+  consent_media_name?: boolean;
   status: ApplicationStatus;
   admin_note: string | null;
   reviewed_at: string | null;

@@ -8,6 +8,8 @@ import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { Application } from "@/lib/types";
+import { MEDIA_NOTICE } from "@/lib/media-consent";
+import { MediaConsentForm } from "./MediaConsentForm";
 import { ProfileForm } from "./ProfileForm";
 
 export const metadata: Metadata = { title: "마이페이지" };
@@ -23,6 +25,19 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
     .eq("guardian_id", user.id)
     .order("created_at", { ascending: false })
     .returns<Pick<Application, "id" | "child_name" | "child_birthdate" | "status" | "admin_note" | "created_at">[]>();
+
+  // 보호자 계정과 연결된 자녀 단원 (0008 실행 전이면 빈 목록)
+  const { data: mySingers } = await supabase.rpc("my_singers");
+  const singers = (mySingers ?? []) as {
+    id: number;
+    name: string;
+    class_name: string | null;
+    status: string;
+    consent_media_channels: boolean;
+    consent_media_press: boolean;
+    name_public: boolean;
+    consent_updated_at: string | null;
+  }[];
 
   return (
     <>
@@ -79,6 +94,34 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             </Link>
             <span className="ml-1">— 회원 정보와 입단 신청 내역·사진이 바로 삭제됩니다.</span>
           </div>
+        </section>
+        <section className="card md:col-span-3">
+          <h2 className="text-lg font-bold text-navy">자녀 단원 초상권(사진·영상) 동의</h2>
+          <p className="mt-1 text-sm text-ink-soft">항목별로 언제든 동의하거나 철회할 수 있습니다.</p>
+          <ul className="mt-3 list-disc space-y-1 pl-5 text-xs leading-relaxed text-ink-soft">
+            {MEDIA_NOTICE.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+          {singers.length === 0 ? (
+            <p className="mt-6 rounded-sm bg-cream px-4 py-3 text-sm text-ink-soft">
+              이 계정과 연결된 단원이 없습니다. 자녀가 단원인데 보이지 않으면 합창단에 계정 연결을 요청해 주세요.
+            </p>
+          ) : (
+            <div className="mt-6 space-y-6">
+              {singers.map((s) => (
+                <div key={s.id} className="border-t border-line pt-5">
+                  <p className="mb-3 font-medium">
+                    {s.name} <span className="text-sm text-ink-soft">{s.class_name ?? ""}</span>
+                    {s.consent_updated_at && (
+                      <span className="ml-2 text-xs text-ink-soft">최근 변경 {formatDate(s.consent_updated_at)}</span>
+                    )}
+                  </p>
+                  <MediaConsentForm singer={s} />
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </>

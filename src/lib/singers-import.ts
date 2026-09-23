@@ -15,7 +15,9 @@ export const IMPORT_COLUMNS = [
   "보호자 이름",
   "보호자 연락처",
   "보호자 가입 이메일",
-  "이름 공개 동의",
+  "초상권① 공식채널",
+  "초상권② 언론홍보",
+  "초상권③ 이름표시",
   "비고",
 ] as const;
 
@@ -36,7 +38,9 @@ export const IMPORT_EXAMPLE: Record<string, string> = {
   "보호자 이름": "홍부모",
   "보호자 연락처": "010-0000-0000",
   "보호자 가입 이메일": "",
-  "이름 공개 동의": "X",
+  "초상권① 공식채널": "O",
+  "초상권② 언론홍보": "X",
+  "초상권③ 이름표시": "X",
   비고: "이 예시 줄은 지우고 입력하세요",
 };
 
@@ -48,7 +52,7 @@ export const IMPORT_NOTES = [
   "· 성별: 여 / 남,  반: 울림반 / 화음반 / 선율반,  상태: 활동 / 휴단 / 퇴단 (비우면 활동)",
   "· 학년(예외만): 비우면 출생연도로 자동 계산합니다. 조기·유예 입학 등 예외일 때만 미취학, 초1~초6, 중1~중3, 고1~고3 으로 입력하세요.",
   "· 보호자 가입 이메일: 보호자가 홈페이지에 가입했다면 가입 이메일을 넣으면 회원과 연결됩니다.",
-  "· 이름 공개 동의: 보호자가 '단원 소개' 화면 이름 공개에 동의한 경우만 O 로 입력합니다. (비우면 비공개)",
+  "· 초상권①②③: 보호자에게 동의를 받은 항목만 O 로 입력합니다. (비우면 미동의) ① 공식 채널 게시 ② 언론·외부 홍보물 ③ 이름 표시(단원 소개 화면 포함)",
   "· 한 줄이라도 오류가 있으면 아무것도 등록되지 않습니다. 오류 줄을 고친 뒤 다시 올려 주세요.",
   "· 이미 등록된 단원(이름+생년월일 동일)은 중복 오류로 표시됩니다.",
   "· 이 파일에는 아동 개인정보가 들어가므로 등록 후 PC 에서 삭제해 주세요.",
@@ -69,6 +73,8 @@ export type ImportedSinger = {
   guardian_phone: string | null;
   guardian_email: string | null;
   name_public: boolean;
+  consent_media_channels: boolean;
+  consent_media_press: boolean;
   notes: string | null;
 };
 
@@ -139,8 +145,15 @@ export function parseImportRow(values: Record<string, string>): { singer?: Impor
   const email = get("보호자 가입 이메일").toLowerCase();
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push("보호자 이메일 형식 오류");
 
-  const pub = get("이름 공개 동의").toUpperCase();
-  if (pub && !["O", "X", "Y", "N", "동의", "비동의"].includes(pub)) errors.push("이름 공개 동의는 O/X");
+  // O/X 칸 (예전 양식의 '이름 공개 동의' 머리글도 ③ 으로 인정)
+  const yesNo = (raw: string, label: string) => {
+    const v = raw.trim().toUpperCase();
+    if (v && !["O", "X", "Y", "N", "동의", "비동의"].includes(v)) errors.push(`${label}는 O/X`);
+    return ["O", "Y", "동의"].includes(v);
+  };
+  const mediaChannels = yesNo(get("초상권① 공식채널"), "초상권①");
+  const mediaPress = yesNo(get("초상권② 언론홍보"), "초상권②");
+  const mediaName = yesNo(get("초상권③ 이름표시") || (values["이름 공개 동의"] ?? ""), "초상권③");
 
   if (errors.length) return { errors };
   return {
@@ -159,7 +172,9 @@ export function parseImportRow(values: Record<string, string>): { singer?: Impor
       guardian_name: opt("보호자 이름", 50),
       guardian_phone: opt("보호자 연락처", 20),
       guardian_email: email || null,
-      name_public: ["O", "Y", "동의"].includes(pub),
+      name_public: mediaName,
+      consent_media_channels: mediaChannels,
+      consent_media_press: mediaPress,
       notes: opt("비고", 2000),
     },
   };

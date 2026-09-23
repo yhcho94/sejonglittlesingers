@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
 import type { FormState } from "@/lib/types";
+import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
 
 const PHOTO_BUCKET = "application-photos";
 const PHOTO_PATH_RE =
@@ -44,6 +45,7 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
     if (!consentPhoto) return { error: "사진을 첨부하려면 사진 수집·이용에 동의해 주세요." };
   }
 
+  const media = readMediaConsent(formData);
   const supabase = await createClient();
   const { error } = await supabase.from("applications").insert({
     guardian_id: userId,
@@ -58,6 +60,10 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
     consent_privacy: true,
     consent_guardian: true,
     consent_photo: Boolean(photoPath) && consentPhoto,
+    consent_media_channels: media.channels,
+    consent_media_press: media.press,
+    consent_media_name: media.name,
+    consent_media_version: MEDIA_CONSENT_VERSION,
   });
 
   if (error) {
