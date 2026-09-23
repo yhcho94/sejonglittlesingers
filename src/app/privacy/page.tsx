@@ -61,7 +61,7 @@ export default function PrivacyPage() {
                     최소 정보(단원 이름·생년월일·심사 결과)는 반려 후 5일 이내에 파기
                   </li>
                   <li>
-                    승인된 경우: 단원 활동 종료 후 <Placeholder>보유 기간 확인 필요</Placeholder>
+                    승인된 경우: 단원 활동 종료(퇴단) 후 1년
                   </li>
                 </ul>
               </li>
@@ -142,7 +142,7 @@ export default function PrivacyPage() {
                     <td>이용 과정에서 전송되는 입력 정보, IP 주소, 접속 기록</td>
                     <td>홈페이지 호스팅 및 서버 기능 실행</td>
                     <td>
-                      위탁계약 종료 시까지 <Placeholder>접속 기록 보존 기간 확인 필요</Placeholder>
+                      위탁계약 종료 시까지 (접속 기록은 1시간 후 자동 삭제)
                     </td>
                   </tr>
                   <tr>
