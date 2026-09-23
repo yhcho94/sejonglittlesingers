@@ -30,7 +30,7 @@ create table if not exists public.gallery_photos (
 create index if not exists gallery_photos_album_idx on public.gallery_photos (album_id, sort_order, id);
 create index if not exists gallery_albums_taken_idx on public.gallery_albums (taken_on desc nulls last, id desc);
 
--- 대표 사진은 같은 앨범의 사진이어야 하며, 사진이 지워지면 비움
+-- 대표 사진: 사진이 지워지면 비움 (같은 앨범의 사진인지는 관리자 화면에서만 지정하므로 따로 검사하지 않음)
 do $$
 begin
   if not exists (select 1 from pg_constraint where conname = 'gallery_albums_cover_fk') then
