@@ -8,7 +8,11 @@ import { isSupabaseConfigured, missingSupabaseEnv } from "@/lib/supabase/env";
 import { safeNext } from "@/lib/auth";
 import type { FormState } from "@/lib/types";
 
-const NOT_CONFIGURED = `사이트 설정(Supabase 연결)이 아직 완료되지 않았습니다. (누락: ${missingSupabaseEnv.join(", ")})`;
+// 어떤 배포에서 설정이 빠졌는지 알 수 있도록 Vercel 이 제공하는 공개 정보(환경, 커밋)를 함께 표시합니다.
+const DEPLOY_INFO = [process.env.VERCEL_ENV, process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7)]
+  .filter(Boolean)
+  .join(" · ");
+const NOT_CONFIGURED = `사이트 설정(Supabase 연결)이 아직 완료되지 않았습니다. (누락: ${missingSupabaseEnv.join(", ")}${DEPLOY_INFO ? ` / 배포: ${DEPLOY_INFO}` : ""})`;
 const PHONE_RE = /^[0-9-]{9,20}$/;
 
 function text(formData: FormData, key: string) {
