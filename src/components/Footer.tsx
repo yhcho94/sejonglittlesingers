@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { InstallButton } from "@/components/InstallButton";
 import { site } from "@/lib/site";
 
 export function Footer() {
@@ -8,6 +9,7 @@ export function Footer() {
         <div>
           <p className="text-base font-bold text-navy">{site.name}</p>
           <p className="mt-1">{site.nameEn}</p>
+          <InstallButton className="btn-outline mt-4 px-3 py-1.5 text-sm" />
         </div>
         <div className="space-y-1 md:text-right">
           <p>주소: {site.contact.address}</p>
