@@ -4,11 +4,11 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { isSupabaseConfigured, missingSupabaseEnv } from "@/lib/supabase/env";
 import { safeNext } from "@/lib/auth";
 import type { FormState } from "@/lib/types";
 
-const NOT_CONFIGURED = "사이트 설정(Supabase 연결)이 아직 완료되지 않았습니다.";
+const NOT_CONFIGURED = `사이트 설정(Supabase 연결)이 아직 완료되지 않았습니다. (누락: ${missingSupabaseEnv.join(", ")})`;
 const PHONE_RE = /^[0-9-]{9,20}$/;
 
 function text(formData: FormData, key: string) {
