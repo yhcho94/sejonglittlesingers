@@ -60,39 +60,45 @@ export default async function HomePage() {
   return (
     <>
       {/* ── 대표 영역 ───────────────────────────── */}
-      <section className="relative isolate flex min-h-[calc(100svh-var(--header-h))] items-end overflow-hidden bg-navy-dark text-white md:min-h-[min(calc(100svh-var(--header-h)),860px)]">
-        <Image
-          src={heroImage}
-          alt="세종리틀싱어즈 단원들이 무대에서 노래하는 모습"
-          fill
-          priority
-          placeholder="blur"
-          sizes="100vw"
-          className="-z-10 object-cover object-[55%_45%]"
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-navy-dark via-navy-dark/60 to-navy-dark/20" />
-        <div className="absolute inset-0 -z-10 hidden bg-gradient-to-r from-navy-dark/80 via-navy-dark/25 to-transparent md:block" />
+      {/* 휴대폰·태블릿: 사진 아래에 글자 / PC: 왼쪽 글자, 오른쪽 사진 (아이들을 가리지 않도록) */}
+      <section className="bg-navy-dark text-white lg:grid lg:min-h-[min(calc(100svh-var(--header-h)),820px)] lg:grid-cols-[calc(max(2rem,(100vw-72rem)/2+2rem)+28rem)_1fr]">
+        <div className="relative aspect-[16/9] lg:order-2 lg:aspect-auto">
+          <Image
+            src={heroImage}
+            alt="세종리틀싱어즈 단원들이 무대에서 노래하는 모습"
+            fill
+            priority
+            placeholder="blur"
+            sizes="(min-width: 1024px) 65vw, 100vw"
+            className="object-cover object-[50%_85%] lg:object-[50%_60%]"
+          />
+          {/* 사진과 글자 영역이 자연스럽게 이어지도록 */}
+          <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-navy-dark to-transparent lg:hidden" />
+          <div className="absolute inset-y-0 left-0 hidden w-1/4 bg-gradient-to-r from-navy-dark to-transparent lg:block" />
+        </div>
 
-        <div className="container-page pb-14 pt-32 md:pb-24">
-          <p className="eyebrow text-gold">
-            {site.nameEn}
-            <span className="hidden sm:inline">
-              <span className="mx-2 text-white/40">·</span> Since 2023
-            </span>
-          </p>
-          <h1 className="mt-5 text-[2.6rem] font-bold leading-[1.15] sm:text-6xl md:text-7xl">{site.name}</h1>
-          <span className="gold-rule mt-6 w-14 md:mt-8" />
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 md:text-xl">
-            음악을 통해 아이들의 감성과 협동심을 키우는
-            <br className="hidden sm:block" /> 세종시 어린이 합창단
-          </p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <Link href="/join" className="btn-gold px-8 py-3.5">
-              입단 안내
-            </Link>
-            <Link href="/concerts" className="btn-ghost-light px-8 py-3.5">
-              공연 보기
-            </Link>
+        <div className="flex items-center lg:order-1">
+          <div className="w-full px-5 pb-12 pt-6 sm:px-8 md:pb-16 lg:py-20 lg:pl-[max(2rem,calc((100vw-72rem)/2+2rem))] lg:pr-10">
+            <p className="eyebrow text-gold">
+              {site.nameEn}
+              <span className="hidden sm:inline">
+                <span className="mx-2 text-white/40">·</span> Since 2023
+              </span>
+            </p>
+            <h1 className="mt-4 whitespace-nowrap text-[2.4rem] font-bold leading-[1.15] sm:text-6xl lg:mt-6 lg:text-[3.5rem]">{site.name}</h1>
+            <span className="gold-rule mt-5 w-14 lg:mt-8" />
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 md:text-lg lg:mt-6">
+              음악을 통해 아이들의 감성과 협동심을 키우는
+              <br className="hidden sm:block lg:hidden" /> 세종시 어린이 합창단
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:mt-10">
+              <Link href="/join" className="btn-gold px-8 py-3.5">
+                입단 안내
+              </Link>
+              <Link href="/concerts" className="btn-ghost-light px-8 py-3.5">
+                공연 보기
+              </Link>
+            </div>
           </div>
         </div>
       </section>
