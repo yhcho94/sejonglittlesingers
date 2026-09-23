@@ -15,6 +15,7 @@ const NAV = [
   { href: "/admin/faqs", label: "FAQ" },
   { href: "/admin/concerts", label: "공연 일정" },
   { href: "/admin/notices", label: "공지사항" },
+  { href: "/admin/press", label: "보도자료" },
 ];
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {

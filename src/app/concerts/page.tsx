@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ConcertCard } from "@/components/ConcertCard";
 import { PageHeader } from "@/components/PageHeader";
+import { PerformanceHistory } from "@/components/PerformanceHistory";
 import { listConcerts } from "@/lib/content";
 
 export const metadata: Metadata = { title: "공연 일정" };
@@ -35,6 +36,11 @@ export default async function ConcertsPage() {
             </div>
           </section>
         )}
+
+        <section id="history" className="scroll-mt-24">
+          <h2 className="mb-5 text-xl font-bold text-navy">공연 이력</h2>
+          <PerformanceHistory />
+        </section>
       </div>
     </>
   );

@@ -80,3 +80,12 @@ export type Concert = {
   video_url: string | null;
   is_published: boolean;
 };
+
+export type Press = {
+  id: number;
+  title: string;
+  media: string | null;
+  url: string;
+  published_on: string | null;
+  is_published: boolean;
+};

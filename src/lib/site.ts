@@ -3,17 +3,29 @@
 export const site = {
   name: "세종리틀싱어즈",
   nameEn: "Sejong Little Singers",
-  description: "세종리틀싱어즈 어린이 합창단 공식 홈페이지",
+  description: "음악을 통해 아이들의 감성과 협동심을 키우는 세종시 어린이 합창단, 세종리틀싱어즈 공식 홈페이지",
+  // 공식 채널
+  links: {
+    cafe: "https://cafe.naver.com/sejonglittlesingers",
+    youtube: `https://www.youtube.com/${encodeURIComponent("@세종리틀싱어즈")}`,
+  },
   contact: {
-    phone: "[입력 필요]",
-    email: "[입력 필요]",
-    address: "[입력 필요]",
+    phone: "010-9294-2612",
+    email: "jjyy1340@naver.com",
+    address: "세종특별자치시 소담동 복합커뮤니티센터",
   },
   // 개인정보처리방침에 표시할 개인정보 보호책임자
   privacyOfficer: {
-    name: "[입력 필요]",
-    contact: "[입력 필요]",
+    name: "지정윤",
+    contact: "010-9294-2612",
   },
 };
 
 export const TODO = "[입력 필요]";
+
+// 전화·지도 링크용
+export const telHref = `tel:${site.contact.phone.replaceAll("-", "")}`;
+// 입단·공연 문의는 단장에게 문자 메시지로 받습니다.
+export const smsHref = `sms:${site.contact.phone.replaceAll("-", "")}`;
+export const mailHref = `mailto:${site.contact.email}`;
+export const mapHref = `https://map.naver.com/p/search/${encodeURIComponent(site.contact.address)}`;

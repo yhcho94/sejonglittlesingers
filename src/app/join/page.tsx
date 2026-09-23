@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FaqList } from "@/components/FaqList";
 import { PageHeader } from "@/components/PageHeader";
 import { getRecruitment, listPublishedFaqs } from "@/lib/content";
-import { site } from "@/lib/site";
+import { site, smsHref } from "@/lib/site";
 
 export const metadata: Metadata = { title: "입단 안내" };
 
@@ -55,7 +55,8 @@ export default async function JoinPage() {
             </dl>
           ) : (
             <p className="rounded-2xl border border-line bg-white p-6 text-ink-soft">
-              모집 요강을 준비하고 있습니다. 문의: {site.contact.phone}
+              모집 요강을 준비하고 있습니다. 입단 문의: 단장{" "}
+              <a href={smsHref} className="underline">{site.contact.phone}</a> (문자 메시지)
             </p>
           )}
         </section>
@@ -104,6 +105,10 @@ export default async function JoinPage() {
         <section className="rounded-2xl border border-line bg-white p-8 text-center">
           <p className="text-lg font-bold text-navy">입단 신청은 온라인으로 받습니다</p>
           <p className="mt-2 text-sm text-ink-soft">보호자 회원가입 후 신청할 수 있습니다.</p>
+          <p className="mt-1 text-sm text-ink-soft">
+            입단 문의: 단장{" "}
+            <a href={smsHref} className="underline">{site.contact.phone}</a> (문자 메시지)
+          </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link href="/apply" className="btn-primary px-6">입단 신청하기</Link>
             <Link href="/signup" className="btn-outline px-6">보호자 회원가입</Link>

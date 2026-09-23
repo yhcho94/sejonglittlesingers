@@ -8,6 +8,7 @@ const NAV = [
   { href: "/join", label: "입단 안내" },
   { href: "/concerts", label: "공연 일정" },
   { href: "/notices", label: "공지사항" },
+  { href: "/press", label: "보도자료" },
 ];
 
 export async function Header() {

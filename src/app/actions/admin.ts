@@ -68,6 +68,17 @@ export async function reviewApplication(_prev: FormState, formData: FormData): P
   const note = String(formData.get("admin_note") ?? "").trim().slice(0, 2000);
   if (!Number.isSafeInteger(id) || !STATUSES.includes(status)) return { error: "잘못된 요청입니다." };
 
+  // 반려하면 DB 가 사진 경로와 선택 항목을 지우므로, 사진 파일은 여기서 저장소에서 삭제합니다.
+  let photoToRemove: string | null = null;
+  if (status === "rejected") {
+    const { data: current } = await admin.supabase
+      .from("applications")
+      .select("status, photo_path")
+      .eq("id", id)
+      .maybeSingle();
+    if (current && current.status !== "rejected") photoToRemove = current.photo_path;
+  }
+
   const { error } = await admin.supabase
     .from("applications")
     .update({
@@ -79,8 +90,16 @@ export async function reviewApplication(_prev: FormState, formData: FormData): P
     .eq("id", id);
 
   if (error) return { error: "저장하지 못했습니다." };
+  if (photoToRemove) {
+    await admin.supabase.storage.from("application-photos").remove([photoToRemove]);
+  }
   revalidatePath("/admin", "layout");
-  return { success: "심사 결과를 저장했습니다. 신청자는 마이페이지에서 확인할 수 있습니다." };
+  return {
+    success:
+      status === "rejected"
+        ? "반려 처리했습니다. 사진과 상세 정보는 삭제되었고, 신청 기록은 5일 후 삭제됩니다."
+        : "심사 결과를 저장했습니다. 신청자는 마이페이지에서 확인할 수 있습니다.",
+  };
 }
 
 export async function deleteApplication(formData: FormData) {
@@ -239,4 +258,52 @@ export async function deleteConcert(formData: FormData) {
   await admin.supabase.from("concerts").delete().eq("id", id);
   revalidatePath("/", "layout");
   redirect("/admin/concerts");
+}
+
+// ── 보도자료 ────────────────────────────────────
+export async function savePress(_prev: FormState, formData: FormData): Promise<FormState> {
+  const admin = await adminClient();
+  if (!admin) return DENIED;
+
+  const id = formData.get("id") ? Number(formData.get("id")) : null;
+  const title = String(formData.get("title") ?? "").trim();
+  const url = String(formData.get("url") ?? "").trim();
+  const publishedOn = String(formData.get("published_on") ?? "").trim();
+  if (!title || title.length > 200) return { error: "제목을 200자 이내로 입력해 주세요." };
+  try {
+    const parsed = new URL(url);
+    if (!["http:", "https:"].includes(parsed.protocol) || url.length > 500) throw new Error();
+  } catch {
+    return { error: "기사 주소는 http:// 또는 https:// 로 시작해야 합니다." };
+  }
+  if (publishedOn && !/^\d{4}-\d{2}-\d{2}$/.test(publishedOn)) return { error: "게시일을 확인해 주세요." };
+
+  const values = {
+    title,
+    url,
+    media: optionalText(formData, "media", 50),
+    published_on: publishedOn || null,
+    is_published: formData.get("is_published") === "on",
+  };
+  const { error } =
+    id && Number.isSafeInteger(id)
+      ? await admin.supabase.from("press").update(values).eq("id", id)
+      : await admin.supabase.from("press").insert(values);
+
+  if (error) {
+    if (error.code === "23505") return { error: "이미 등록된 기사 주소입니다." };
+    return { error: "저장하지 못했습니다." };
+  }
+  revalidatePath("/press");
+  redirect("/admin/press");
+}
+
+export async function deletePress(formData: FormData) {
+  const admin = await adminClient();
+  if (!admin) return;
+  const id = Number(formData.get("id"));
+  if (!Number.isSafeInteger(id)) return;
+  await admin.supabase.from("press").delete().eq("id", id);
+  revalidatePath("/press");
+  redirect("/admin/press");
 }

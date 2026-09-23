@@ -1,7 +1,7 @@
 import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import type { Concert, Faq, Recruitment } from "@/lib/types";
+import type { Concert, Faq, Press, Recruitment } from "@/lib/types";
 
 // 공개 화면용 조회. DB 가 아직 준비되지 않았으면 빈 값으로 표시합니다.
 
@@ -60,4 +60,30 @@ export async function getPublishedConcert(id: number): Promise<Concert | null> {
     .eq("is_published", true)
     .maybeSingle<Concert>();
   return data;
+}
+
+const PRESS_COLUMNS = "id, title, media, url, published_on, is_published";
+
+export async function listPublishedPress(): Promise<Press[]> {
+  await connection();
+  if (!isSupabaseConfigured) return [];
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("press")
+    .select(PRESS_COLUMNS)
+    .eq("is_published", true)
+    .order("published_on", { ascending: false, nullsFirst: false })
+    .order("id", { ascending: false })
+    .returns<Press[]>();
+  return data ?? [];
+}
+
+// 언론사명이 없으면 기사 주소의 도메인을 표시합니다.
+export function pressSource(item: Pick<Press, "media" | "url">) {
+  if (item.media) return item.media;
+  try {
+    return new URL(item.url).hostname.replace(/^(www|m)\./, "");
+  } catch {
+    return "";
+  }
 }

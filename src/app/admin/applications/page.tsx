@@ -19,6 +19,8 @@ export default async function AdminApplicationsPage({
   const filter = FILTERS.includes(status as ApplicationStatus) ? (status as ApplicationStatus) : "all";
 
   const supabase = await createClient();
+  // 반려 후 5일이 지난 신청 기록 정리 (개인정보처리방침의 파기 기한)
+  await supabase.rpc("purge_rejected_applications");
   let query = supabase
     .from("applications")
     .select("id, child_name, child_birthdate, status, created_at, guardian:profiles!applications_guardian_id_fkey(guardian_name, phone)")

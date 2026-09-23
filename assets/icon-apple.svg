@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 세종리틀싱어즈 iOS 홈 화면용: 모서리는 iOS 가 자동으로 둥글게 처리 -->
+  <rect width="512" height="512" fill="#23306b"/>
+  <g transform="translate(256 256) scale(0.82) translate(-270 -258)" fill="#e2a93b">
+    <ellipse cx="186" cy="356" rx="60" ry="44" transform="rotate(-22 186 356)"/>
+    <ellipse cx="350" cy="322" rx="60" ry="44" transform="rotate(-22 350 322)"/>
+    <rect x="230" y="150" width="20" height="200"/>
+    <rect x="394" y="116" width="20" height="200"/>
+    <polygon points="230,150 414,116 414,170 230,204"/>
+  </g>
+</svg>
