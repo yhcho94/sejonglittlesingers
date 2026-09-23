@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { assistantConductors, conductor, type BioSection, type StaffMember } from "@/lib/staff";
 import { mailHref, mapHref, site, telHref } from "@/lib/site";
@@ -82,6 +83,9 @@ export default function AboutPage() {
                 세종시에서 가장 활발한 활동을 펼치는 어린이 합창단으로, 연 20회 내외의 공연 및 주요 문화·공공 행사에
                 초청되어 다양한 무대를 경험하고 있습니다.
               </p>
+              <Link href="/concerts#history" className="mt-3 inline-block text-sm font-medium text-navy underline underline-offset-4">
+                공연 이력 보기
+              </Link>
             </div>
             <div>
               <p className="font-bold">앨범 · 뮤직비디오</p>
