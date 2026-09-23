@@ -10,6 +10,7 @@
    - `0001_init.sql`: 회원, 공지사항, 입단 신청, 사진 저장소
    - `0002_recruitment_faq_concerts.sql`: 입단 안내, FAQ, 공연 일정
    - `0003_purge_rejected.sql`: 반려된 입단 신청 정보 파기 (반려 즉시 상세 정보 삭제, 5일 후 기록 삭제)
+   - `0004_press.sql`: 보도자료 (초기 기사 16건 포함)
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 두 파일 모두 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.
@@ -72,6 +73,7 @@ update public.profiles set role = 'admin' where email = '관리자이메일@exam
 - 자주 묻는 질문: 관리자 → FAQ
 - 공연 일정(예매 링크, YouTube 영상): 관리자 → 공연 일정
 - 공지사항: 관리자 → 공지사항
+- 보도자료(기사 링크): 관리자 → 보도자료
 
 **코드에서 수정** — 사이트 곳곳의 **노란 점선 상자(입력 필요)** 는 실제 정보로 바꿔야 하는 자리입니다.
 

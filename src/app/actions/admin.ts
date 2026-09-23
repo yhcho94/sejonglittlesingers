@@ -259,3 +259,51 @@ export async function deleteConcert(formData: FormData) {
   revalidatePath("/", "layout");
   redirect("/admin/concerts");
 }
+
+// ── 보도자료 ────────────────────────────────────
+export async function savePress(_prev: FormState, formData: FormData): Promise<FormState> {
+  const admin = await adminClient();
+  if (!admin) return DENIED;
+
+  const id = formData.get("id") ? Number(formData.get("id")) : null;
+  const title = String(formData.get("title") ?? "").trim();
+  const url = String(formData.get("url") ?? "").trim();
+  const publishedOn = String(formData.get("published_on") ?? "").trim();
+  if (!title || title.length > 200) return { error: "제목을 200자 이내로 입력해 주세요." };
+  try {
+    const parsed = new URL(url);
+    if (!["http:", "https:"].includes(parsed.protocol) || url.length > 500) throw new Error();
+  } catch {
+    return { error: "기사 주소는 http:// 또는 https:// 로 시작해야 합니다." };
+  }
+  if (publishedOn && !/^\d{4}-\d{2}-\d{2}$/.test(publishedOn)) return { error: "게시일을 확인해 주세요." };
+
+  const values = {
+    title,
+    url,
+    media: optionalText(formData, "media", 50),
+    published_on: publishedOn || null,
+    is_published: formData.get("is_published") === "on",
+  };
+  const { error } =
+    id && Number.isSafeInteger(id)
+      ? await admin.supabase.from("press").update(values).eq("id", id)
+      : await admin.supabase.from("press").insert(values);
+
+  if (error) {
+    if (error.code === "23505") return { error: "이미 등록된 기사 주소입니다." };
+    return { error: "저장하지 못했습니다." };
+  }
+  revalidatePath("/press");
+  redirect("/admin/press");
+}
+
+export async function deletePress(formData: FormData) {
+  const admin = await adminClient();
+  if (!admin) return;
+  const id = Number(formData.get("id"));
+  if (!Number.isSafeInteger(id)) return;
+  await admin.supabase.from("press").delete().eq("id", id);
+  revalidatePath("/press");
+  redirect("/admin/press");
+}
