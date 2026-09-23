@@ -185,18 +185,6 @@ export const accompanists: StaffMember[] = [
   },
 ];
 
-export const vocalTrainers: StaffMember[] = [
-  {
-    name: "이정윤",
-    role: "보컬트레이너",
-    className: "선율반",
-    sections: [
-      { title: "학력 · 이수", items: ["영남대학교 음악대학 성악과 졸업", "오르프 지도자 교육과정 이수"] },
-      { title: "주요 경력", items: ["다수 음악학원 강사 및 원장 역임"] },
-    ],
-  },
-];
-
 export const theoryTeachers: StaffMember[] = [
   {
     name: "최오늘",
@@ -265,33 +253,6 @@ export const theoryTeachers: StaffMember[] = [
   },
 ];
 
-// 유튜브 담당
-export const otherTeachers: StaffMember[] = [
-  {
-    name: "박세연",
-    role: "유튜브 담당",
-    sections: [
-      {
-        title: "학력",
-        items: ["계명대학교 음악대학 실용작편곡 전공 졸업", "숙명여자대학교 대학원 피아노교수학과 휴학중"],
-      },
-      {
-        title: "주요 경력 (전)",
-        items: [
-          "홈플러스 세종점 음악강사 역임",
-          "이마트 세종점 음악강사 역임",
-          "청주 현대백화점 문화센터 음악강사 역임",
-          "뮤직트리, 뮤직어드벤처, 음악세계 음악교재 편집위원 역임",
-        ],
-      },
-      {
-        title: "현재 활동 (현)",
-        items: ["창신초등학교 합창 강사", "연서초등학교 음악강사", "감성초등학교 음악강사"],
-      },
-    ],
-  },
-];
-
 export const officeStaff: StaffMember[] = [
   {
     name: "박성희",
@@ -311,9 +272,7 @@ export const officeStaff: StaffMember[] = [
 export const staffGroups = [
   { title: "부지휘자", members: assistantConductors },
   { title: "반주자", members: accompanists },
-  { title: "보컬트레이너", members: vocalTrainers },
   { title: "이론선생님", members: theoryTeachers },
-  { title: "유튜브 담당", members: otherTeachers },
   { title: "사무국", members: officeStaff },
 ];
 
