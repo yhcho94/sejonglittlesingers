@@ -24,7 +24,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
     <div className="mx-auto max-w-6xl px-4 py-8">
       <nav className="mb-8 flex flex-wrap gap-2 border-b border-line pb-4 text-sm">
         {NAV.map((item) => (
-          <Link key={item.href} href={item.href} className="rounded-lg px-3 py-1.5 hover:bg-white">
+          <Link key={item.href} href={item.href} className="rounded-sm px-3 py-1.5 hover:bg-white">
             {item.label}
           </Link>
         ))}

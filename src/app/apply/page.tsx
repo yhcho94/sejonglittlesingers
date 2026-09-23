@@ -10,7 +10,7 @@ export default async function ApplyPage() {
 
   return (
     <>
-      <PageHeader title="입단 신청" description="보호자 회원이 자녀(단원)의 입단을 신청합니다." />
+      <PageHeader eyebrow="Application" title="입단 신청" description="보호자 회원이 자녀(단원)의 입단을 신청합니다." />
       <div className="mx-auto max-w-2xl px-4 py-10">
         <p className="mb-4 text-sm text-ink-soft">
           신청 보호자: <strong className="text-ink">{profile?.guardian_name}</strong> ({profile?.phone})

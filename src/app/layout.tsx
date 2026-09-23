@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_KR } from "next/font/google";
+import { Cormorant_Garamond, Noto_Sans_KR, Noto_Serif_KR } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { site } from "@/lib/site";
@@ -9,6 +9,19 @@ const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
   weight: ["400", "500", "700"],
   preload: false,
+});
+
+const notoSerifKr = Noto_Serif_KR({
+  variable: "--font-noto-serif-kr",
+  weight: ["500", "700"],
+  preload: false,
+});
+
+// 영문 장식 글꼴 (SEJONG LITTLE SINGERS 등)
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  weight: ["500", "600"],
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -32,12 +45,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#23306b",
+  themeColor: "#16224d",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${notoSansKr.variable} h-full antialiased`}>
+    <html lang="ko" className={`${notoSansKr.variable} ${notoSerifKr.variable} ${cormorant.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <Header />
         <main className="flex-1">{children}</main>

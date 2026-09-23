@@ -20,7 +20,7 @@ export function RecruitmentForm({ data }: { data: Recruitment | null }) {
   const [state, action] = useActionState(saveRecruitment, undefined);
   return (
     <form action={action} className="space-y-5">
-      <label className="flex items-center gap-2 rounded-lg bg-gold-soft p-3 text-sm font-medium">
+      <label className="flex items-center gap-2 rounded-sm bg-gold-soft p-3 text-sm font-medium">
         <input type="checkbox" name="is_open" defaultChecked={data?.is_open ?? false} />
         지금 단원 모집 중 (홈 화면에 모집 배너가 표시됩니다)
       </label>

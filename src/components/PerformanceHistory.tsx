@@ -9,7 +9,7 @@ const BADGE: Record<NonNullable<HistoryItem["kind"]>, { label: string; className
 // 연도별 공연 이력. 최근 연도만 펼쳐 두고 이전 연도는 접어 둡니다.
 export function PerformanceHistory() {
   return (
-    <div className="divide-y divide-line rounded-2xl border border-line bg-white">
+    <div className="divide-y divide-line rounded-sm border border-line bg-white">
       {history.map(({ year, items }, index) => (
         <details key={year} open={index === 0} className="group px-5 py-4 sm:px-6">
           <summary className="flex cursor-pointer list-none items-center justify-between">

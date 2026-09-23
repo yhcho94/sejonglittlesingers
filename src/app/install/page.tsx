@@ -46,10 +46,10 @@ const GUIDES = [
 export default function InstallPage() {
   return (
     <>
-      <PageHeader title="홈 화면에 앱 설치" description="앱처럼 아이콘을 눌러 바로 접속할 수 있습니다." />
+      <PageHeader eyebrow="Install" title="홈 화면에 앱 설치" description="앱처럼 아이콘을 눌러 바로 접속할 수 있습니다." />
       <div className="mx-auto max-w-3xl space-y-8 px-4 py-10">
         <div className="card flex flex-wrap items-center gap-5">
-          <Image src="/icons/icon-192.png" alt="" width={72} height={72} className="rounded-2xl" />
+          <Image src="/icons/icon-192.png" alt="" width={72} height={72} className="rounded-[22%]" />
           <div className="min-w-[10rem] flex-1">
             <p className="text-lg font-bold text-navy">{site.name}</p>
             <p className="text-sm text-ink-soft">별도 앱 다운로드 없이 홈 화면에 추가됩니다.</p>
@@ -57,7 +57,7 @@ export default function InstallPage() {
           <InstallButton className="btn-primary w-full sm:w-auto" />
         </div>
 
-        <p className="rounded-lg bg-gold-soft px-4 py-3 text-sm">
+        <p className="rounded-sm bg-gold-soft px-4 py-3 text-sm">
           카카오톡 등 앱 안에서 열린 화면에서는 설치할 수 없습니다. 오른쪽 위 메뉴에서{" "}
           <strong>&apos;다른 브라우저로 열기&apos;</strong>를 누른 뒤 진행해 주세요.
         </p>

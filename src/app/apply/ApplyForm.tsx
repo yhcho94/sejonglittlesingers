@@ -90,12 +90,12 @@ export function ApplyForm({ userId }: { userId: string }) {
             type="file"
             accept="image/jpeg,image/png,image/webp"
             onChange={(e) => setHasPhoto(Boolean(e.target.files?.length))}
-            className="block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-cream file:px-3 file:py-2"
+            className="block w-full text-sm file:mr-3 file:rounded-sm file:border-0 file:bg-cream file:px-3 file:py-2"
           />
         </div>
       </fieldset>
 
-      <fieldset className="space-y-3 rounded-lg bg-cream p-4 text-sm">
+      <fieldset className="space-y-3 rounded-sm bg-cream p-4 text-sm">
         <legend className="sr-only">동의</legend>
         <p className="font-medium">개인정보 수집·이용 동의</p>
         <ul className="list-disc space-y-1 pl-5 text-ink-soft">

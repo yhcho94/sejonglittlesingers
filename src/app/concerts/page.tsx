@@ -11,7 +11,7 @@ export default async function ConcertsPage() {
 
   return (
     <>
-      <PageHeader title="공연 일정" />
+      <PageHeader eyebrow="Concerts" title="공연" description="다가오는 공연과 지금까지 함께한 무대를 소개합니다." />
       <div className="mx-auto max-w-4xl space-y-12 px-4 py-12">
         <section>
           <h2 className="mb-5 text-xl font-bold text-navy">다가오는 공연</h2>
@@ -22,7 +22,7 @@ export default async function ConcertsPage() {
               ))}
             </div>
           ) : (
-            <p className="rounded-2xl border border-line bg-white p-6 text-ink-soft">예정된 공연이 없습니다.</p>
+            <p className="rounded-sm border border-line bg-white p-6 text-ink-soft">예정된 공연이 없습니다.</p>
           )}
         </section>
 

@@ -1,42 +1,98 @@
 @import "tailwindcss";
 
+/*
+ * 디자인 토큰 — 아이보리 · 딥 네이비 · 샴페인 골드
+ * gold 는 장식선·어두운 배경용, 밝은 배경 위 글자에는 gold-deep 을 씁니다. (명도 대비 확보)
+ */
 @theme {
-  --color-cream: #fbf8f3;
-  --color-ink: #1f2440;
-  --color-ink-soft: #4a5070;
-  --color-navy: #23306b;
-  --color-navy-dark: #172050;
-  --color-gold: #e2a93b;
-  --color-gold-soft: #fbeed3;
-  --color-line: #e7e1d6;
+  --color-cream: #f8f5ef;
+  --color-ivory: #fdfbf7;
+  --color-ink: #1b1e2b;
+  --color-ink-soft: #5c6173;
+  --color-navy: #16224d;
+  --color-navy-dark: #0c1533;
+  --color-gold: #c3a266;
+  --color-gold-deep: #86672f;
+  --color-gold-soft: #f3ecdd;
+  --color-line: #e5dfd3;
   --font-sans: var(--font-noto-sans-kr), "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-serif: var(--font-noto-serif-kr), "AppleMyungjo", "Batang", serif;
+  --font-display: var(--font-cormorant), var(--font-noto-serif-kr), serif;
 }
 
-body {
-  background: var(--color-cream);
-  color: var(--color-ink);
-  word-break: keep-all;
+@layer base {
+  :root {
+    --header-h: 4rem;
+  }
+  @media (width >= 64rem) {
+    :root {
+      --header-h: 4.75rem;
+    }
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  h1,
+  h2 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: var(--color-gold-soft);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
 }
 
 /* 공통 폼·버튼 스타일 (Tailwind v4 는 @utility 로 정의해야 조합해서 쓸 수 있습니다) */
 @utility input {
-  @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-ink outline-none transition focus:border-navy focus:ring-2 focus:ring-navy/20;
+  @apply w-full rounded-sm border border-line bg-white px-3 py-2.5 text-base text-ink outline-none transition focus:border-navy focus:ring-2 focus:ring-navy/15 sm:text-sm;
 }
 @utility label {
-  @apply mb-1 block text-sm font-medium text-ink;
+  @apply mb-1.5 block text-sm font-medium text-ink;
 }
 @utility btn {
-  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-sm px-5 py-2.5 text-sm font-medium tracking-wide transition disabled:cursor-not-allowed disabled:opacity-50;
 }
 @utility btn-primary {
   @apply btn bg-navy text-white hover:bg-navy-dark;
 }
+@utility btn-gold {
+  @apply btn bg-gold text-navy-dark hover:bg-[#d2b37a];
+}
 @utility btn-outline {
-  @apply btn border border-line bg-white text-ink hover:bg-cream;
+  @apply btn border border-line bg-white text-ink hover:border-navy;
+}
+@utility btn-ghost-light {
+  @apply btn border border-white/50 text-white hover:border-white hover:bg-white/10;
 }
 @utility btn-danger {
   @apply btn border border-red-200 bg-white text-red-700 hover:bg-red-50;
 }
 @utility card {
-  @apply rounded-2xl border border-line bg-white p-6;
+  @apply rounded-sm border border-line bg-white p-6 md:p-8;
+}
+/* 영문 소제목: SEJONG LITTLE SINGERS 같은 작은 대문자 */
+@utility eyebrow {
+  @apply font-[family-name:var(--font-display)] text-xs font-semibold tracking-[0.32em] uppercase;
+}
+/* 섹션 제목 아래 짧은 금색 선 */
+@utility gold-rule {
+  @apply block h-px w-10 bg-gold;
+}
+/* 섹션 여백 */
+@utility section-y {
+  @apply py-16 md:py-24;
+}
+@utility container-page {
+  @apply mx-auto w-full max-w-6xl px-5 md:px-8;
 }
