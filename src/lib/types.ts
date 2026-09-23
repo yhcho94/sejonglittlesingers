@@ -82,6 +82,7 @@ export type Concert = {
   ticket_url: string | null;
   video_url: string | null;
   is_published: boolean;
+  time_tbd?: boolean; // 시각 미정 (0009 실행 전에는 없음)
 };
 
 export type Press = {

@@ -34,7 +34,17 @@ const concertFormatter = new Intl.DateTimeFormat("ko-KR", {
   hourCycle: "h23", // 오전/오후 표기는 서버 환경마다 달라질 수 있어 24시간제로 통일
 });
 
-export function formatConcertDate(value: string) {
+const concertDayFormatter = new Intl.DateTimeFormat("ko-KR", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  weekday: "short",
+});
+
+// 시각 미정 공연은 날짜만 표시합니다.
+export function formatConcertDate(value: string, timeTbd = false) {
+  if (timeTbd) return `${concertDayFormatter.format(new Date(value))} · 시간 미정`;
   return concertFormatter.format(new Date(value));
 }
 

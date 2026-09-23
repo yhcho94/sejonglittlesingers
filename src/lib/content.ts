@@ -31,7 +31,8 @@ export async function listPublishedFaqs(): Promise<Faq[]> {
   return data ?? [];
 }
 
-const CONCERT_COLUMNS = "id, title, starts_at, venue, description, ticket_url, video_url, is_published";
+// 공개 정보만 있는 표라 전체 칸을 읽습니다. (time_tbd 칸이 아직 없어도 오류가 나지 않도록)
+const CONCERT_COLUMNS = "*";
 
 export async function listConcerts(when: "upcoming" | "past", limit?: number): Promise<Concert[]> {
   await connection();

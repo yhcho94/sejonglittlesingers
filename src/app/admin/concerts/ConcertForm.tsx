@@ -26,6 +26,12 @@ export function ConcertForm({ concert }: { concert?: Concert }) {
             defaultValue={concert ? toKstInputValue(concert.starts_at) : undefined}
             className="input"
           />
+          {/* 수정 중인 공연에 time_tbd 칸이 있으면(0009 실행 후) 체크 해제도 저장되도록 */}
+          {concert && "time_tbd" in concert && <input type="hidden" name="has_time_tbd" value="1" />}
+          <label className="mt-2 flex items-center gap-2 text-sm">
+            <input type="checkbox" name="time_tbd" defaultChecked={concert?.time_tbd ?? false} />
+            시간 미정 <span className="text-xs text-ink-soft">(날짜만 맞게 입력하면 &lsquo;시간 미정&rsquo;으로 표시)</span>
+          </label>
         </div>
         <div>
           <label htmlFor="venue" className="label">장소</label>
