@@ -157,7 +157,7 @@ export default function PrivacyPage() {
                       동기, 사진(선택) / 접속 기록
                     </td>
                     <td>회원 인증, 데이터 저장·관리</td>
-                    <td>이 방침 3.에서 정한 보유 기간 또는 위탁계약 종료 시까지</td>
+                    <td>이 방침 3.에서 정한 보유 기간 또는 위탁계약 종료 시까지 (접속 기록은 1일 후 자동 삭제)</td>
                   </tr>
                   <tr>
                     <td>Google LLC (googlekrsupport@google.com)</td>
