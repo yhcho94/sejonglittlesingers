@@ -73,9 +73,12 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
         <section className="card">
           <h2 className="mb-4 text-lg font-bold text-navy">회원 정보</h2>
           {profile ? <ProfileForm profile={profile} /> : <p>회원 정보를 불러오지 못했습니다.</p>}
-          <p className="mt-6 text-xs text-ink-soft">
-            회원 탈퇴 및 개인정보 삭제 요청은 합창단 담당자에게 문의해 주세요.
-          </p>
+          <div className="mt-6 border-t border-line pt-4 text-xs text-ink-soft">
+            <Link href="/mypage/withdraw" className="underline hover:text-red-700">
+              회원 탈퇴
+            </Link>
+            <span className="ml-1">— 회원 정보와 입단 신청 내역·사진이 바로 삭제됩니다.</span>
+          </div>
         </section>
       </div>
     </>

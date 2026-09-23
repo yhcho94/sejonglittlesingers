@@ -12,6 +12,7 @@
    - `0003_purge_rejected.sql`: 반려된 입단 신청 정보 파기 (반려 즉시 상세 정보 삭제, 5일 후 기록 삭제)
    - `0004_press.sql`: 보도자료 (초기 기사 16건 포함)
    - `0005_singers.sql`: 단원 명부(관리자 전용), 단원 사진 저장소 `singer-photos`(비공개), 공개 '단원 소개'용 통계 함수
+   - `0006_retention.sql`: 회원 탈퇴, 퇴단 1년 후 자동 삭제, 사진 삭제 대기열, 매일 새벽 예약 작업(pg_cron)
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.
@@ -45,13 +46,25 @@ Vercel **Settings → Environment Variables** 에 추가합니다. (Production, 
 | `NEXT_PUBLIC_SUPABASE_URL` | Project URL (`https://xxxx.supabase.co`) |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | **Publishable key** (`sb_publishable_...`). 없으면 legacy `anon` 키 |
 
-- **secret 키 / service_role 키는 넣지 않습니다.** 이 사이트는 그 키 없이 동작합니다.
+개인정보 자동 파기(사진 파일 삭제) 예약 작업용으로 아래 두 개를 **Production 에만** 추가합니다.
+
+| 이름 | 값 |
+|---|---|
+| `SUPABASE_SECRET_KEY` | Supabase **Project Settings → API Keys → Secret keys** 의 키 (`sb_secret_...`) |
+| `CRON_SECRET` | 아무도 추측할 수 없는 긴 임의 문자열 (예: 비밀번호 생성기로 만든 40자 이상) |
+
+- 두 값은 **Sensitive** 로 표시하고, 이름에 `NEXT_PUBLIC_` 을 붙이지 않습니다. (브라우저로 보내지지 않음)
+- Secret key 는 모든 데이터에 접근할 수 있는 키입니다. 이 두 곳(Supabase, Vercel) 외에는 복사·공유하지 마세요.
+- 설정하지 않아도 사이트는 동작하며, 이 경우 사진 파일은 관리자가 대시보드에 접속할 때 삭제됩니다.
 - 환경변수를 추가·변경한 뒤에는 **Redeploy** 해야 반영됩니다.
 
 ## 5. Vercel: 프레임워크 설정
 
 `vercel.json` 에 `"framework": "nextjs"` 를 지정해 두었으므로 대시보드의 Framework Preset 이 `Other` 여도 Next.js 로 빌드됩니다.
 (대시보드에서도 **Settings → Build and Deployment → Framework Preset** 을 **Next.js** 로 맞춰 두면 더 명확합니다.)
+
+`vercel.json` 에 매일 한국 시간 03:30 에 `/api/cron/cleanup` 을 호출하는 예약 작업(Cron)을 등록했습니다.
+배포 후 **Settings → Cron Jobs** 에서 확인하고 **Run** 으로 한 번 실행해 볼 수 있습니다.
 
 `vercel.json` 에서 서버 실행 지역을 서울(`icn1`)로 지정했습니다. Supabase(서울)와 가까워 빠르고, 요청 처리도 국내에서 이루어집니다.
 
