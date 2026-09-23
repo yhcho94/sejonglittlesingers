@@ -222,7 +222,10 @@ export async function saveConcert(_prev: FormState, formData: FormData): Promise
 
   const id = formData.get("id") ? Number(formData.get("id")) : null;
   const title = String(formData.get("title") ?? "").trim();
-  const startsAt = fromKstInputValue(String(formData.get("starts_at") ?? ""));
+  // 시간 미정이면 날짜만 쓰고, 정렬용으로 그날 12:00(한국 시간)을 저장
+  const timeTbd = formData.get("time_tbd") === "on";
+  const rawStartsAt = String(formData.get("starts_at") ?? "");
+  const startsAt = fromKstInputValue(timeTbd ? `${rawStartsAt.slice(0, 10)}T12:00` : rawStartsAt);
   const ticket = httpsUrl(formData, "ticket_url");
   const video = httpsUrl(formData, "video_url");
 
@@ -239,6 +242,8 @@ export async function saveConcert(_prev: FormState, formData: FormData): Promise
     ticket_url: ticket.value,
     video_url: video.value,
     is_published: formData.get("is_published") === "on",
+    // 0009 실행 전에는 이 칸이 없으므로, 체크했거나 이미 칸이 있는 공연일 때만 보냅니다.
+    ...(timeTbd || formData.get("has_time_tbd") ? { time_tbd: timeTbd } : {}),
   };
   const { error } =
     id && Number.isSafeInteger(id)

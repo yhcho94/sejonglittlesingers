@@ -11,7 +11,20 @@ import { BarList, ChartCard, HeatTable, StatTile } from "./charts";
 // 입단 신청 연도별 (한국 시간 기준 연도)
 async function applicationsByYear() {
   const supabase = await createClient();
-  const { data } = await supabase.from("applications").select("status, created_at").returns<{ status: ApplicationStatus; created_at: string }[]>();
+  // join_source 칸(0011)이 없으면 기본 칸만 다시 조회
+  type Row = { status: ApplicationStatus; created_at: string; join_source?: string | null };
+  const first = await supabase.from("applications").select("status, created_at, join_source").returns<Row[]>();
+  const data = first.error
+    ? (await supabase.from("applications").select("status, created_at").returns<Row[]>()).data
+    : first.data;
+  const sources = new Map<string, number>();
+  for (const a of data ?? []) {
+    const k = a.join_source ?? "미입력";
+    sources.set(k, (sources.get(k) ?? 0) + 1);
+  }
+  const bySource = [...sources.entries()]
+    .map(([label, value]) => ({ key: label, label, value }))
+    .sort((a, b) => (a.label === "미입력" ? 1 : b.label === "미입력" ? -1 : b.value - a.value));
   const map = new Map<number, { year: number; total: number; approved: number; pending: number }>();
   for (const a of data ?? []) {
     const y = todayKst(new Date(a.created_at)).year;
@@ -21,14 +34,14 @@ async function applicationsByYear() {
     if (a.status === "pending") row.pending += 1;
     map.set(y, row);
   }
-  return [...map.values()].sort((a, b) => a.year - b.year);
+  return { years: [...map.values()].sort((a, b) => a.year - b.year), bySource };
 }
 
 export default async function SingerStatsPage({ searchParams }: PageProps<"/admin/singers/stats">) {
   await requireAdmin();
   const cls = (await searchParams).class;
   const className = (CLASS_NAMES as readonly string[]).includes(String(cls)) ? (cls as ClassName) : "";
-  const [{ singers, error }, apps] = await Promise.all([listSingers(), applicationsByYear()]);
+  const [{ singers, error }, { years: apps, bySource: appSources }] = await Promise.all([listSingers(), applicationsByYear()]);
   const scoped = className ? singers.filter((s) => s.class_name === className) : singers;
   const st = singerStats(scoped);
   const { year, month, day } = todayKst();
@@ -88,8 +101,14 @@ export default async function SingerStatsPage({ searchParams }: PageProps<"/admi
             <ChartCard title="학년별 인원" note="활동 단원 · 출생연도 기준 (3월 학년도 시작, 직접 지정 반영)">
               <BarList items={st.byGrade} total={sm.active} />
             </ChartCard>
-            <ChartCard title="만 나이별 인원" note="활동 단원 · 오늘 기준 만 나이">
+            <ChartCard title="출생연도별 인원" note="활동 단원">
+              <BarList items={st.byBirthYear} total={sm.active} />
+            </ChartCard>
+            <ChartCard title="만 나이별 인원" note="활동 단원 · 오늘 기준 만 나이 (생일을 모르는 단원은 '생일 미입력')">
               <BarList items={st.byAge} total={sm.active} />
+            </ChartCard>
+            <ChartCard title="가입경로" note="활동 단원 · 홍보 효과 확인에 참고">
+              <BarList items={st.byJoinSource} total={sm.active} />
             </ChartCard>
             <ChartCard title="성별" note="활동 단원">
               <BarList items={st.byGender} total={sm.active} />
@@ -186,6 +205,11 @@ export default async function SingerStatsPage({ searchParams }: PageProps<"/admi
                   </table>
                 )}
               </ChartCard>
+              <div className="mt-6">
+                <ChartCard title="입단 신청 가입경로" note="홈페이지 신청서 기준 (가입경로 항목 추가 이전 신청은 '미입력')">
+                  <BarList items={appSources} unit="건" />
+                </ChartCard>
+              </div>
             </div>
           )}
         </>

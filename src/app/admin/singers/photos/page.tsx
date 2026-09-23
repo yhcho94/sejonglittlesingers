@@ -77,7 +77,12 @@ export default async function SingerPhotoRoster({ searchParams }: PageProps<"/ad
                       return (
                         <li key={s.id} className="break-inside-avoid">
                           <Link href={`/admin/singers/${s.id}`} className="group block">
-                            <div className="flex aspect-[3/4] items-center justify-center overflow-hidden border border-line bg-cream text-xs text-ink-soft">
+                            <div className="relative flex aspect-[3/4] items-center justify-center overflow-hidden border border-line bg-cream text-xs text-ink-soft">
+                              {!s.consent_media_channels && (
+                                <span className="absolute top-1 left-1 rounded-sm bg-red-700 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                                  게시 미동의
+                                </span>
+                              )}
                               {url ? (
                                 // eslint-disable-next-line @next/next/no-img-element -- 만료되는 서명 URL
                                 <img src={url} alt="" className="h-full w-full object-cover" />
@@ -103,7 +108,8 @@ export default async function SingerPhotoRoster({ searchParams }: PageProps<"/ad
             </div>
           )}
           <p className="mt-8 text-xs text-ink-soft print:hidden">
-            사진 링크는 1시간 동안만 유효합니다. 오래 열어 둔 뒤 인쇄할 때는 새로고침 후 인쇄하세요. 인쇄물은 단원 관리 목적으로만
+            &lsquo;게시 미동의&rsquo; 표시 단원은 공식 채널 사진·영상 게시에 동의하지 않았으니 게시물에서 제외하거나 얼굴을
+            가려 주세요. 사진 링크는 1시간 동안만 유효합니다. 오래 열어 둔 뒤 인쇄할 때는 새로고침 후 인쇄하세요. 인쇄물은 단원 관리 목적으로만
             쓰고, 사용 후 파기해 주세요.
           </p>
         </>

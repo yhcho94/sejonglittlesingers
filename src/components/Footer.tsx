@@ -24,7 +24,7 @@ export function Footer() {
         <nav className="md:col-span-3" aria-label="바로가기">
           <p className="eyebrow text-[10px] text-gold">Menu</p>
           <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm md:grid-cols-1">
-            {NAV.map((item) => (
+            {NAV.filter((item) => !item.topOnly).map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="hover:text-white">
                   {item.label}

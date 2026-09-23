@@ -50,6 +50,7 @@ export default async function AdminApplicationDetail({
     ["주소", app.address],
     ["음악 경력", app.experience],
     ["지원 동기", app.motivation],
+    ["가입경로", app.join_source ? `${app.join_source}${app.join_source_detail ? ` (${app.join_source_detail})` : ""}` : null],
   ];
 
   return (
@@ -84,6 +85,10 @@ export default async function AdminApplicationDetail({
           <p className="text-sm text-ink-soft">
             동의: 개인정보 {app.consent_privacy ? "O" : "X"} · 법정대리인 {app.consent_guardian ? "O" : "X"} · 사진{" "}
             {app.consent_photo ? "O" : "X"}
+          </p>
+          <p className="text-sm text-ink-soft">
+            초상권(선택): ① 공식 채널 {app.consent_media_channels ? "O" : "X"} · ② 언론·홍보물{" "}
+            {app.consent_media_press ? "O" : "X"} · ③ 이름 표시 {app.consent_media_name ? "O" : "X"}
           </p>
         </section>
 

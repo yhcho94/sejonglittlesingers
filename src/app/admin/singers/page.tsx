@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ConsentPill } from "./ConsentPill";
 import { StatusPill } from "./StatusPill";
 import { MigrationNotice, SingerTabs } from "./SingerTabs";
 import { RosterFilters } from "./RosterFilters";
@@ -9,7 +10,8 @@ import {
   gradeCode,
   gradeLabel,
   groupSingers,
-  manAge,
+  birthLabel,
+  singerAge,
   parseFilter,
   VIEWS,
 } from "@/lib/singers";
@@ -63,7 +65,7 @@ export default async function AdminSingersPage({ searchParams }: PageProps<"/adm
                     </h2>
                   )}
                   <div className="card overflow-x-auto p-0">
-                    <table className="w-full min-w-[820px] text-left text-sm">
+                    <table className="w-full min-w-[900px] text-left text-sm">
                       <thead className="border-b border-line bg-cream text-ink-soft">
                         <tr>
                           <th className="w-12 px-3 py-3 text-center font-medium">No</th>
@@ -74,6 +76,7 @@ export default async function AdminSingersPage({ searchParams }: PageProps<"/adm
                           <th className="px-3 py-3 font-medium">생년월일</th>
                           <th className="px-3 py-3 font-medium">학교</th>
                           <th className="px-3 py-3 font-medium">보호자 / 연락처</th>
+                          <th className="px-3 py-3 font-medium">초상권</th>
                           <th className="px-3 py-3 font-medium">상태</th>
                         </tr>
                       </thead>
@@ -95,14 +98,17 @@ export default async function AdminSingersPage({ searchParams }: PageProps<"/adm
                               </td>
                               <td className="px-3 py-2.5">{s.class_name ?? "-"}</td>
                               <td className="px-3 py-2.5">{gradeLabel(gradeCode(s.birthdate, s.grade_override))}</td>
-                              <td className="px-3 py-2.5">{manAge(s.birthdate)}세</td>
-                              <td className="px-3 py-2.5 tabular-nums">{s.birthdate}</td>
+                              <td className="px-3 py-2.5">{singerAge(s) === null ? "-" : `${singerAge(s)}세`}</td>
+                              <td className="px-3 py-2.5 tabular-nums">{birthLabel(s)}</td>
                               <td className="px-3 py-2.5">{s.school ?? "-"}</td>
                               <td className="px-3 py-2.5">
                                 {guardian?.guardian_name ?? s.guardian_name ?? "-"}
                                 <span className="block text-xs text-ink-soft">
                                   {guardian?.phone ?? s.guardian_phone ?? ""}
                                 </span>
+                              </td>
+                              <td className="px-3 py-2.5">
+                                <ConsentPill singer={s} />
                               </td>
                               <td className="px-3 py-2.5">
                                 <StatusPill status={s.status} />

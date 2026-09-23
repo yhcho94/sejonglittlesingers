@@ -8,6 +8,7 @@ import { processStorageCleanup } from "@/lib/storage-cleanup";
 import { createClient } from "@/lib/supabase/server";
 import { createSecretClient } from "@/lib/supabase/secret";
 import type { FormState } from "@/lib/types";
+import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -65,4 +66,27 @@ export async function adminDeleteMember(formData: FormData) {
   if (!error) await processStorageCleanup(supabase);
   revalidatePath("/admin/members");
   revalidatePath("/admin/singers", "layout");
+}
+
+// ── 보호자의 자녀 초상권 동의 변경 ───────────────
+export async function updateMyMediaConsent(_prev: FormState, formData: FormData): Promise<FormState> {
+  const current = await getCurrentUser();
+  if (!current) return { error: "로그인이 필요합니다." };
+  const singerId = Number(formData.get("singer_id"));
+  if (!Number.isSafeInteger(singerId)) return { error: "잘못된 요청입니다." };
+  const media = readMediaConsent(formData);
+
+  const supabase = await createClient();
+  // DB 함수가 본인과 연결된 단원인지 다시 확인합니다.
+  const { error } = await supabase.rpc("set_my_media_consent", {
+    p_singer_id: singerId,
+    p_channels: media.channels,
+    p_press: media.press,
+    p_name: media.name,
+    p_version: MEDIA_CONSENT_VERSION,
+  });
+  if (error) return { error: "저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+  revalidatePath("/mypage");
+  revalidatePath("/singers");
+  return { success: "저장했습니다." };
 }

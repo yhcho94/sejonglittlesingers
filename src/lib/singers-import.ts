@@ -1,4 +1,5 @@
 // 엑셀 일괄 등록: 양식 열과 한 줄씩 검사하는 로직 (화면·서버 공통, 테스트 가능하도록 순수 함수)
+import { normalizeJoinSource } from "./join-source";
 import { CLASS_NAMES, STATUS_LABEL, type SingerStatus } from "./singers";
 
 export const IMPORT_COLUMNS = [
@@ -15,7 +16,10 @@ export const IMPORT_COLUMNS = [
   "보호자 이름",
   "보호자 연락처",
   "보호자 가입 이메일",
-  "이름 공개 동의",
+  "가입경로",
+  "초상권① 공식채널",
+  "초상권② 언론홍보",
+  "초상권③ 이름표시",
   "비고",
 ] as const;
 
@@ -36,7 +40,10 @@ export const IMPORT_EXAMPLE: Record<string, string> = {
   "보호자 이름": "홍부모",
   "보호자 연락처": "010-0000-0000",
   "보호자 가입 이메일": "",
-  "이름 공개 동의": "X",
+  가입경로: "지인 소개",
+  "초상권① 공식채널": "O",
+  "초상권② 언론홍보": "X",
+  "초상권③ 이름표시": "X",
   비고: "이 예시 줄은 지우고 입력하세요",
 };
 
@@ -45,10 +52,12 @@ export const IMPORT_NOTES = [
   "",
   "· 첫 번째 시트(단원 입력)의 2번째 줄부터 한 줄에 한 명씩 입력합니다. 머리글(1번째 줄)은 바꾸지 마세요.",
   "· 이름*, 생년월일* 은 필수입니다. 생년월일·입단일은 2016-05-20 처럼 입력합니다.",
+  "· 생일을 모르면 생년월일 칸에 출생연도만 2021 또는 21년생 처럼 입력하세요. (명부에 '2021년생'으로 표시)",
+  "· 가입경로: 지인 소개 / 인터넷 검색 / SNS / 네이버 카페·블로그 / 유튜브 / 공연 관람 / 유치원·학교 안내 / 기타 (비워도 됨)",
   "· 성별: 여 / 남,  반: 울림반 / 화음반 / 선율반,  상태: 활동 / 휴단 / 퇴단 (비우면 활동)",
   "· 학년(예외만): 비우면 출생연도로 자동 계산합니다. 조기·유예 입학 등 예외일 때만 미취학, 초1~초6, 중1~중3, 고1~고3 으로 입력하세요.",
   "· 보호자 가입 이메일: 보호자가 홈페이지에 가입했다면 가입 이메일을 넣으면 회원과 연결됩니다.",
-  "· 이름 공개 동의: 보호자가 '단원 소개' 화면 이름 공개에 동의한 경우만 O 로 입력합니다. (비우면 비공개)",
+  "· 초상권①②③: 보호자에게 동의를 받은 항목만 O 로 입력합니다. (비우면 미동의) ① 공식 채널 게시 ② 언론·외부 홍보물 ③ 이름 표시(단원 소개 화면 포함)",
   "· 한 줄이라도 오류가 있으면 아무것도 등록되지 않습니다. 오류 줄을 고친 뒤 다시 올려 주세요.",
   "· 이미 등록된 단원(이름+생년월일 동일)은 중복 오류로 표시됩니다.",
   "· 이 파일에는 아동 개인정보가 들어가므로 등록 후 PC 에서 삭제해 주세요.",
@@ -57,6 +66,8 @@ export const IMPORT_NOTES = [
 export type ImportedSinger = {
   name: string;
   birthdate: string;
+  birth_year_only: boolean;
+  join_source: string | null;
   gender: "여" | "남" | null;
   class_name: string | null;
   school: string | null;
@@ -69,6 +80,8 @@ export type ImportedSinger = {
   guardian_phone: string | null;
   guardian_email: string | null;
   name_public: boolean;
+  consent_media_channels: boolean;
+  consent_media_press: boolean;
   notes: string | null;
 };
 
@@ -112,8 +125,13 @@ export function parseImportRow(values: Record<string, string>): { singer?: Impor
   if (!name) errors.push("이름이 없습니다");
   else if (name.length > 50) errors.push("이름이 너무 깁니다");
 
-  const birthdate = normalizeDate(get("생년월일*"));
-  if (!birthdate) errors.push("생년월일이 없습니다");
+  // 출생연도만 있는 경우: 2021 / 21년생 / 2021년생
+  const birthRaw = get("생년월일*").replace(/\s/g, "");
+  const yearOnly = /^(?:(\d{4})|(\d{2})년생|(\d{4})년생)$/.exec(birthRaw);
+  const birthYear = yearOnly ? Number(yearOnly[1] ?? yearOnly[3] ?? `20${yearOnly[2]}`) : null;
+  const birthdate = birthYear ? `${birthYear}-01-01` : normalizeDate(get("생년월일*"));
+  if (!birthRaw) errors.push("생년월일이 없습니다");
+  else if (birthYear !== null && (birthYear < 1990 || birthYear > 2100)) errors.push(`출생연도 오류(${birthRaw})`);
   else if (!validDate(birthdate)) errors.push(`생년월일 형식 오류(${birthdate})`);
 
   const gender = get("성별");
@@ -139,8 +157,15 @@ export function parseImportRow(values: Record<string, string>): { singer?: Impor
   const email = get("보호자 가입 이메일").toLowerCase();
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push("보호자 이메일 형식 오류");
 
-  const pub = get("이름 공개 동의").toUpperCase();
-  if (pub && !["O", "X", "Y", "N", "동의", "비동의"].includes(pub)) errors.push("이름 공개 동의는 O/X");
+  // O/X 칸 (예전 양식의 '이름 공개 동의' 머리글도 ③ 으로 인정)
+  const yesNo = (raw: string, label: string) => {
+    const v = raw.trim().toUpperCase();
+    if (v && !["O", "X", "Y", "N", "동의", "비동의"].includes(v)) errors.push(`${label}는 O/X`);
+    return ["O", "Y", "동의"].includes(v);
+  };
+  const mediaChannels = yesNo(get("초상권① 공식채널"), "초상권①");
+  const mediaPress = yesNo(get("초상권② 언론홍보"), "초상권②");
+  const mediaName = yesNo(get("초상권③ 이름표시") || (values["이름 공개 동의"] ?? ""), "초상권③");
 
   if (errors.length) return { errors };
   return {
@@ -148,6 +173,8 @@ export function parseImportRow(values: Record<string, string>): { singer?: Impor
     singer: {
       name,
       birthdate,
+      birth_year_only: birthYear !== null,
+      join_source: normalizeJoinSource(get("가입경로")),
       gender: gender ? (gender as "여" | "남") : null,
       class_name: className || null,
       school: opt("학교", 100),
@@ -159,7 +186,9 @@ export function parseImportRow(values: Record<string, string>): { singer?: Impor
       guardian_name: opt("보호자 이름", 50),
       guardian_phone: opt("보호자 연락처", 20),
       guardian_email: email || null,
-      name_public: ["O", "Y", "동의"].includes(pub),
+      name_public: mediaName,
+      consent_media_channels: mediaChannels,
+      consent_media_press: mediaPress,
       notes: opt("비고", 2000),
     },
   };

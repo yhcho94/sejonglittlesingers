@@ -3,24 +3,14 @@
 import { useActionState, useState } from "react";
 import { saveSinger } from "@/app/actions/singers";
 import { FormMessage, SubmitButton } from "@/components/form";
+import { MediaConsentFields } from "@/components/MediaConsentFields";
+import { resizeImage } from "@/lib/image-resize";
+import { JOIN_SOURCES } from "@/lib/join-source";
 import { createClient } from "@/lib/supabase/client";
 import { CLASS_NAMES, STATUS_LABEL, gradeCode, gradeLabel, type Singer } from "@/lib/singers";
 import type { GuardianProfile } from "@/lib/singers-data";
 
 type Initial = Partial<Singer> & { application_id?: number | null };
-
-// 사진을 가로·세로 최대 800px JPEG 로 줄입니다. (다시 저장하면서 위치정보 등 EXIF 도 제거됨)
-async function resizePhoto(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-  const scale = Math.min(1, 800 / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bitmap.width * scale);
-  canvas.height = Math.round(bitmap.height * scale);
-  canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  return new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("변환 실패"))), "image/jpeg", 0.85),
-  );
-}
 
 export function SingerForm({
   initial,
@@ -37,6 +27,7 @@ export function SingerForm({
   const [uploading, setUploading] = useState(false);
   const [photoError, setPhotoError] = useState("");
   const [birthdate, setBirthdate] = useState(initial.birthdate ?? "");
+  const [yearOnly, setYearOnly] = useState(initial.birth_year_only ?? false);
   const [gradeOverride, setGradeOverride] = useState(
     initial.grade_override === null || initial.grade_override === undefined ? "" : String(initial.grade_override),
   );
@@ -50,7 +41,7 @@ export function SingerForm({
     }
     setUploading(true);
     try {
-      const blob = await resizePhoto(file);
+      const { blob } = await resizeImage(file, 800);
       const path = `singers/${crypto.randomUUID()}.jpg`;
       const { error } = await createClient()
         .storage.from("singer-photos")
@@ -119,15 +110,37 @@ export function SingerForm({
           </div>
           <div>
             <label htmlFor="birthdate" className="label">생년월일 *</label>
-            <input
-              id="birthdate"
-              name="birthdate"
-              type="date"
-              required
-              value={birthdate}
-              onChange={(e) => setBirthdate(e.target.value)}
-              className="input"
-            />
+            {yearOnly ? (
+              <select
+                id="birthdate"
+                name="birthdate"
+                required
+                value={birthdate ? `${birthdate.slice(0, 4)}-01-01` : ""}
+                onChange={(e) => setBirthdate(e.target.value)}
+                className="input"
+              >
+                <option value="">출생연도 선택</option>
+                {Array.from({ length: 20 }, (_, i) => new Date().getFullYear() - 3 - i).map((y) => (
+                  <option key={y} value={`${y}-01-01`}>
+                    {y}년생
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                id="birthdate"
+                name="birthdate"
+                type="date"
+                required
+                value={birthdate}
+                onChange={(e) => setBirthdate(e.target.value)}
+                className="input"
+              />
+            )}
+            <label className="mt-1.5 flex items-center gap-2 text-xs text-ink-soft">
+              <input type="checkbox" name="birth_year_only" checked={yearOnly} onChange={(e) => setYearOnly(e.target.checked)} />
+              생일은 모르고 출생연도만 알아요
+            </label>
           </div>
           <div>
             <label htmlFor="class_name" className="label">반</label>
@@ -187,6 +200,15 @@ export function SingerForm({
             <input id="cohort" name="cohort" type="number" min={1} max={99} defaultValue={initial.cohort ?? ""} className="input" />
           </div>
           <div>
+            <label htmlFor="join_source" className="label">가입경로</label>
+            <select id="join_source" name="join_source" defaultValue={initial.join_source ?? ""} className="input">
+              <option value="">미입력</option>
+              {JOIN_SOURCES.map((j) => (
+                <option key={j}>{j}</option>
+              ))}
+            </select>
+          </div>
+          <div>
             <label htmlFor="joined_on" className="label">입단일</label>
             <input id="joined_on" name="joined_on" type="date" defaultValue={initial.joined_on ?? ""} className="input" />
           </div>
@@ -226,14 +248,23 @@ export function SingerForm({
           <label htmlFor="notes" className="label">비고</label>
           <textarea id="notes" name="notes" rows={3} maxLength={2000} defaultValue={initial.notes ?? ""} className="input" />
         </div>
-        <label className="flex items-start gap-2 text-sm">
-          <input type="checkbox" name="name_public" defaultChecked={initial.name_public ?? false} className="mt-1" />
-          <span>
-            보호자가 <strong>이름 공개에 동의</strong>함 — 공개 &lsquo;단원 소개&rsquo; 화면에 이름과 반이 표시됩니다.
-            (사진·생년월일 등 다른 정보는 공개되지 않습니다)
-          </span>
-        </label>
       </div>
+
+      <fieldset className="space-y-3 border-t border-line pt-6">
+        <legend className="mb-2 pt-6 font-bold text-navy">초상권(사진·영상) 이용 동의</legend>
+        <p className="text-xs text-ink-soft">
+          보호자에게 동의를 받은 항목만 체크하세요 (입단 신청서·종이 동의서 등). 보호자가 마이페이지에서 바꾸면 이곳에도
+          반영되며, 모든 변경은 동의 기록에 남습니다.
+        </p>
+        <MediaConsentFields
+          showNotice={false}
+          defaults={{
+            channels: initial.consent_media_channels ?? false,
+            press: initial.consent_media_press ?? false,
+            name: initial.name_public ?? false,
+          }}
+        />
+      </fieldset>
 
       <FormMessage state={state} />
       <SubmitButton className="btn-primary px-8" pendingText="저장 중...">

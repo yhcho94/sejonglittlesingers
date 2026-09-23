@@ -9,9 +9,9 @@ export default async function AdminConcertsPage() {
   const supabase = await createClient();
   const { data: concerts } = await supabase
     .from("concerts")
-    .select("id, title, starts_at, venue, is_published")
+    .select("*")
     .order("starts_at", { ascending: false })
-    .returns<Pick<Concert, "id" | "title" | "starts_at" | "venue" | "is_published">[]>();
+    .returns<Concert[]>();
 
   return (
     <>
@@ -31,7 +31,7 @@ export default async function AdminConcertsPage() {
                   {c.title}
                 </Link>
                 <span className="text-sm text-ink-soft">
-                  {formatConcertDate(c.starts_at)}
+                  {formatConcertDate(c.starts_at, c.time_tbd)}
                   {c.venue && ` · ${c.venue}`}
                 </span>
               </li>

@@ -1,5 +1,5 @@
 // 단원 통계 계산 (순수 함수)
-import { CLASS_NAMES, gradeCode, gradeLabel, manAge, todayKst, type Singer } from "./singers";
+import { CLASS_NAMES, gradeCode, gradeLabel, singerAge, todayKst, type Singer } from "./singers";
 
 export type Count = { key: string; label: string; value: number };
 
@@ -49,9 +49,15 @@ export function singerStats(all: Singer[], now = new Date()) {
     return { key: `g${g}`, label: gradeLabel(g), order: g };
   });
   const byAge = countBy(active, (s) => {
-    const a = manAge(s.birthdate, now);
-    return { key: `a${a}`, label: `만 ${a}세`, order: a };
+    const a = singerAge(s, now);
+    return a === null ? { key: "a-none", label: "생일 미입력", order: 999 } : { key: `a${a}`, label: `만 ${a}세`, order: a };
   });
+  const byBirthYear = countBy(active, (s) => {
+    const y = Number(s.birthdate.slice(0, 4));
+    return { key: `y${y}`, label: `${y}년생`, order: y };
+  });
+  const byJoinSource = countBy(active, (s) => ({ key: s.join_source ?? "", label: s.join_source ?? "미입력", order: 0 }))
+    .sort((a, b) => (a.key === "" ? 1 : b.key === "" ? -1 : b.value - a.value));
   const byGender = countBy(active, (s) =>
     s.gender ? { key: s.gender, label: s.gender === "여" ? "여" : "남", order: s.gender === "여" ? 0 : 1 } : { key: "none", label: "미입력", order: 9 },
   );
@@ -102,6 +108,8 @@ export function singerStats(all: Singer[], now = new Date()) {
     byClass,
     byGrade,
     byAge,
+    byBirthYear,
+    byJoinSource,
     byGender,
     bySchool,
     cross: { grades: byGrade.map((g) => g.label), rows: cross },

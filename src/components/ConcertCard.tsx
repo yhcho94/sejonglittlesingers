@@ -17,7 +17,7 @@ export function ConcertCard({ concert }: { concert: Concert }) {
       </div>
       <div className="min-w-0 p-5">
         <p className="font-medium leading-snug group-hover:text-navy">{concert.title}</p>
-        <p className="mt-2 text-sm text-ink-soft">{formatConcertDate(concert.starts_at)}</p>
+        <p className="mt-2 text-sm text-ink-soft">{formatConcertDate(concert.starts_at, concert.time_tbd)}</p>
         {concert.venue && <p className="text-sm text-ink-soft">{concert.venue}</p>}
       </div>
     </Link>

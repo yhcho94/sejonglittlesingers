@@ -34,6 +34,11 @@ export type Application = {
   consent_privacy: boolean;
   consent_guardian: boolean;
   consent_photo: boolean;
+  consent_media_channels?: boolean;
+  consent_media_press?: boolean;
+  consent_media_name?: boolean;
+  join_source?: string | null;
+  join_source_detail?: string | null;
   status: ApplicationStatus;
   admin_note: string | null;
   reviewed_at: string | null;
@@ -79,6 +84,7 @@ export type Concert = {
   ticket_url: string | null;
   video_url: string | null;
   is_published: boolean;
+  time_tbd?: boolean; // 시각 미정 (0009 실행 전에는 없음)
 };
 
 export type Press = {

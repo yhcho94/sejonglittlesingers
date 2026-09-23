@@ -14,7 +14,7 @@ export default async function EditConcertPage({ params }: PageProps<"/admin/conc
   const supabase = await createClient();
   const { data: concert } = await supabase
     .from("concerts")
-    .select("id, title, starts_at, venue, description, ticket_url, video_url, is_published")
+    .select("*")
     .eq("id", id)
     .maybeSingle<Concert>();
   if (!concert) notFound();

@@ -4,11 +4,12 @@ import { deleteSinger } from "@/app/actions/singers";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { StatusBadge } from "@/components/StatusBadge";
 import { requireAdmin } from "@/lib/auth";
-import { formatDate } from "@/lib/format";
-import { gradeCode, gradeLabel, manAge } from "@/lib/singers";
+import { formatDate, formatDateTime } from "@/lib/format";
+import { birthLabel, gradeCode, gradeLabel, singerAge } from "@/lib/singers";
 import { getSinger, guardianMap, signedPhotoUrls, singersOfGuardian } from "@/lib/singers-data";
 import { createClient } from "@/lib/supabase/server";
 import type { ApplicationStatus } from "@/lib/types";
+import { ConsentPill } from "../ConsentPill";
 import { StatusPill } from "../StatusPill";
 
 export default async function AdminSingerDetail({ params }: PageProps<"/admin/singers/[id]">) {
@@ -16,7 +17,7 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
   const singer = await getSinger(Number((await params).id));
   if (!singer) notFound();
 
-  const [photos, guardians, siblings, application] = await Promise.all([
+  const [photos, guardians, siblings, application, consentLog] = await Promise.all([
     signedPhotoUrls([singer.photo_path], 300),
     guardianMap([singer.guardian_id]),
     singer.guardian_id ? singersOfGuardian(singer.guardian_id) : Promise.resolve([]),
@@ -30,6 +31,16 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
             .then((r) => r.data),
         )
       : Promise.resolve(null),
+    createClient().then((sb) =>
+      sb
+        .from("media_consent_log")
+        .select("id, channels, press, name, by_guardian, version, created_at")
+        .eq("singer_id", singer.id)
+        .order("created_at", { ascending: false })
+        .limit(10)
+        .returns<{ id: number; channels: boolean; press: boolean; name: boolean; by_guardian: boolean; version: string | null; created_at: string }[]>()
+        .then((r) => r.data ?? []),
+    ),
   ]);
   const photoUrl = singer.photo_path ? photos.get(singer.photo_path) : undefined;
   const guardian = singer.guardian_id ? guardians.get(singer.guardian_id) : undefined;
@@ -38,14 +49,17 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
   const rows: [string, React.ReactNode][] = [
     ["반", singer.class_name],
     ["학년", `${grade}${singer.grade_override !== null ? " (직접 지정)" : ""}`],
-    ["생년월일", `${singer.birthdate} (만 ${manAge(singer.birthdate)}세)`],
+    [
+      "생년월일",
+      singer.birth_year_only ? `${birthLabel(singer)} (생일 미입력)` : `${singer.birthdate} (만 ${singerAge(singer)}세)`,
+    ],
+    ["가입경로", singer.join_source],
     ["성별", singer.gender],
     ["학교", singer.school],
     ["파트", singer.part],
     ["기수", singer.cohort ? `${singer.cohort}기` : null],
     ["입단일", singer.joined_on],
     ["퇴단일", singer.left_on],
-    ["이름 공개", singer.name_public ? "동의 (단원 소개 화면에 이름·반 표시)" : "비동의"],
     ["비고", singer.notes],
   ];
 
@@ -164,6 +178,40 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
               </ul>
             </section>
           )}
+
+          <section className="card">
+            <h2 className="mb-3 flex items-center gap-2 font-bold text-navy">
+              초상권 동의 <ConsentPill singer={singer} />
+            </h2>
+            <ul className="space-y-1.5 text-sm">
+              {[
+                ["① 공식 채널 게시", singer.consent_media_channels],
+                ["② 언론·홍보물", singer.consent_media_press],
+                ["③ 이름 표시 (단원 소개 포함)", singer.name_public],
+              ].map(([label, on]) => (
+                <li key={String(label)} className="flex justify-between gap-3">
+                  <span className="text-ink-soft">{label}</span>
+                  <span className={on ? "font-medium text-emerald-800" : "text-red-700"}>{on ? "동의" : "미동의"}</span>
+                </li>
+              ))}
+            </ul>
+            {consentLog.length > 0 && (
+              <details className="mt-4 text-xs">
+                <summary className="cursor-pointer text-ink-soft">변경 기록 {consentLog.length}건</summary>
+                <ul className="mt-2 space-y-1">
+                  {consentLog.map((l) => (
+                    <li key={l.id} className="flex flex-wrap gap-x-2 text-ink-soft">
+                      <span className="tabular-nums">{formatDateTime(l.created_at)}</span>
+                      <span>{l.by_guardian ? "보호자" : "관리자"}</span>
+                      <span className="text-ink">
+                        {[l.channels && "①", l.press && "②", l.name && "③"].filter(Boolean).join(" ") || "모두 미동의"}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+          </section>
 
           {application && (
             <section className="card">

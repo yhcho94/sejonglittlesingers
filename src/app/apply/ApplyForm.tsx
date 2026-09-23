@@ -6,6 +6,8 @@ import { submitApplication } from "@/app/actions/applications";
 import { FormMessage, SubmitButton } from "@/components/form";
 import { createClient } from "@/lib/supabase/client";
 import type { FormState } from "@/lib/types";
+import { MediaConsentFields } from "@/components/MediaConsentFields";
+import { JOIN_SOURCES } from "@/lib/join-source";
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 const PHOTO_TYPES: Record<string, string> = {
@@ -16,6 +18,7 @@ const PHOTO_TYPES: Record<string, string> = {
 
 export function ApplyForm({ userId }: { userId: string }) {
   const [hasPhoto, setHasPhoto] = useState(false);
+  const [joinSource, setJoinSource] = useState("");
 
   // 사진은 브라우저에서 비공개 저장소로 바로 올리고(본인 폴더만 허용), 경로만 서버로 보냅니다.
   const [state, action] = useActionState(async (prev: FormState, formData: FormData) => {
@@ -82,6 +85,30 @@ export function ApplyForm({ userId }: { userId: string }) {
           <label htmlFor="motivation" className="label">지원 동기</label>
           <textarea id="motivation" name="motivation" rows={4} maxLength={2000} className="input" />
         </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label htmlFor="join_source" className="label">가입경로 *</label>
+            <select
+              id="join_source"
+              name="join_source"
+              required
+              value={joinSource}
+              onChange={(e) => setJoinSource(e.target.value)}
+              className="input"
+            >
+              <option value="">어떻게 알게 되셨나요?</option>
+              {JOIN_SOURCES.map((j) => (
+                <option key={j}>{j}</option>
+              ))}
+            </select>
+          </div>
+          {joinSource === "기타" && (
+            <div>
+              <label htmlFor="join_source_detail" className="label">기타 가입경로</label>
+              <input id="join_source_detail" name="join_source_detail" maxLength={100} placeholder="직접 입력" className="input" />
+            </div>
+          )}
+        </div>
         <div>
           <label htmlFor="photo" className="label">사진 (선택, JPG·PNG·WEBP, 5MB 이하)</label>
           <input
@@ -119,6 +146,11 @@ export function ApplyForm({ userId }: { userId: string }) {
           <input type="checkbox" name="consent_photo" required={hasPhoto} className="mt-1" />
           <span>({hasPhoto ? "사진 첨부 시 필수" : "선택"}) 아동 사진의 수집·이용에 동의합니다. 사진은 입단 심사 목적으로만 사용하며 외부에 공개하지 않습니다.</span>
         </label>
+      </fieldset>
+
+      <fieldset className="space-y-3 rounded-sm border border-line p-4">
+        <legend className="px-1 text-sm font-medium">초상권(사진·영상) 이용 동의 (선택)</legend>
+        <MediaConsentFields />
       </fieldset>
 
       <FormMessage state={state} />

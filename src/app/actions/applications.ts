@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
 import type { FormState } from "@/lib/types";
+import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
+import { JOIN_SOURCES } from "@/lib/join-source";
 
 const PHOTO_BUCKET = "application-photos";
 const PHOTO_PATH_RE =
@@ -44,8 +46,11 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
     if (!consentPhoto) return { error: "사진을 첨부하려면 사진 수집·이용에 동의해 주세요." };
   }
 
+  const joinSource = String(formData.get("join_source") ?? "");
+  if (!(JOIN_SOURCES as readonly string[]).includes(joinSource)) return { error: "가입경로를 선택해 주세요." };
+  const media = readMediaConsent(formData);
   const supabase = await createClient();
-  const { error } = await supabase.from("applications").insert({
+  const base = {
     guardian_id: userId,
     child_name: childName,
     child_birthdate: birthdate,
@@ -58,7 +63,21 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
     consent_privacy: true,
     consent_guardian: true,
     consent_photo: Boolean(photoPath) && consentPhoto,
-  });
+  };
+  // 0008(초상권)·0011(가입경로) 칸. DB 에 아직 칸이 없으면(PGRST204) 기본 항목만이라도 저장해 신청이 누락되지 않게 합니다.
+  const extra = {
+    consent_media_channels: media.channels,
+    consent_media_press: media.press,
+    consent_media_name: media.name,
+    consent_media_version: MEDIA_CONSENT_VERSION,
+    join_source: joinSource,
+    join_source_detail: joinSource === "기타" ? text(formData, "join_source_detail", 100) : null,
+  };
+  let { error } = await supabase.from("applications").insert({ ...base, ...extra });
+  if (error?.code === "PGRST204") {
+    console.error("입단 신청: 새 항목 칸이 없어 기본 항목만 저장 (0008·0011 실행 필요)");
+    ({ error } = await supabase.from("applications").insert(base));
+  }
 
   if (error) {
     console.error("입단 신청 저장 실패", error.message);

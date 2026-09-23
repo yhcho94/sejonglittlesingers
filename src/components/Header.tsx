@@ -45,26 +45,31 @@ export async function Header() {
         <div className="container-page flex h-full items-center justify-end gap-6 text-xs">
           <div className="flex items-center gap-4">{accountLinks}</div>
           <span className="h-3 w-px bg-line" aria-hidden />
-          <div className="flex items-center gap-1 text-ink-soft">
-            <SocialLinks itemClassName="p-1.5 hover:text-navy" />
-            <CopyLinkButton className="p-1.5 hover:text-navy" />
+          <div className="flex items-center gap-3 text-ink-soft">
+            <SocialLinks className="gap-3" itemClassName="hover:text-navy" showLabel />
+            <span className="h-3 w-px bg-line" aria-hidden />
+            <CopyLinkButton className="hover:text-navy" showLabel />
           </div>
         </div>
       </div>
 
       <header data-print-hide className="sticky top-0 z-30 h-[var(--header-h)] border-b border-line/80 bg-ivory/90 backdrop-blur-md">
         <div className="container-page flex h-full items-center justify-between gap-6">
-          <Link href="/" className="flex flex-col leading-none" aria-label={`${site.name} 홈`}>
+          <Link href="/" className="flex shrink-0 flex-col leading-none whitespace-nowrap" aria-label={`${site.name} 홈`}>
             <span className="font-[family-name:var(--font-serif)] text-lg font-bold tracking-tight text-navy lg:text-xl">
               {site.name}
             </span>
-            <span className="eyebrow mt-1 text-[9px] text-gold-deep lg:text-[10px]">{site.nameEn}</span>
+            <span className="eyebrow mt-1 text-[8px] tracking-[0.2em] text-gold-deep sm:text-[9px] sm:tracking-[0.32em] lg:text-[10px]">
+              {site.nameEn}
+            </span>
           </Link>
 
           <DesktopNav />
 
-          <div className="flex items-center gap-1 lg:hidden">
-            <CopyLinkButton className="h-11 w-11 justify-center text-navy" />
+          {/* 휴대폰·태블릿: 공식 채널 · 주소 복사 · 메뉴 */}
+          <div className="flex items-center lg:hidden">
+            <SocialLinks itemClassName="h-10 w-8 justify-center text-navy/80 hover:text-navy sm:w-10" />
+            <CopyLinkButton className="h-10 w-8 justify-center text-navy/80 hover:text-navy max-[359px]:hidden sm:w-10" />
             <MobileMenu account={accountLinks} />
           </div>
         </div>

@@ -49,6 +49,7 @@ export const conductor: StaffMember = {
         "계룡시어린이뮤지컬 합창단 상임 지휘자 역임",
         "경찰대학교 강사역임",
         "세종하모니앙상블 대표역임",
+        "세종사계절하모니합창단 지휘자 역임",
       ],
     },
     {
@@ -56,7 +57,6 @@ export const conductor: StaffMember = {
       items: [
         "세종드림예술기획 대표",
         "세종리틀싱어즈 단장 및 상임지휘자",
-        "세종사계절하모니합창단 예술감독 및 상임지휘자",
         "싱싱콰이어 지휘자",
         "클래시컬쇼콰이어그룹 튀김소보체 단원",
         "세종시 음악협회 회원",
@@ -126,7 +126,7 @@ export const assistantConductors: StaffMember[] = [
   },
 ];
 
-// 2026 조직도. 합창단 제공 조직도 기준. (선율반 보컬트레이너는 합창단 요청으로 추가)
+// 2026 조직도. 합창단 제공 조직도 기준 (울림반 이론선생님·선율반 구성은 합창단 요청으로 수정)
 // 학부모대표 옆의 '○○ 어머니' 표기는 아동 이름이 드러나므로 공개 홈페이지에는 싣지 않습니다.
 export const accompanists: StaffMember[] = [
   {
@@ -181,18 +181,6 @@ export const accompanists: StaffMember[] = [
           "반월합창단 반주자",
         ],
       },
-    ],
-  },
-];
-
-export const vocalTrainers: StaffMember[] = [
-  {
-    name: "이정윤",
-    role: "보컬트레이너",
-    className: "선율반",
-    sections: [
-      { title: "학력 · 이수", items: ["영남대학교 음악대학 성악과 졸업", "오르프 지도자 교육과정 이수"] },
-      { title: "주요 경력", items: ["다수 음악학원 강사 및 원장 역임"] },
     ],
   },
 ];
@@ -265,33 +253,6 @@ export const theoryTeachers: StaffMember[] = [
   },
 ];
 
-// 유튜브 담당
-export const otherTeachers: StaffMember[] = [
-  {
-    name: "박세연",
-    role: "유튜브 담당",
-    sections: [
-      {
-        title: "학력",
-        items: ["계명대학교 음악대학 실용작편곡 전공 졸업", "숙명여자대학교 대학원 피아노교수학과 휴학중"],
-      },
-      {
-        title: "주요 경력 (전)",
-        items: [
-          "홈플러스 세종점 음악강사 역임",
-          "이마트 세종점 음악강사 역임",
-          "청주 현대백화점 문화센터 음악강사 역임",
-          "뮤직트리, 뮤직어드벤처, 음악세계 음악교재 편집위원 역임",
-        ],
-      },
-      {
-        title: "현재 활동 (현)",
-        items: ["창신초등학교 합창 강사", "연서초등학교 음악강사", "감성초등학교 음악강사"],
-      },
-    ],
-  },
-];
-
 export const officeStaff: StaffMember[] = [
   {
     name: "박성희",
@@ -311,9 +272,7 @@ export const officeStaff: StaffMember[] = [
 export const staffGroups = [
   { title: "부지휘자", members: assistantConductors },
   { title: "반주자", members: accompanists },
-  { title: "보컬트레이너", members: vocalTrainers },
   { title: "이론선생님", members: theoryTeachers },
-  { title: "유튜브 담당", members: otherTeachers },
   { title: "사무국", members: officeStaff },
 ];
 
@@ -330,7 +289,7 @@ export const organization = {
         { role: "학부모대표", name: "국지은" },
         { role: "부대표", name: "안가영" },
         { role: "반주자", name: "정연수" },
-        { role: "이론선생님", name: "박세연" },
+        { role: "이론선생님", name: "최오늘" },
       ],
     },
     {
@@ -348,7 +307,6 @@ export const organization = {
       color: "#3f6b4f",
       members: [
         { role: "부지휘자", name: "서지선" },
-        { role: "보컬트레이너", name: "이정윤" },
         { role: "학부모대표", name: "김소영" },
         { role: "부대표", name: "이은희" },
         { role: "반주자", name: "배성희" },

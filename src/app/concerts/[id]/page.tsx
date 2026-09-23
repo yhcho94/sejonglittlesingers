@@ -26,7 +26,7 @@ export default async function ConcertDetailPage({ params }: PageProps<"/concerts
         <dl className="mt-4 space-y-1 text-sm">
           <div className="flex gap-3">
             <dt className="w-10 text-ink-soft">일시</dt>
-            <dd>{formatConcertDate(concert.starts_at)}</dd>
+            <dd>{formatConcertDate(concert.starts_at, concert.time_tbd)}</dd>
           </div>
           {concert.venue && (
             <div className="flex gap-3">
