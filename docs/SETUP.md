@@ -11,7 +11,7 @@
    - `0002_recruitment_faq_concerts.sql`: 입단 안내, FAQ, 공연 일정
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
-4. 이미 실행한 파일은 다시 실행하지 않습니다. (새 번호 파일만 실행)
+4. 두 파일 모두 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.
 
 ## 2. Supabase: 로그인 링크 주소 설정
 

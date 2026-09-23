@@ -1,11 +1,12 @@
 -- 입단 안내 · FAQ · 공연 일정
--- 0001_init.sql 을 실행한 뒤, SQL Editor 에서 이 파일 전체를 한 번 실행합니다.
+-- 0001_init.sql 을 실행한 뒤, SQL Editor 에서 이 파일 전체를 실행합니다.
+-- 여러 번 실행해도 안전합니다.
 -- 모든 내용은 관리자 화면에서 입력·수정합니다. (코드 수정 불필요)
 
 -- ─────────────────────────────────────────────
 -- recruitment: 입단 안내 (한 행만 존재)
 -- ─────────────────────────────────────────────
-create table public.recruitment (
+create table if not exists public.recruitment (
   id smallint primary key default 1 check (id = 1),
   is_open boolean not null default false,          -- 모집 중 여부 (홈 배너 표시)
   period text check (char_length(period) <= 200),  -- 모집 기간
@@ -19,18 +20,20 @@ create table public.recruitment (
   updated_at timestamptz not null default now()
 );
 
-insert into public.recruitment (id) values (1);
+insert into public.recruitment (id) values (1) on conflict (id) do nothing;
 
-create trigger recruitment_updated_at
+create or replace trigger recruitment_updated_at
   before update on public.recruitment
   for each row execute function public.set_updated_at();
 
 alter table public.recruitment enable row level security;
 
+drop policy if exists "입단 안내 공개 조회" on public.recruitment;
 create policy "입단 안내 공개 조회" on public.recruitment
   for select to anon, authenticated
   using (true);
 
+drop policy if exists "관리자 수정" on public.recruitment;
 create policy "관리자 수정" on public.recruitment
   for update to authenticated
   using ((select public.is_admin()))
@@ -43,7 +46,7 @@ grant update (is_open, period, target, schedule, place, fee, audition, classes, 
 -- ─────────────────────────────────────────────
 -- faqs: 자주 묻는 질문
 -- ─────────────────────────────────────────────
-create table public.faqs (
+create table if not exists public.faqs (
   id bigint generated always as identity primary key,
   question text not null check (char_length(question) between 1 and 300),
   answer text not null check (char_length(answer) between 1 and 4000),
@@ -53,31 +56,36 @@ create table public.faqs (
   updated_at timestamptz not null default now()
 );
 
-create index faqs_order_idx on public.faqs (sort_order, id);
+create index if not exists faqs_order_idx on public.faqs (sort_order, id);
 
-create trigger faqs_updated_at
+create or replace trigger faqs_updated_at
   before update on public.faqs
   for each row execute function public.set_updated_at();
 
 alter table public.faqs enable row level security;
 
+drop policy if exists "게시된 FAQ 공개 조회" on public.faqs;
 create policy "게시된 FAQ 공개 조회" on public.faqs
   for select to anon, authenticated
   using (is_published);
 
+drop policy if exists "관리자 전체 조회" on public.faqs;
 create policy "관리자 전체 조회" on public.faqs
   for select to authenticated
   using ((select public.is_admin()));
 
+drop policy if exists "관리자 작성" on public.faqs;
 create policy "관리자 작성" on public.faqs
   for insert to authenticated
   with check ((select public.is_admin()));
 
+drop policy if exists "관리자 수정" on public.faqs;
 create policy "관리자 수정" on public.faqs
   for update to authenticated
   using ((select public.is_admin()))
   with check ((select public.is_admin()));
 
+drop policy if exists "관리자 삭제" on public.faqs;
 create policy "관리자 삭제" on public.faqs
   for delete to authenticated
   using ((select public.is_admin()));
@@ -88,7 +96,7 @@ grant insert, update, delete on public.faqs to authenticated;
 -- ─────────────────────────────────────────────
 -- concerts: 공연 일정
 -- ─────────────────────────────────────────────
-create table public.concerts (
+create table if not exists public.concerts (
   id bigint generated always as identity primary key,
   title text not null check (char_length(title) between 1 and 200),
   starts_at timestamptz not null,
@@ -101,31 +109,36 @@ create table public.concerts (
   updated_at timestamptz not null default now()
 );
 
-create index concerts_starts_at_idx on public.concerts (starts_at desc);
+create index if not exists concerts_starts_at_idx on public.concerts (starts_at desc);
 
-create trigger concerts_updated_at
+create or replace trigger concerts_updated_at
   before update on public.concerts
   for each row execute function public.set_updated_at();
 
 alter table public.concerts enable row level security;
 
+drop policy if exists "게시된 공연 공개 조회" on public.concerts;
 create policy "게시된 공연 공개 조회" on public.concerts
   for select to anon, authenticated
   using (is_published);
 
+drop policy if exists "관리자 전체 조회" on public.concerts;
 create policy "관리자 전체 조회" on public.concerts
   for select to authenticated
   using ((select public.is_admin()));
 
+drop policy if exists "관리자 작성" on public.concerts;
 create policy "관리자 작성" on public.concerts
   for insert to authenticated
   with check ((select public.is_admin()));
 
+drop policy if exists "관리자 수정" on public.concerts;
 create policy "관리자 수정" on public.concerts
   for update to authenticated
   using ((select public.is_admin()))
   with check ((select public.is_admin()));
 
+drop policy if exists "관리자 삭제" on public.concerts;
 create policy "관리자 삭제" on public.concerts
   for delete to authenticated
   using ((select public.is_admin()));
