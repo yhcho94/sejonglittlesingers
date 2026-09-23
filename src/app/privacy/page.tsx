@@ -251,7 +251,7 @@ export default function PrivacyPage() {
           <section>
             <h2>13. 시행일</h2>
             <p>
-              이 개인정보처리방침은 2026년 10월 1일부터 적용됩니다.
+              이 개인정보처리방침은 2026년 11월 1일부터 적용됩니다.
             </p>
           </section>
         </article>
