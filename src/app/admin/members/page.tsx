@@ -1,3 +1,4 @@
+import { adminDeleteMember } from "@/app/actions/account";
 import { setMemberRole } from "@/app/actions/admin";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { requireAdmin } from "@/lib/auth";
@@ -64,6 +65,17 @@ export default async function AdminMembersPage() {
                           </ConfirmButton>
                         </form>
                       )}
+                      {!isSelf && (
+                        <form action={adminDeleteMember}>
+                          <input type="hidden" name="id" value={m.id} />
+                          <ConfirmButton
+                            message={`${m.guardian_name} 님의 계정을 삭제할까요? 회원 정보와 입단 신청 내역·사진이 영구 삭제됩니다. (단원 명부는 보호자 연결만 해제)`}
+                            className="text-xs text-red-700 underline"
+                          >
+                            삭제
+                          </ConfirmButton>
+                        </form>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -73,7 +85,8 @@ export default async function AdminMembersPage() {
         </table>
       </div>
       <p className="mt-4 text-xs text-ink-soft">
-        관리자는 모든 회원·신청 정보를 볼 수 있습니다. 꼭 필요한 사람만 지정해 주세요.
+        관리자는 모든 회원·신청 정보를 볼 수 있습니다. 꼭 필요한 사람만 지정해 주세요. 회원 삭제는 Supabase 대시보드가 아닌
+        이 화면에서 하면 첨부 사진까지 바로 삭제됩니다.
       </p>
     </>
   );

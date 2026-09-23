@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { NAV } from "@/lib/nav";
 
 function isActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -12,7 +13,7 @@ function isActive(pathname: string, href: string) {
 export function DesktopNav() {
   const pathname = usePathname();
   return (
-    <nav className="hidden items-center gap-8 lg:flex" aria-label="주 메뉴">
+    <nav className="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="주 메뉴">
       {NAV.map((item) => {
         const active = isActive(pathname, item.href);
         return (

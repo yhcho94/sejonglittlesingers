@@ -7,6 +7,7 @@ export const site = {
   // 공식 채널
   links: {
     cafe: "https://cafe.naver.com/sejonglittlesingers",
+    blog: "https://blog.naver.com/sejonglittlesingers",
     youtube: `https://www.youtube.com/${encodeURIComponent("@세종리틀싱어즈")}`,
   },
   contact: {

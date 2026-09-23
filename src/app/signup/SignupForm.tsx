@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { signUp } from "@/app/actions/auth";
 import { FormMessage, SubmitButton } from "@/components/form";
+import { PASSWORD_HINT, PASSWORD_MIN } from "@/lib/password";
 
 export function SignupForm() {
   const [state, action] = useActionState(signUp, undefined);
@@ -25,12 +26,13 @@ export function SignupForm() {
         <input id="email" name="email" type="email" required autoComplete="email" className="input" />
       </div>
       <div>
-        <label htmlFor="password" className="label">비밀번호 (8자 이상) *</label>
-        <input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" className="input" />
+        <label htmlFor="password" className="label">비밀번호 *</label>
+        <input id="password" name="password" type="password" required minLength={PASSWORD_MIN} autoComplete="new-password" aria-describedby="password-hint" className="input" />
+        <p id="password-hint" className="mt-1 text-xs text-ink-soft">{PASSWORD_HINT}</p>
       </div>
       <div>
         <label htmlFor="password_confirm" className="label">비밀번호 확인 *</label>
-        <input id="password_confirm" name="password_confirm" type="password" required minLength={8} autoComplete="new-password" className="input" />
+        <input id="password_confirm" name="password_confirm" type="password" required minLength={PASSWORD_MIN} autoComplete="new-password" className="input" />
       </div>
 
       <div className="space-y-3 rounded-sm bg-cream p-4 text-sm">

@@ -23,10 +23,12 @@
 @layer base {
   :root {
     --header-h: 4rem;
+    --util-h: 0rem; /* PC 상단 보조 줄 높이 */
   }
   @media (width >= 64rem) {
     :root {
       --header-h: 4.75rem;
+      --util-h: 2.25rem;
     }
   }
   html {
@@ -100,4 +102,18 @@
 }
 @utility container-page {
   @apply mx-auto w-full max-w-6xl px-5 md:px-8;
+}
+
+/* 인쇄: 사이트 머리·꼬리말과 관리자 메뉴를 숨기고 흰 바탕으로 */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  [data-print-hide] {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
 }

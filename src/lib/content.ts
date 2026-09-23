@@ -87,3 +87,19 @@ export function pressSource(item: Pick<Press, "media" | "url">) {
     return "";
   }
 }
+
+// 공개 '단원 소개': 이름 없는 인원 통계 + 이름 공개에 동의한 단원 (DB 함수가 필요한 값만 돌려줌)
+export async function getPublicSingers() {
+  await connection();
+  if (!isSupabaseConfigured) return null;
+  const supabase = await createClient();
+  const [stats, names] = await Promise.all([
+    supabase.rpc("singer_public_stats"),
+    supabase.rpc("singer_public_names"),
+  ]);
+  if (stats.error || names.error) return null;
+  return {
+    stats: (stats.data ?? []) as { class_name: string | null; birth_year: number; grade_override: number | null }[],
+    names: (names.data ?? []) as { name: string; class_name: string | null }[],
+  };
+}
