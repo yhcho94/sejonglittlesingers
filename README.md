@@ -1,2 +1,36 @@
-# sejonglittlesingers
-Homepage of Sejong Little Singers
+# 세종리틀싱어즈 홈페이지
+
+Homepage of Sejong Little Singers.
+
+## 구성
+
+- **Next.js 16** (App Router) + Tailwind CSS 4, **Vercel** 배포
+- **Supabase**: 로그인, 데이터베이스(PostgreSQL), 사진 저장소 (서울 리전)
+
+## 기능
+
+| 구분 | 기능 |
+|---|---|
+| 공개 | 홈, 합창단 소개, 공지사항, 개인정보처리방침 |
+| 보호자 회원 | 회원가입(이메일 인증), 로그인, 비밀번호 재설정, 입단 신청(사진 첨부), 신청 현황 확인·취소, 회원정보 수정 |
+| 관리자 | 대시보드, 입단 신청 심사(승인/반려, 안내 문구), 회원 관리(관리자 지정), 공지사항 작성·수정·삭제 |
+
+## 보안·개인정보
+
+- 모든 테이블에 RLS(행 단위 보안) 적용: 본인 정보는 본인만, 전체 정보는 관리자만 조회
+- 회원은 자신의 권한(role)이나 신청 심사 상태를 바꿀 수 없음 (DB 컬럼 권한으로 차단)
+- 신청 사진은 비공개 버킷에 저장, 관리자 화면에서만 5분짜리 임시 링크로 표시
+- 만 14세 미만 아동 정보는 법정대리인(보호자) 명의 가입·동의로만 수집
+- 서버에 secret/service_role 키를 두지 않음
+
+## 설정
+
+처음 배포할 때 해야 할 일은 [docs/SETUP.md](docs/SETUP.md) 를 참고하세요.
+
+## 로컬 개발
+
+```bash
+cp .env.example .env.local   # 값 채우기 (커밋 금지)
+npm install
+npm run dev
+```
