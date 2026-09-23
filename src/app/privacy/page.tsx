@@ -80,13 +80,96 @@ export default function PrivacyPage() {
 
           <section>
             <h2>6. 개인정보 처리의 위탁 및 국외 이전</h2>
-            <p>합창단은 홈페이지 운영을 위하여 다음과 같이 개인정보 처리 업무를 위탁합니다.</p>
-            <ul>
-              <li>Supabase Inc.: 회원 인증, 데이터베이스 및 파일 저장 (데이터 저장 위치: 대한민국 서울 리전)</li>
-              <li>Vercel Inc.: 웹사이트 호스팅 및 요청 처리</li>
-            </ul>
+            <p className="font-medium">가. 처리 위탁</p>
+            <p>합창단은 홈페이지 운영을 위하여 다음과 같이 개인정보 처리 업무를 위탁하고 있습니다.</p>
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full min-w-[480px] border-collapse text-sm [&_td]:border [&_td]:border-line [&_td]:p-2 [&_th]:border [&_th]:border-line [&_th]:bg-cream [&_th]:p-2 [&_th]:text-left">
+                <thead>
+                  <tr>
+                    <th>수탁자</th>
+                    <th>위탁 업무</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Vercel Inc.</td>
+                    <td>홈페이지 호스팅, 서버 기능(회원가입·신청서 접수 처리 등) 실행</td>
+                  </tr>
+                  <tr>
+                    <td>Supabase <Placeholder>계약 법인명 확인 필요 (Supabase Pte. Ltd. 또는 Supabase, Inc.)</Placeholder></td>
+                    <td>회원 인증, 데이터베이스 및 첨부파일(사진) 저장·관리</td>
+                  </tr>
+                  <tr>
+                    <td>Google LLC</td>
+                    <td>회원가입 인증·비밀번호 재설정 이메일 발송</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <p className="mt-2">
-              <Placeholder>국외 이전 해당 여부, 이전 국가, 이전 일시·방법, 보유 기간 등 법정 고지 항목 확인 필요</Placeholder>
+              위탁업무의 내용이나 수탁자가 변경될 경우에는 지체 없이 이 개인정보처리방침을 통하여 공개하겠습니다.
+            </p>
+
+            <p className="mt-5 font-medium">나. 국외 이전</p>
+            <p>
+              합창단은 정보주체와의 계약(회원가입 및 입단 신청)의 체결 및 이행을 위하여 개인정보의 처리위탁·보관이
+              필요하므로, 「개인정보 보호법」 제28조의8 제1항 제3호에 따라 다음 사항을 공개하고 개인정보를 국외로
+              이전합니다. 개인정보는 국외에서 조회되는 경우를 포함하여 아래 수탁자에게 이전될 수 있습니다.
+            </p>
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full min-w-[720px] border-collapse text-sm [&_td]:border [&_td]:border-line [&_td]:p-2 [&_td]:align-top [&_th]:border [&_th]:border-line [&_th]:bg-cream [&_th]:p-2 [&_th]:text-left">
+                <thead>
+                  <tr>
+                    <th>이전받는 자 (연락처)</th>
+                    <th>이전 국가</th>
+                    <th>이전 시기 및 방법</th>
+                    <th>이전 항목</th>
+                    <th>이용 목적</th>
+                    <th>보유·이용 기간</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Vercel Inc. (privacy@vercel.com)</td>
+                    <td>
+                      미국 등. 서버 실행 위치는 대한민국(서울)으로 설정하였으나, 운영 기록 등이 국외에서 처리될 수 있음
+                    </td>
+                    <td>홈페이지 이용 시 정보통신망을 통해 암호화 전송(HTTPS)</td>
+                    <td>이용 과정에서 전송되는 입력 정보, IP 주소, 접속 기록</td>
+                    <td>홈페이지 호스팅 및 서버 기능 실행</td>
+                    <td>
+                      위탁계약 종료 시까지 <Placeholder>접속 기록 보존 기간 확인 필요</Placeholder>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Supabase (privacy@supabase.com)</td>
+                    <td>
+                      운영 법인 소재국 <Placeholder>싱가포르 또는 미국 확인 필요</Placeholder>. 데이터 저장 위치는
+                      대한민국(서울 리전)이며, 운영 법인이 국외에서 접근할 수 있음
+                    </td>
+                    <td>서비스 이용 시 정보통신망을 통해 암호화 전송(HTTPS)</td>
+                    <td>
+                      보호자: 이름, 연락처, 이메일, 비밀번호(암호화) / 단원: 이름, 생년월일, 학교, 학년, 주소, 음악 경력, 지원
+                      동기, 사진(선택) / 접속 기록
+                    </td>
+                    <td>회원 인증, 데이터 저장·관리</td>
+                    <td>이 방침 3.에서 정한 보유 기간 또는 위탁계약 종료 시까지</td>
+                  </tr>
+                  <tr>
+                    <td>Google LLC (googlekrsupport@google.com)</td>
+                    <td>미국</td>
+                    <td>인증 이메일 발송 시 정보통신망을 통해 암호화 전송</td>
+                    <td>이메일 주소, 인증 이메일 내용</td>
+                    <td>회원가입 인증·비밀번호 재설정 이메일 발송</td>
+                    <td>이메일 발송 목적 달성 시까지 (Google 정책에 따름)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-2">
+              정보주체는 개인정보의 국외 이전을 거부할 수 있으며, 개인정보 보호책임자(아래 11. 참조) 또는 이메일(
+              {site.contact.email})로 요청하시거나 회원 탈퇴를 통해 거부할 수 있습니다. 다만 위 국외 이전은 홈페이지 운영과
+              회원가입·입단 신청 처리에 반드시 필요하므로, 거부하시는 경우 회원가입 및 입단 신청 등 서비스 이용이 불가능합니다.
             </p>
           </section>
 
