@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #fbf8f3;
+  --color-ink: #1f2440;
+  --color-ink-soft: #4a5070;
+  --color-navy: #23306b;
+  --color-navy-dark: #172050;
+  --color-gold: #e2a93b;
+  --color-gold-soft: #fbeed3;
+  --color-line: #e7e1d6;
+  --font-sans: var(--font-noto-sans-kr), "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  word-break: keep-all;
+}
+
+/* 공통 폼·버튼 스타일 (Tailwind v4 는 @utility 로 정의해야 조합해서 쓸 수 있습니다) */
+@utility input {
+  @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-ink outline-none transition focus:border-navy focus:ring-2 focus:ring-navy/20;
+}
+@utility label {
+  @apply mb-1 block text-sm font-medium text-ink;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-navy text-white hover:bg-navy-dark;
+}
+@utility btn-outline {
+  @apply btn border border-line bg-white text-ink hover:bg-cream;
+}
+@utility btn-danger {
+  @apply btn border border-red-200 bg-white text-red-700 hover:bg-red-50;
+}
+@utility card {
+  @apply rounded-2xl border border-line bg-white p-6;
+}
