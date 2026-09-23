@@ -2,8 +2,10 @@ import Link from "next/link";
 import { signOut } from "@/app/actions/auth";
 import { getCurrentUser } from "@/lib/auth";
 import { site } from "@/lib/site";
+import { CopyLinkButton } from "./CopyLinkButton";
 import { MobileMenu } from "./MobileMenu";
 import { DesktopNav } from "./NavLinks";
+import { SocialLinks } from "./SocialLinks";
 
 export async function Header() {
   const current = await getCurrentUser();
@@ -30,28 +32,43 @@ export async function Header() {
       <Link href="/login" className="text-ink-soft hover:text-navy">
         로그인
       </Link>
-      <Link href="/signup" className="btn-primary px-4 py-2 text-[13px]">
+      <Link href="/signup" className="text-ink-soft hover:text-navy">
         회원가입
       </Link>
     </>
   );
 
   return (
-    <header className="sticky top-0 z-30 h-[var(--header-h)] border-b border-line/80 bg-ivory/90 backdrop-blur-md">
-      <div className="container-page flex h-full items-center justify-between gap-6">
-        <Link href="/" className="group flex flex-col leading-none" aria-label={`${site.name} 홈`}>
-          <span className="font-[family-name:var(--font-serif)] text-lg font-bold tracking-tight text-navy lg:text-xl">
-            {site.name}
-          </span>
-          <span className="eyebrow mt-1 text-[9px] text-gold-deep lg:text-[10px]">{site.nameEn}</span>
-        </Link>
-
-        <DesktopNav />
-
-        <div className="hidden items-center gap-5 text-[13px] lg:flex">{accountLinks}</div>
-
-        <MobileMenu account={accountLinks} />
+    <>
+      {/* PC 상단 보조 줄: 계정 · 공식 채널 · 주소 복사 */}
+      <div className="hidden h-[var(--util-h)] border-b border-line/70 bg-ivory lg:block">
+        <div className="container-page flex h-full items-center justify-end gap-6 text-xs">
+          <div className="flex items-center gap-4">{accountLinks}</div>
+          <span className="h-3 w-px bg-line" aria-hidden />
+          <div className="flex items-center gap-1 text-ink-soft">
+            <SocialLinks itemClassName="p-1.5 hover:text-navy" />
+            <CopyLinkButton className="p-1.5 hover:text-navy" />
+          </div>
+        </div>
       </div>
-    </header>
+
+      <header className="sticky top-0 z-30 h-[var(--header-h)] border-b border-line/80 bg-ivory/90 backdrop-blur-md">
+        <div className="container-page flex h-full items-center justify-between gap-6">
+          <Link href="/" className="flex flex-col leading-none" aria-label={`${site.name} 홈`}>
+            <span className="font-[family-name:var(--font-serif)] text-lg font-bold tracking-tight text-navy lg:text-xl">
+              {site.name}
+            </span>
+            <span className="eyebrow mt-1 text-[9px] text-gold-deep lg:text-[10px]">{site.nameEn}</span>
+          </Link>
+
+          <DesktopNav />
+
+          <div className="flex items-center gap-1 lg:hidden">
+            <CopyLinkButton className="h-11 w-11 justify-center text-navy" />
+            <MobileMenu account={accountLinks} />
+          </div>
+        </div>
+      </header>
+    </>
   );
 }

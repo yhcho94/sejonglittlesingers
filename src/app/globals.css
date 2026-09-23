@@ -23,10 +23,12 @@
 @layer base {
   :root {
     --header-h: 4rem;
+    --util-h: 0rem; /* PC 상단 보조 줄 높이 */
   }
   @media (width >= 64rem) {
     :root {
       --header-h: 4.75rem;
+      --util-h: 2.25rem;
     }
   }
   html {

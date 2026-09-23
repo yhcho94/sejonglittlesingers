@@ -221,6 +221,7 @@ export default function AboutPage() {
               {[
                 { href: site.links.youtube, name: "유튜브", sub: "@세종리틀싱어즈 · 공식 유튜브 채널" },
                 { href: site.links.cafe, name: "네이버 카페", sub: "cafe.naver.com/sejonglittlesingers" },
+                { href: site.links.blog, name: "네이버 블로그", sub: "blog.naver.com/sejonglittlesingers" },
               ].map((ch) => (
                 <a
                   key={ch.name}

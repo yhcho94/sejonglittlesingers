@@ -61,7 +61,7 @@ export default async function HomePage() {
     <>
       {/* ── 대표 영역 ───────────────────────────── */}
       {/* 휴대폰·태블릿: 사진 아래에 글자 / PC: 왼쪽 글자, 오른쪽 사진 (아이들을 가리지 않도록) */}
-      <section className="bg-navy-dark text-white lg:grid lg:min-h-[min(calc(100svh-var(--header-h)),820px)] lg:grid-cols-[calc(max(2rem,(100vw-72rem)/2+2rem)+28rem)_1fr]">
+      <section className="bg-navy-dark text-white lg:grid lg:min-h-[min(calc(100svh-var(--header-h)-var(--util-h)),820px)] lg:grid-cols-[calc(max(2rem,(100vw-72rem)/2+2rem)+28rem)_1fr]">
         <div className="relative aspect-[16/9] lg:order-2 lg:aspect-auto">
           <Image
             src={heroImage}

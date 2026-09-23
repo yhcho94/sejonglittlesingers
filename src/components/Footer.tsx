@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { InstallButton } from "@/components/InstallButton";
+import { SocialLinks } from "@/components/SocialLinks";
 import { NAV } from "@/lib/nav";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
 
@@ -13,14 +14,11 @@ export function Footer() {
           <p className="mt-6 max-w-sm text-sm leading-relaxed">
             음악을 통해 아이들의 감성과 협동심을 키우는 세종시 어린이 합창단
           </p>
-          <div className="mt-6 flex flex-wrap gap-3 text-sm">
-            <a href={site.links.youtube} target="_blank" rel="noopener noreferrer" className="btn-ghost-light px-4 py-2 text-xs">
-              YouTube
-            </a>
-            <a href={site.links.cafe} target="_blank" rel="noopener noreferrer" className="btn-ghost-light px-4 py-2 text-xs">
-              네이버 카페
-            </a>
-          </div>
+          <SocialLinks
+            showLabel
+            className="mt-6 flex-wrap gap-2 text-xs"
+            itemClassName="border border-white/30 px-3 py-2 text-white/85 hover:border-white hover:text-white"
+          />
         </div>
 
         <nav className="md:col-span-3" aria-label="바로가기">

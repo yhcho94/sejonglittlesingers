@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MobileNavLinks } from "./NavLinks";
+import { SocialLinks } from "./SocialLinks";
 
 // 모바일 전체 화면 메뉴. 페이지를 이동하면 자동으로 닫힙니다.
 export function MobileMenu({ account }: { account: React.ReactNode }) {
@@ -47,6 +48,11 @@ function MobileMenuInner({ account }: { account: React.ReactNode }) {
             className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-40 overflow-y-auto bg-ivory px-6 pb-10 pt-4"
           >
             <MobileNavLinks onNavigate={() => setOpen(false)} />
+            <SocialLinks
+              showLabel
+              className="mt-8 flex-wrap gap-x-5 gap-y-3 text-sm text-ink-soft"
+              itemClassName="hover:text-navy"
+            />
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm" onClick={() => setOpen(false)}>
               {account}
             </div>
