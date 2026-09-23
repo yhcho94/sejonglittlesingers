@@ -126,7 +126,7 @@ export const assistantConductors: StaffMember[] = [
   },
 ];
 
-// 2026 조직도. 합창단 제공 조직도 기준.
+// 2026 조직도. 합창단 제공 조직도 기준. (선율반 보컬트레이너는 합창단 요청으로 추가)
 // 학부모대표 옆의 '○○ 어머니' 표기는 아동 이름이 드러나므로 공개 홈페이지에는 싣지 않습니다.
 export const accompanists: StaffMember[] = [
   {
@@ -226,7 +226,7 @@ export const theoryTeachers: StaffMember[] = [
     className: "화음반",
     sections: [
       { title: "학력", items: ["전주대학교 음악대학 졸업"] },
-      { title: "자격 · 수료", items: ["우쿠렐레지도자 2급 자격증", "뮤직플러스 아동 음악 연구회 수료"] },
+      { title: "자격 · 수료", items: ["우쿨렐레지도자 2급 자격증", "뮤직플러스 아동 음악 연구회 수료"] },
       { title: "주요 경력 (전)", items: ["양지 어린이집, 나성 어린이집 음악강사역임"] },
       { title: "현재 활동 (현)", items: ["소담유치원, 한빛 유치원, 바른 유치원 음악 강사"] },
     ],
@@ -265,11 +265,11 @@ export const theoryTeachers: StaffMember[] = [
   },
 ];
 
-// 담당 명칭 확인 필요 ("유투드 담당"으로 전달받음)
+// 유튜브 담당
 export const otherTeachers: StaffMember[] = [
   {
     name: "박세연",
-    role: "유투드 담당",
+    role: "유튜브 담당",
     sections: [
       {
         title: "학력",
@@ -281,7 +281,7 @@ export const otherTeachers: StaffMember[] = [
           "홈플러스 세종점 음악강사 역임",
           "이마트 세종점 음악강사 역임",
           "청주 현대백화점 문화센터 음악강사 역임",
-          "뮤직트리, 뮤직어드벤처, 음악세계 음악교재 편집의원 역임",
+          "뮤직트리, 뮤직어드벤처, 음악세계 음악교재 편집위원 역임",
         ],
       },
       {
@@ -313,7 +313,7 @@ export const staffGroups = [
   { title: "반주자", members: accompanists },
   { title: "보컬트레이너", members: vocalTrainers },
   { title: "이론선생님", members: theoryTeachers },
-  { title: "그 밖의 강사진", members: otherTeachers },
+  { title: "유튜브 담당", members: otherTeachers },
   { title: "사무국", members: officeStaff },
 ];
 
@@ -348,6 +348,7 @@ export const organization = {
       color: "#3f6b4f",
       members: [
         { role: "부지휘자", name: "서지선" },
+        { role: "보컬트레이너", name: "이정윤" },
         { role: "학부모대표", name: "김소영" },
         { role: "부대표", name: "이은희" },
         { role: "반주자", name: "배성희" },

@@ -130,7 +130,7 @@ export default async function HomePage() {
               합창 교육단체입니다.
             </p>
             <p className="mt-5 leading-relaxed text-ink-soft">
-              지휘자, 부지휘자, 반주자, 이론 강사, 사무국장 등 총 11명의 전문 강사진과 운영진이 함께하며, 12년 경력의
+              지휘자, 부지휘자, 반주자, 이론 강사, 사무국장 등 총 13명의 전문 강사진과 운영진이 함께하며, 12년 경력의
               어린이 합창 전문가인 단장이 직접 수업을 이끕니다.
             </p>
             <Link href="/about" className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-navy">
