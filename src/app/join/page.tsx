@@ -7,7 +7,11 @@ import { AUDITION_EMAIL } from "@/lib/application-fields";
 import { getRecruitment, listAuditionSongs, listPublishedFaqs } from "@/lib/content";
 import { site, smsHref } from "@/lib/site";
 
-export const metadata: Metadata = { title: "입단 안내" };
+export const metadata: Metadata = {
+  title: "입단 안내",
+  description: "세종리틀싱어즈 단원 모집 안내: 모집 대상, 반 구성(울림반·화음반·선율반), 오디션 지정곡과 온라인 입단 신청 방법.",
+  alternates: { canonical: "/join" },
+};
 
 // 이 사이트의 실제 신청·심사 흐름과 같습니다.
 const STEPS = [

@@ -8,6 +8,7 @@ import { listAlbums } from "@/lib/gallery";
 export const metadata: Metadata = {
   title: "사진 갤러리",
   description: "세종리틀싱어즈의 공연·행사 사진첩입니다. 무대 위의 순간과 함께 노래한 시간들을 담았습니다.",
+  alternates: { canonical: "/gallery" },
 };
 
 function dateLabel(d: string | null) {

@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { listPublishedPress, pressSource } from "@/lib/content";
 
-export const metadata: Metadata = { title: "보도자료" };
+export const metadata: Metadata = {
+  title: "보도자료",
+  description: "세종리틀싱어즈가 소개된 언론 보도 모음입니다.",
+  alternates: { canonical: "/press" },
+};
 
 export default async function PressPage() {
   const items = await listPublishedPress();

@@ -24,7 +24,7 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: site.name,
+    default: `${site.name} | 세종시 어린이 합창단`,
     template: `%s | ${site.name}`,
   },
   description: site.description,

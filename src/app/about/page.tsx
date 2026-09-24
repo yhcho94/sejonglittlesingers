@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "합창단 소개",
   description:
     "세종리틀싱어즈는 2023년 창단된 세종시 어린이 합창단으로, 음악을 통해 아이들의 감성과 협동심을 키우는 전문 합창 교육단체입니다.",
+  alternates: { canonical: "/about" },
 };
 
 // 아래 수치와 문구는 합창단이 제공한 소개 글을 그대로 옮긴 것입니다.

@@ -3,7 +3,11 @@ import { NoticeList } from "@/components/NoticeList";
 import { PageHeader } from "@/components/PageHeader";
 import { listPublishedNotices } from "@/lib/notices";
 
-export const metadata: Metadata = { title: "공지사항" };
+export const metadata: Metadata = {
+  title: "공지사항",
+  description: "세종리틀싱어즈 공지사항입니다.",
+  alternates: { canonical: "/notices" },
+};
 
 export default async function NoticesPage() {
   const notices = await listPublishedNotices();
