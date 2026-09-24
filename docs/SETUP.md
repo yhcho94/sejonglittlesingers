@@ -44,6 +44,7 @@
 
 Supabase 기본 메일 발송은 **테스트용**입니다. 발송량이 적게 제한되고 수신 대상에도 제약이 있습니다.
 실제 보호자들이 가입하려면 **Authentication → Emails → SMTP Settings** 에서 외부 메일 발송 서비스(SMTP)를 연결해야 합니다.
+메일 문구는 `docs/email-templates/README.md` 를 보고 한국어로 바꿉니다.
 (정확한 제한 사항은 Supabase 문서에서 최신 내용을 확인하세요.)
 
 ## 4. Vercel: 환경변수
@@ -105,3 +106,13 @@ update public.profiles set role = 'admin' where email = '관리자이메일@exam
 - 소개·연혁·지휘자: `src/app/about/page.tsx`
 - 대표 문구·입단 안내: `src/app/page.tsx`
 - 개인정보처리방침(초안): `src/app/privacy/page.tsx` → **게시 전 법률 검토 필요**
+
+## 검색엔진 등록 (네이버·구글)
+
+- 사이트맵: `https://sejonglittlesingers.com/sitemap.xml`, 수집 규칙: `/robots.txt` (관리자·회원 화면 제외)
+- 소유 확인은 **HTML 태그** 방식을 고르고, 태그의 `content="..."` 값만 Vercel 환경변수에 넣은 뒤 다시 배포합니다.
+
+| 이름 | 값 |
+|---|---|
+| `NAVER_SITE_VERIFICATION` | 네이버 서치어드바이저가 준 코드 |
+| `GOOGLE_SITE_VERIFICATION` | 구글 서치콘솔(URL 접두어 방식)이 준 코드 |
