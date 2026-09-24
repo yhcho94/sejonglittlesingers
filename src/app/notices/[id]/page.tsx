@@ -21,7 +21,7 @@ export default async function NoticeDetailPage({ params }: PageProps<"/notices/[
         ← 공지사항 목록
       </Link>
       <article className="card mt-4">
-        <h1 className="text-2xl font-bold text-navy">{notice.title}</h1>
+        <h1 className="text-2xl font-semibold text-navy">{notice.title}</h1>
         <p className="mt-2 text-sm text-ink-soft">{formatDateTime(notice.created_at)}</p>
         <hr className="my-6 border-line" />
         {/* 본문은 일반 텍스트로만 표시 (HTML 삽입 방지) */}

@@ -64,7 +64,7 @@ export default function InstallPage() {
 
         {GUIDES.map((guide) => (
           <section key={guide.id} id={guide.id} className="card scroll-mt-24">
-            <h2 className="mb-3 text-lg font-bold text-navy">{guide.title}</h2>
+            <h2 className="mb-3 text-lg font-semibold text-navy">{guide.title}</h2>
             <ol className="list-decimal space-y-2 pl-5 leading-relaxed">
               {guide.steps.map((step) => (
                 <li key={step}>{step}</li>

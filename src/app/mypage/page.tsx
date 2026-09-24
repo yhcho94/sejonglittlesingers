@@ -58,7 +58,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
       <div className="mx-auto grid max-w-5xl gap-6 px-4 py-7 md:grid-cols-3">
         <section className="card md:col-span-2">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-navy">입단 신청 내역</h2>
+            <h2 className="text-lg font-semibold text-navy">입단 신청 내역</h2>
             <Link href="/apply" className="btn-primary px-3 py-1.5 text-sm">새 신청</Link>
           </div>
           {applied && (
@@ -122,7 +122,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
         </section>
 
         <section className="card">
-          <h2 className="mb-4 text-lg font-bold text-navy">회원 정보</h2>
+          <h2 className="mb-4 text-lg font-semibold text-navy">회원 정보</h2>
           {profile ? <ProfileForm profile={profile} /> : <p>회원 정보를 불러오지 못했습니다.</p>}
           <div className="mt-6 border-t border-line pt-4 text-xs text-ink-soft">
             <Link href="/mypage/withdraw" className="underline hover:text-red-700">
@@ -132,7 +132,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
           </div>
         </section>
         <section className="card md:col-span-3">
-          <h2 className="text-lg font-bold text-navy">자녀 단원 초상권(사진·영상) 동의 · 이름 게시</h2>
+          <h2 className="text-lg font-semibold text-navy">자녀 단원 초상권(사진·영상) 동의 · 이름 게시</h2>
           <p className="mt-1 text-sm text-ink-soft">
             항목별로 언제든 동의하거나 철회할 수 있습니다. 활동 단원의 이름과 반은 홈페이지 &lsquo;단원 소개&rsquo;에 게시되며,
             원하지 않으시면 게시 중단을 선택해 주세요.

@@ -22,7 +22,7 @@ export default async function ConcertDetailPage({ params }: PageProps<"/concerts
         ← 공연 일정
       </Link>
       <article className="card mt-4">
-        <h1 className="text-2xl font-bold text-navy">{concert.title}</h1>
+        <h1 className="text-2xl font-semibold text-navy">{concert.title}</h1>
         <dl className="mt-4 space-y-1 text-sm">
           <div className="flex gap-3">
             <dt className="w-10 text-ink-soft">일시</dt>

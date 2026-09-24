@@ -1,20 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Noto_Sans_KR, Noto_Serif_KR } from "next/font/google";
+import { Cormorant_Garamond, Noto_Serif_KR } from "next/font/google";
+// 본문 글꼴: 프리텐다드 (SIL OFL, 글자 범위별로 나눠 필요한 부분만 내려받음)
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { site } from "@/lib/site";
 import "./globals.css";
 import { REVEAL_BOOT_SCRIPT, RevealObserver } from "@/components/Reveal";
 
-const notoSansKr = Noto_Sans_KR({
-  variable: "--font-noto-sans-kr",
-  weight: ["400", "500", "700"],
-  preload: false,
-});
-
 const notoSerifKr = Noto_Serif_KR({
   variable: "--font-noto-serif-kr",
-  weight: ["500", "700"],
+  weight: ["500", "600", "700"],
   preload: false,
 });
 
@@ -54,7 +50,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#16224d",
+  themeColor: "#121a3a",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -63,7 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="ko"
       suppressHydrationWarning
-      className={`${notoSansKr.variable} ${notoSerifKr.variable} ${cormorant.variable} h-full antialiased`}
+      className={`${notoSerifKr.variable} ${cormorant.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: REVEAL_BOOT_SCRIPT }} />

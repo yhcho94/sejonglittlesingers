@@ -15,7 +15,7 @@ export default async function WithdrawPage() {
       <div className="mx-auto max-w-2xl px-4 py-7">
         <section className="card space-y-6">
           <div>
-            <h2 className="font-bold text-navy">탈퇴하면 바로 삭제되는 정보</h2>
+            <h2 className="font-semibold text-navy">탈퇴하면 바로 삭제되는 정보</h2>
             <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed">
               <li>
                 회원 정보: 보호자 이름, 연락처, 이메일({profile?.email}), 로그인 정보
@@ -24,7 +24,7 @@ export default async function WithdrawPage() {
             </ul>
           </div>
           <div>
-            <h2 className="font-bold text-navy">함께 알아 두실 점</h2>
+            <h2 className="font-semibold text-navy">함께 알아 두실 점</h2>
             <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-ink-soft">
               <li>삭제된 정보는 되돌릴 수 없습니다. 다시 이용하려면 새로 가입해야 합니다.</li>
               <li>
