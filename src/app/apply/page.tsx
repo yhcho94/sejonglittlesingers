@@ -46,14 +46,13 @@ export default async function ApplyPage({ searchParams }: PageProps<"/apply">) {
             </p>
             {rejected.admin_note && <p className="mt-1 whitespace-pre-line text-ink">안내: {rejected.admin_note}</p>}
             <p className="mt-2 text-ink-soft">
-              이름과 생년월일은 이전 신청에서 가져왔습니다. 학교·주소·경력·지원 동기·사진 등은 반려 시 개인정보 보호를 위해
-              삭제되었으므로 다시 입력해 주세요.
+              이름과 생년월일은 이전 신청에서 가져왔습니다. 성별·소속·원하는 반·사는 동·특이사항 등은 반려 시 개인정보 보호를
+              위해 삭제되었으므로 다시 입력해 주세요. 오디션 동영상도 다시 보내 주세요.
             </p>
           </div>
         )}
         <div className="card">
           <ApplyForm
-            userId={user.id}
             defaults={rejected ? { childName: rejected.child_name, childBirthdate: rejected.child_birthdate } : undefined}
           />
         </div>

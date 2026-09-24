@@ -7,10 +7,9 @@ import { getCurrentUser } from "@/lib/auth";
 import type { FormState } from "@/lib/types";
 import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
 import { JOIN_SOURCES } from "@/lib/join-source";
+import { CLASS_OPTIONS, GENDERS } from "@/lib/application-fields";
 
 const PHOTO_BUCKET = "application-photos";
-const PHOTO_PATH_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f-]{36}\.(jpg|png|webp)$/;
 
 function text(formData: FormData, key: string, max: number) {
   const value = formData.get(key);
@@ -37,14 +36,14 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
     return { error: "필수 동의 항목에 동의해 주세요." };
   }
 
-  const photoPath = text(formData, "photo_path", 200);
-  const consentPhoto = formData.get("consent_photo") === "on";
-  if (photoPath) {
-    if (!PHOTO_PATH_RE.test(photoPath) || !photoPath.startsWith(`${userId}/`)) {
-      return { error: "사진 정보가 올바르지 않습니다. 다시 첨부해 주세요." };
-    }
-    if (!consentPhoto) return { error: "사진을 첨부하려면 사진 수집·이용에 동의해 주세요." };
-  }
+  const gender = String(formData.get("gender") ?? "");
+  if (!(GENDERS as readonly string[]).includes(gender)) return { error: "성별을 선택해 주세요." };
+  const desiredClass = String(formData.get("desired_class") ?? "");
+  if (!CLASS_OPTIONS.some((c) => c.name === desiredClass)) return { error: "원하는 반을 선택해 주세요." };
+  const school = text(formData, "school", 100);
+  if (!school) return { error: "소속 기관(학교·유치원)을 입력해 주세요." };
+  const neighborhood = text(formData, "neighborhood", 50);
+  if (!neighborhood) return { error: "사는 동을 입력해 주세요." };
 
   const joinSource = String(formData.get("join_source") ?? "");
   if (!(JOIN_SOURCES as readonly string[]).includes(joinSource)) return { error: "가입경로를 선택해 주세요." };
@@ -54,18 +53,17 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
     guardian_id: userId,
     child_name: childName,
     child_birthdate: birthdate,
-    school: text(formData, "school", 100),
-    grade: text(formData, "grade", 20),
-    address: text(formData, "address", 200),
-    experience: text(formData, "experience", 2000),
-    motivation: text(formData, "motivation", 2000),
-    photo_path: photoPath,
+    school,
     consent_privacy: true,
     consent_guardian: true,
-    consent_photo: Boolean(photoPath) && consentPhoto,
   };
-  // 0008(초상권)·0011(가입경로) 칸. DB 에 아직 칸이 없으면(PGRST204) 기본 항목만이라도 저장해 신청이 누락되지 않게 합니다.
+  // 0008(초상권)·0011(가입경로)·0017(신청서 항목) 칸. DB 에 아직 칸이 없으면(PGRST204) 기본 항목만이라도 저장해 신청이 누락되지 않게 합니다.
   const extra = {
+    gender,
+    desired_class: desiredClass,
+    neighborhood,
+    referrer: text(formData, "referrer", 100),
+    notes: text(formData, "notes", 2000),
     consent_media_channels: media.channels,
     consent_media_press: media.press,
     consent_media_name: media.name,
@@ -75,8 +73,9 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
   };
   let { error } = await supabase.from("applications").insert({ ...base, ...extra });
   if (error?.code === "PGRST204") {
-    console.error("입단 신청: 새 항목 칸이 없어 기본 항목만 저장 (0008·0011 실행 필요)");
-    ({ error } = await supabase.from("applications").insert(base));
+    console.error("입단 신청: 새 항목 칸이 없어 기본 항목만 저장 (0008·0011·0017 실행 필요)");
+    const fallback = [base.school, `성별 ${gender}`, `원하는 반 ${desiredClass}`, `사는 동 ${neighborhood}`].join(" / ");
+    ({ error } = await supabase.from("applications").insert({ ...base, motivation: fallback }));
   }
 
   if (error) {

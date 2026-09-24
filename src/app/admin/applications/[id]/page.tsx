@@ -7,6 +7,7 @@ import { requireAdmin } from "@/lib/auth";
 import { formatDateTime } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { Application, Profile } from "@/lib/types";
+import { AUDITION_EMAIL, CLASS_OPTIONS } from "@/lib/application-fields";
 import { ReviewForm } from "./ReviewForm";
 
 type Detail = Application & {
@@ -43,15 +44,25 @@ export default async function AdminApplicationDetail({
       ? await supabase.from("singers").select("id").eq("application_id", app.id).maybeSingle()
       : { data: null };
 
-  const rows: [string, string | null][] = [
+  const cls = CLASS_OPTIONS.find((c) => c.name === app.desired_class);
+  const rows: [string, string | null | undefined][] = [
     ["생년월일", app.child_birthdate],
-    ["학교", app.school],
+    ["성별", app.gender],
+    ["소속 기관", app.school],
+    ["원하는 반", cls ? `${cls.name} (${cls.day})` : app.desired_class],
+    ["사는 동", app.neighborhood],
+    ["가입경로", app.join_source ? `${app.join_source}${app.join_source_detail ? ` (${app.join_source_detail})` : ""}` : null],
+    ["소개해 준 사람", app.referrer],
+    ["특이사항", app.notes],
+  ];
+  // 예전 신청서 항목 (값이 있을 때만 표시)
+  const legacy: [string, string | null][] = [
     ["학년", app.grade],
     ["주소", app.address],
     ["음악 경력", app.experience],
     ["지원 동기", app.motivation],
-    ["가입경로", app.join_source ? `${app.join_source}${app.join_source_detail ? ` (${app.join_source_detail})` : ""}` : null],
   ];
+  for (const row of legacy) if (row[1]) rows.push(row);
 
   return (
     <>
@@ -83,8 +94,8 @@ export default async function AdminApplicationDetail({
           </dl>
           <p className="mt-6 text-sm text-ink-soft">신청일시 {formatDateTime(app.created_at)}</p>
           <p className="text-sm text-ink-soft">
-            동의: 개인정보 {app.consent_privacy ? "O" : "X"} · 법정대리인 {app.consent_guardian ? "O" : "X"} · 사진{" "}
-            {app.consent_photo ? "O" : "X"}
+            동의: 개인정보 {app.consent_privacy ? "O" : "X"} · 법정대리인 {app.consent_guardian ? "O" : "X"}
+            {app.photo_path && <> · 사진 {app.consent_photo ? "O" : "X"}</>}
           </p>
           <p className="text-sm text-ink-soft">
             초상권(선택): ① 공식 채널 {app.consent_media_channels ? "O" : "X"} · ② 언론·홍보물{" "}
@@ -100,14 +111,19 @@ export default async function AdminApplicationDetail({
             <p className="text-sm text-ink-soft">{app.guardian?.email}</p>
           </section>
           <section className="card">
-            <h2 className="mb-3 font-bold text-navy">사진</h2>
-            {photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element -- 만료되는 서명 URL 이라 이미지 최적화를 거치지 않음
-              <img src={photoUrl} alt={`${app.child_name} 신청 사진`} className="w-full rounded-sm" />
-            ) : (
-              <p className="text-sm text-ink-soft">첨부된 사진이 없습니다.</p>
-            )}
+            <h2 className="mb-2 font-bold text-navy">오디션 동영상</h2>
+            <p className="text-sm text-ink-soft">
+              {AUDITION_EMAIL} 메일함에서 제목 &lsquo;[입단 오디션] {app.child_name} ({app.child_birthdate})&rsquo; 을 찾아 확인하세요.
+              심사 결과를 정한 날부터 30일 이내에 메일을 삭제해 주세요.
+            </p>
           </section>
+          {photoUrl && (
+            <section className="card">
+              <h2 className="mb-3 font-bold text-navy">사진 (예전 신청서)</h2>
+              {/* eslint-disable-next-line @next/next/no-img-element -- 만료되는 서명 URL 이라 이미지 최적화를 거치지 않음 */}
+              <img src={photoUrl} alt={`${app.child_name} 신청 사진`} className="w-full rounded-sm" />
+            </section>
+          )}
         </div>
       </div>
 
