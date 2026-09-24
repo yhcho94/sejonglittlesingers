@@ -44,7 +44,8 @@ export const metadata: Metadata = {
   },
   // 검색엔진 사이트 소유 확인 코드 (공개 값. Vercel 환경변수가 있으면 그 값을 우선)
   verification: {
-    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    // 구글 서치콘솔 (URL 접두어: https://sejonglittlesingers.com)
+    google: process.env.GOOGLE_SITE_VERIFICATION || "d7xlIyVQ1tptJm7w4a6ooDwmAAvp_WgA2tMBfKrfGcQ",
     other: {
       // 네이버 서치어드바이저: https://sejonglittlesingers.com (대표 주소), https://www.sejonglittlesingers.com
       "naver-site-verification": process.env.NAVER_SITE_VERIFICATION
