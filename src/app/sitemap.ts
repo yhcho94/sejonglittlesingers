@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { connection } from "next/server";
 import { listConcerts } from "@/lib/content";
 import { listAlbums } from "@/lib/gallery";
 import { listPublishedNotices } from "@/lib/notices";
@@ -19,6 +20,8 @@ const PAGES: { path: string; priority: number; changeFrequency: "daily" | "weekl
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // 게시물이 바뀌면 바로 반영되도록 요청 때마다 만듭니다. (아래 try 가 이 신호를 삼키지 않도록 먼저 호출)
+  await connection();
   const url = (path: string) => `${site.url}${path === "/" ? "" : path}`;
   const entries: MetadataRoute.Sitemap = PAGES.map((p) => ({
     url: url(p.path),
