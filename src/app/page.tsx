@@ -4,7 +4,7 @@ import { ConcertCard } from "@/components/ConcertCard";
 import { CountUp } from "@/components/CountUp";
 import { NoticeList } from "@/components/NoticeList";
 import { getRecruitment, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
-import { history } from "@/lib/history";
+import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
 import { site, smsHref } from "@/lib/site";
 import { organization } from "@/lib/staff";
@@ -26,11 +26,13 @@ const STATS: { value: string; unit?: string; label: string; count?: boolean }[] 
   { value: "4", unit: "회", label: "연간 주최 음악회", count: true },
 ];
 
-// 공연 이력에서 장소가 있는 최근 무대 3개 (최신순)
-const RECENT_STAGES = history
-  .flatMap((y) => [...y.items].reverse().map((item) => ({ ...item, year: y.year })))
-  .filter((item) => item.place)
-  .slice(0, 3);
+// 공연 이력에서 장소가 있는 최근 무대 3개 (최신순, 끝난 공연 일정 포함)
+async function recentStages() {
+  return (await getHistory())
+    .flatMap((y) => [...y.items].reverse().map((item) => ({ ...item, year: y.year })))
+    .filter((item) => item.place)
+    .slice(0, 3);
+}
 
 function SectionTitle({
   eyebrow,
@@ -59,11 +61,12 @@ function SectionTitle({
 }
 
 export default async function HomePage() {
-  const [notices, concerts, recruitment, press] = await Promise.all([
+  const [notices, concerts, recruitment, press, RECENT_STAGES] = await Promise.all([
     listPublishedNotices(4),
     listConcerts("upcoming", 3),
     getRecruitment(),
     listPublishedPress(),
+    recentStages(),
   ]);
 
   return (

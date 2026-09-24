@@ -1,4 +1,5 @@
-import { history, type HistoryItem } from "@/lib/history";
+import type { HistoryItem } from "@/lib/history";
+import { getHistory } from "@/lib/history-merged";
 
 const BADGE: Record<NonNullable<HistoryItem["kind"]>, { label: string; className: string }> = {
   milestone: { label: "창단", className: "bg-navy text-white" },
@@ -7,7 +8,9 @@ const BADGE: Record<NonNullable<HistoryItem["kind"]>, { label: string; className
 };
 
 // 연도별 공연 이력. 최근 연도만 펼쳐 두고 이전 연도는 접어 둡니다.
-export function PerformanceHistory() {
+// 관리자 '공연 일정'에 등록한 공연은 끝나면 자동으로 이력에 추가됩니다.
+export async function PerformanceHistory() {
+  const history = await getHistory();
   return (
     <div className="divide-y divide-line border border-line bg-white">
       {history.map(({ year, items }, index) => (

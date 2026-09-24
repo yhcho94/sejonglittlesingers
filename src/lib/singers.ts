@@ -10,7 +10,7 @@ export type SingerStatus = keyof typeof STATUS_LABEL;
 export type Singer = {
   id: number;
   name: string;
-  birthdate: string; // YYYY-MM-DD (출생연도만 알면 그해 01-01)
+  birthdate: string | null; // YYYY-MM-DD (출생연도만 알면 그해 01-01, 모르면 null)
   birth_year_only: boolean;
   gender: "여" | "남" | null;
   school: string | null;
@@ -48,14 +48,16 @@ export function todayKst(now = new Date()) {
  * 한국은 1월~12월 출생이 같은 해에 입학하므로 (올해 - 출생연도 - 6) 으로 계산합니다.
  * 학년도는 3월에 시작하므로 1~2월에는 전년도 학년을 씁니다.
  */
-export function gradeCode(birthdate: string, override: number | null, now = new Date()) {
+export function gradeCode(birthdate: string | null, override: number | null, now = new Date()): number | null {
   if (override !== null && override !== undefined) return override;
+  if (!birthdate) return null;
   const { year, month } = todayKst(now);
   const schoolYear = month >= 3 ? year : year - 1;
   return schoolYear - Number(birthdate.slice(0, 4)) - 6;
 }
 
-export function gradeLabel(code: number) {
+export function gradeLabel(code: number | null) {
+  if (code === null) return "미입력";
   if (code <= 0) return "미취학";
   if (code <= 6) return `초${code}`;
   if (code <= 9) return `중${code - 6}`;
@@ -74,11 +76,12 @@ export function manAge(birthdate: string, now = new Date()) {
 
 // 단원의 만 나이 (출생연도만 알면 계산하지 않음)
 export function singerAge(s: Pick<Singer, "birthdate" | "birth_year_only">, now = new Date()) {
-  return s.birth_year_only ? null : manAge(s.birthdate, now);
+  return s.birth_year_only || !s.birthdate ? null : manAge(s.birthdate, now);
 }
 
 // 생년월일 표시: 2016-05-20 또는 2016년생
 export function birthLabel(s: Pick<Singer, "birthdate" | "birth_year_only">) {
+  if (!s.birthdate) return "미입력";
   return s.birth_year_only ? `${s.birthdate.slice(0, 4)}년생` : s.birthdate;
 }
 
@@ -157,7 +160,7 @@ export function groupSingers(singers: Singer[], view: View, now = new Date()): G
       }
       case "grade": {
         const g = gradeCode(s.birthdate, s.grade_override, now);
-        return { key: `g${g}`, label: gradeLabel(g), order: g };
+        return g === null ? { key: "g-none", label: "학년 미입력", order: 999 } : { key: `g${g}`, label: gradeLabel(g), order: g };
       }
       case "age": {
         const a = singerAge(s, now);
@@ -166,6 +169,7 @@ export function groupSingers(singers: Singer[], view: View, now = new Date()): G
           : { key: `a${a}`, label: `만 ${a}세`, order: a };
       }
       case "birthYear": {
+        if (!s.birthdate) return { key: "y-none", label: "출생연도 미입력", order: 9999 };
         const y = Number(s.birthdate.slice(0, 4));
         return { key: `y${y}`, label: `${y}년생`, order: y };
       }
@@ -197,7 +201,7 @@ export function rosterRow(s: Singer, guardian?: { guardian_name: string; phone: 
     반: s.class_name ?? "",
     학년: gradeLabel(gradeCode(s.birthdate, s.grade_override, now)),
     "만 나이": singerAge(s, now) ?? "",
-    생년월일: birthLabel(s),
+    생년월일: s.birthdate ? birthLabel(s) : "",
     성별: s.gender ?? "",
     학교: s.school ?? "",
     파트: s.part ?? "",

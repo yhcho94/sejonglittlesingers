@@ -100,7 +100,7 @@ export async function getPublicSingers() {
   ]);
   if (stats.error || names.error) return null;
   return {
-    stats: (stats.data ?? []) as { class_name: string | null; birth_year: number; grade_override: number | null }[],
+    stats: (stats.data ?? []) as { class_name: string | null; birth_year: number | null; grade_override: number | null }[],
     names: (names.data ?? []) as { name: string; class_name: string | null }[],
   };
 }

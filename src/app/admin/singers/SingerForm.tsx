@@ -109,17 +109,16 @@ export function SingerForm({
             <input id="name" name="name" required maxLength={50} defaultValue={initial.name} className="input" />
           </div>
           <div>
-            <label htmlFor="birthdate" className="label">생년월일 *</label>
+            <label htmlFor="birthdate" className="label">생년월일</label>
             {yearOnly ? (
               <select
                 id="birthdate"
                 name="birthdate"
-                required
                 value={birthdate ? `${birthdate.slice(0, 4)}-01-01` : ""}
                 onChange={(e) => setBirthdate(e.target.value)}
                 className="input"
               >
-                <option value="">출생연도 선택</option>
+                <option value="">모름</option>
                 {Array.from({ length: 20 }, (_, i) => new Date().getFullYear() - 3 - i).map((y) => (
                   <option key={y} value={`${y}-01-01`}>
                     {y}년생
@@ -131,7 +130,6 @@ export function SingerForm({
                 id="birthdate"
                 name="birthdate"
                 type="date"
-                required
                 value={birthdate}
                 onChange={(e) => setBirthdate(e.target.value)}
                 className="input"

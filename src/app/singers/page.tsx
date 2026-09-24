@@ -25,12 +25,13 @@ export default async function SingersPage() {
   // 공개 통계는 생년월일이 아닌 출생연도만 받으므로 7월 1일로 두고 학년을 계산합니다.
   const rows = (data?.stats ?? []).map((s) => ({
     className: s.class_name,
-    grade: gradeCode(`${s.birth_year}-07-01`, s.grade_override),
+    grade: gradeCode(s.birth_year ? `${s.birth_year}-07-01` : null, s.grade_override),
   }));
   const total = rows.length;
 
   const gradeCounts = new Map<number, number>();
-  for (const r of rows) gradeCounts.set(r.grade, (gradeCounts.get(r.grade) ?? 0) + 1);
+  // 학년을 모르는 단원(생년월일 미입력)은 반별 인원에만 포함
+  for (const r of rows) if (r.grade !== null) gradeCounts.set(r.grade, (gradeCounts.get(r.grade) ?? 0) + 1);
   const grades = [...gradeCounts.entries()].sort((a, b) => a[0] - b[0]);
   const maxGrade = Math.max(1, ...grades.map(([, v]) => v));
 
@@ -77,7 +78,7 @@ export default async function SingersPage() {
                       )}
                     </div>
                     {inClass.length > 0 && (
-                      <p className="mt-1 text-sm text-ink-soft">{gradeRange(inClass.map((r) => r.grade))}</p>
+                      <p className="mt-1 text-sm text-ink-soft">{gradeRange(inClass.map((r) => r.grade).filter((g): g is number => g !== null))}</p>
                     )}
 
                     <dl className="mt-6 space-y-1.5 border-t border-line pt-5 text-sm">

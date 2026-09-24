@@ -51,7 +51,11 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
     ["학년", `${grade}${singer.grade_override !== null ? " (직접 지정)" : ""}`],
     [
       "생년월일",
-      singer.birth_year_only ? `${birthLabel(singer)} (생일 미입력)` : `${singer.birthdate} (만 ${singerAge(singer)}세)`,
+      !singer.birthdate
+        ? null
+        : singer.birth_year_only
+          ? `${birthLabel(singer)} (생일 미입력)`
+          : `${singer.birthdate} (만 ${singerAge(singer)}세)`,
     ],
     ["가입경로", singer.join_source],
     ["성별", singer.gender],
