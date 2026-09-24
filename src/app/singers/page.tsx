@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { getPublicSingers } from "@/lib/content";
-import { gradeCode, gradeLabel } from "@/lib/singers";
 import { site } from "@/lib/site";
 import { organization } from "@/lib/staff";
 
@@ -14,22 +13,10 @@ export const metadata: Metadata = {
 // 공개 화면에는 교사진만 표시 (학부모 임원 이름은 싣지 않음)
 const TEACHER_ROLES = ["부지휘자", "반주자", "보컬트레이너", "이론선생님"];
 
-function gradeRange(codes: number[]) {
-  if (!codes.length) return "";
-  const min = Math.min(...codes);
-  const max = Math.max(...codes);
-  return min === max ? gradeLabel(min) : `${gradeLabel(min)} ~ ${gradeLabel(max)}`;
-}
-
 export default async function SingersPage() {
   const data = await getPublicSingers();
-  // 공개 통계는 생년월일이 아닌 출생연도만 받으므로 7월 1일로 두고 학년을 계산합니다.
-  const rows = (data?.stats ?? []).map((s) => ({
-    className: s.class_name,
-    grade: gradeCode(s.birth_year ? `${s.birth_year}-07-01` : null, s.grade_override),
-  }));
-  const total = rows.length;
-
+  const counts = data?.counts ?? [];
+  const total = counts.reduce((sum, c) => sum + c.singers, 0);
 
   return (
     <>
@@ -58,7 +45,7 @@ export default async function SingersPage() {
 
           <div className="grid gap-6 md:grid-cols-3">
             {organization.classes.map((c) => {
-              const inClass = rows.filter((r) => r.className === c.name);
+              const inClass = counts.find((r) => r.class_name === c.name)?.singers ?? 0;
               const names = (data?.names ?? []).filter((n) => n.class_name === c.name);
               const teachers = c.members.filter((m) => TEACHER_ROLES.includes(m.role));
               return (
@@ -67,16 +54,12 @@ export default async function SingersPage() {
                   <div className="flex flex-1 flex-col p-6 md:p-8">
                     <div className="flex items-baseline justify-between gap-4">
                       <h2 className="text-2xl font-bold text-navy">{c.name}</h2>
-                      {inClass.length > 0 && (
+                      {inClass > 0 && (
                         <p className="text-sm text-ink-soft">
-                          <strong className="text-2xl font-semibold text-ink">{inClass.length}</strong>명
+                          <strong className="text-2xl font-semibold text-ink">{inClass}</strong>명
                         </p>
                       )}
                     </div>
-                    {inClass.length > 0 && (
-                      <p className="mt-1 text-sm text-ink-soft">{gradeRange(inClass.map((r) => r.grade).filter((g): g is number => g !== null))}</p>
-                    )}
-
                     <dl className="mt-6 space-y-1.5 border-t border-line pt-5 text-sm">
                       {teachers.map((t) => (
                         <div key={`${t.role}-${t.name}`} className="flex gap-3">
@@ -102,7 +85,7 @@ export default async function SingersPage() {
             })}
           </div>
 
-          {total === 0 && (
+          {total === 0 && !data?.names.length && (
             <p className="mt-10 text-center text-sm text-ink-soft">단원 현황은 준비 중입니다.</p>
           )}
 
