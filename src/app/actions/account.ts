@@ -86,6 +86,11 @@ export async function updateMyMediaConsent(_prev: FormState, formData: FormData)
     p_version: MEDIA_CONSENT_VERSION,
   });
   if (error) return { error: "저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+  const hidden = await supabase.rpc("set_my_name_hidden", {
+    p_singer_id: singerId,
+    p_hidden: formData.get("name_hidden") === "on",
+  });
+  if (hidden.error) return { error: "이름 게시 설정을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   revalidatePath("/mypage");
   revalidatePath("/singers");
   return { success: "저장했습니다." };

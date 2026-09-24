@@ -51,9 +51,14 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
     ["학년", `${grade}${singer.grade_override !== null ? " (직접 지정)" : ""}`],
     [
       "생년월일",
-      singer.birth_year_only ? `${birthLabel(singer)} (생일 미입력)` : `${singer.birthdate} (만 ${singerAge(singer)}세)`,
+      !singer.birthdate
+        ? null
+        : singer.birth_year_only
+          ? `${birthLabel(singer)} (생일 미입력)`
+          : `${singer.birthdate} (만 ${singerAge(singer)}세)`,
     ],
     ["가입경로", singer.join_source],
+    ["단원 소개 이름", singer.name_hidden ? "숨김 (보호자 요청)" : singer.status === "active" ? "게시 중" : "게시 안 함 (활동 단원만 게시)"],
     ["성별", singer.gender],
     ["학교", singer.school],
     ["파트", singer.part],
@@ -187,7 +192,7 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
               {[
                 ["① 공식 채널 게시", singer.consent_media_channels],
                 ["② 언론·홍보물", singer.consent_media_press],
-                ["③ 이름 표시 (단원 소개 포함)", singer.name_public],
+                ["③ 게시물·영상 자막 이름 표시", singer.name_public],
               ].map(([label, on]) => (
                 <li key={String(label)} className="flex justify-between gap-3">
                   <span className="text-ink-soft">{label}</span>

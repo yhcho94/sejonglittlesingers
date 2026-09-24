@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { getPublicSingers } from "@/lib/content";
 import { gradeCode, gradeLabel } from "@/lib/singers";
+import { site } from "@/lib/site";
 import { organization } from "@/lib/staff";
 
 export const metadata: Metadata = {
@@ -25,14 +26,10 @@ export default async function SingersPage() {
   // 공개 통계는 생년월일이 아닌 출생연도만 받으므로 7월 1일로 두고 학년을 계산합니다.
   const rows = (data?.stats ?? []).map((s) => ({
     className: s.class_name,
-    grade: gradeCode(`${s.birth_year}-07-01`, s.grade_override),
+    grade: gradeCode(s.birth_year ? `${s.birth_year}-07-01` : null, s.grade_override),
   }));
   const total = rows.length;
 
-  const gradeCounts = new Map<number, number>();
-  for (const r of rows) gradeCounts.set(r.grade, (gradeCounts.get(r.grade) ?? 0) + 1);
-  const grades = [...gradeCounts.entries()].sort((a, b) => a[0] - b[0]);
-  const maxGrade = Math.max(1, ...grades.map(([, v]) => v));
 
   return (
     <>
@@ -77,7 +74,7 @@ export default async function SingersPage() {
                       )}
                     </div>
                     {inClass.length > 0 && (
-                      <p className="mt-1 text-sm text-ink-soft">{gradeRange(inClass.map((r) => r.grade))}</p>
+                      <p className="mt-1 text-sm text-ink-soft">{gradeRange(inClass.map((r) => r.grade).filter((g): g is number => g !== null))}</p>
                     )}
 
                     <dl className="mt-6 space-y-1.5 border-t border-line pt-5 text-sm">
@@ -91,8 +88,8 @@ export default async function SingersPage() {
 
                     {names.length > 0 && (
                       <div className="mt-6 border-t border-line pt-5">
-                        <p className="eyebrow text-gold-deep">Members</p>
-                        <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 text-sm">
+                        <p className="eyebrow text-gold-deep">Members · {names.length}</p>
+                        <ul className="mt-3 grid grid-cols-3 gap-x-3 gap-y-1.5 text-sm sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4">
                           {names.map((n, i) => (
                             <li key={`${n.name}-${i}`}>{n.name}</li>
                           ))}
@@ -105,42 +102,14 @@ export default async function SingersPage() {
             })}
           </div>
 
-          {grades.length > 0 && (
-            <div className="mt-12 border border-line bg-white p-6 md:p-8">
-              <h2 className="text-xl font-bold text-navy">학년별 단원</h2>
-              <p className="mt-1 text-sm text-ink-soft">활동 단원 기준 · 출생연도로 계산한 학년</p>
-              <ul className="mt-6 space-y-1.5">
-                {grades.map(([g, v]) => (
-                  <li
-                    key={g}
-                    title={`${gradeLabel(g)} ${v}명`}
-                    className="grid grid-cols-[6.5rem_1fr] items-center gap-3 text-sm"
-                  >
-                    <span className="text-ink-soft">{gradeLabel(g)}</span>
-                    <span className="flex items-center gap-2">
-                      <span
-                        className="h-4 rounded-r-[4px] bg-navy"
-                        style={{ width: `calc((100% - 3.5rem) * ${v / maxGrade})` }}
-                      />
-                      <span className="tabular-nums">
-                        {v}
-                        <span className="text-xs text-ink-soft">명</span>
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
           {total === 0 && (
             <p className="mt-10 text-center text-sm text-ink-soft">단원 현황은 준비 중입니다.</p>
           )}
 
           <div className="mt-12 flex flex-col items-start justify-between gap-6 border-t border-line pt-10 md:flex-row md:items-center">
             <p className="max-w-2xl text-xs leading-relaxed text-ink-soft">
-              단원의 개인정보 보호를 위해 이 화면에는 반별·학년별 인원만 공개하며, 단원 이름은 보호자가 공개에 동의한 경우에만
-              게시합니다. 사진·생년월일·학교 등 다른 정보는 공개하지 않습니다.
+              이 화면에는 활동 중인 단원의 이름과 반만 게시하며, 사진·생년월일·학교 등 다른 정보는 공개하지 않습니다. 이름 게시를
+              원하지 않으시면 마이페이지 또는 합창단({site.contact.phone})으로 알려 주세요. 바로 게시를 중단합니다.
             </p>
             <Link href="/join" className="btn-primary shrink-0">
               입단 안내 보기

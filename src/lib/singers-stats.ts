@@ -14,6 +14,8 @@ function countBy(items: Singer[], keyOf: (s: Singer) => { key: string; label: st
   return [...map.values()].sort((a, b) => a.order - b.order).map(({ key, label, value }) => ({ key, label, value }));
 }
 
+const gradeKey = (g: number | null) => (g === null ? "g-none" : `g${g}`);
+
 const pct = (n: number, d: number) => (d ? Math.round((n / d) * 100) : 0);
 
 function monthsBetween(from: string, now: Date) {
@@ -46,13 +48,14 @@ export function singerStats(all: Singer[], now = new Date()) {
   );
   const byGrade = countBy(active, (s) => {
     const g = gradeCode(s.birthdate, s.grade_override, now);
-    return { key: `g${g}`, label: gradeLabel(g), order: g };
+    return { key: gradeKey(g), label: g === null ? "미입력" : gradeLabel(g), order: g ?? 999 };
   });
   const byAge = countBy(active, (s) => {
     const a = singerAge(s, now);
     return a === null ? { key: "a-none", label: "생일 미입력", order: 999 } : { key: `a${a}`, label: `만 ${a}세`, order: a };
   });
   const byBirthYear = countBy(active, (s) => {
+    if (!s.birthdate) return { key: "y-none", label: "미입력", order: 9999 };
     const y = Number(s.birthdate.slice(0, 4));
     return { key: `y${y}`, label: `${y}년생`, order: y };
   });
@@ -73,7 +76,7 @@ export function singerStats(all: Singer[], now = new Date()) {
     cells: gradeKeys.map(
       (gk) =>
         active.filter(
-          (s) => (s.class_name ?? "none") === ck && `g${gradeCode(s.birthdate, s.grade_override, now)}` === gk,
+          (s) => (s.class_name ?? "none") === ck && gradeKey(gradeCode(s.birthdate, s.grade_override, now)) === gk,
         ).length,
     ),
   }));

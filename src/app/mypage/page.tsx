@@ -37,6 +37,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
     consent_media_press: boolean;
     name_public: boolean;
     consent_updated_at: string | null;
+    name_hidden?: boolean;
   }[];
 
   return (
@@ -96,8 +97,11 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
           </div>
         </section>
         <section className="card md:col-span-3">
-          <h2 className="text-lg font-bold text-navy">자녀 단원 초상권(사진·영상) 동의</h2>
-          <p className="mt-1 text-sm text-ink-soft">항목별로 언제든 동의하거나 철회할 수 있습니다.</p>
+          <h2 className="text-lg font-bold text-navy">자녀 단원 초상권(사진·영상) 동의 · 이름 게시</h2>
+          <p className="mt-1 text-sm text-ink-soft">
+            항목별로 언제든 동의하거나 철회할 수 있습니다. 활동 단원의 이름과 반은 홈페이지 &lsquo;단원 소개&rsquo;에 게시되며,
+            원하지 않으시면 게시 중단을 선택해 주세요.
+          </p>
           <ul className="mt-3 list-disc space-y-1 pl-5 text-xs leading-relaxed text-ink-soft">
             {MEDIA_NOTICE.map((line) => (
               <li key={line}>{line}</li>

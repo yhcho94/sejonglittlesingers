@@ -50,7 +50,7 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
   const name = text(formData, "name", 50);
   const birth = dateOrNull(formData, "birthdate");
   if (!name) return { error: "이름을 입력해 주세요." };
-  if (birth.error || !birth.value) return { error: "생년월일을 입력해 주세요." };
+  if (birth.error) return { error: "생년월일을 확인해 주세요." };
 
   const gender = String(formData.get("gender") ?? "");
   const className = String(formData.get("class_name") ?? "");
@@ -73,7 +73,7 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
   const values = {
     name,
     // 출생연도만 아는 경우 그해 1월 1일로 저장 (화면에는 'OOOO년생'으로 표시)
-    birthdate: formData.get("birth_year_only") === "on" ? `${birth.value.slice(0, 4)}-01-01` : birth.value,
+    birthdate: birth.value && formData.get("birth_year_only") === "on" ? `${birth.value.slice(0, 4)}-01-01` : birth.value,
     gender: gender === "여" || gender === "남" ? gender : null,
     school: text(formData, "school", 100),
     grade_override: grade.value,
@@ -87,12 +87,13 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
     guardian_name: text(formData, "guardian_name", 50),
     guardian_phone: text(formData, "guardian_phone", 20),
     photo_path: photoPath || null,
-    birth_year_only: formData.get("birth_year_only") === "on",
+    birth_year_only: Boolean(birth.value) && formData.get("birth_year_only") === "on",
     join_source: (JOIN_SOURCES as readonly string[]).includes(String(formData.get("join_source"))) ? String(formData.get("join_source")) : null,
-    // 초상권 동의 (③ 이름 표시 = 단원 소개 이름 공개)
+    // 초상권 동의 (③ 게시물·영상 자막 이름 표시)
     consent_media_channels: media.channels,
     consent_media_press: media.press,
     name_public: media.name,
+    name_hidden: formData.get("name_hidden") === "on",
     consent_version: MEDIA_CONSENT_VERSION,
     notes: text(formData, "notes", 2000),
   };
@@ -137,8 +138,9 @@ export async function deleteSinger(formData: FormData) {
 }
 
 // ── 엑셀 일괄 등록 ─────────────────────────────
+type ImportLine = { line: number; name: string; messages: string[] };
 export type ImportState =
-  | { error?: string; errors?: { line: number; name: string; messages: string[] }[]; success?: string }
+  | { error?: string; success?: string; skipped?: ImportLine[]; warnings?: ImportLine[] }
   | undefined;
 
 export async function importSingers(_prev: ImportState, formData: FormData): Promise<ImportState> {
@@ -156,8 +158,8 @@ export async function importSingers(_prev: ImportState, formData: FormData): Pro
   } catch {
     return { error: "엑셀 파일을 읽지 못했습니다. 양식 파일에 입력했는지 확인해 주세요." };
   }
-  if (!sheet.headers.includes("이름") || !sheet.headers.includes("생년월일")) {
-    return { error: "양식의 머리글(이름*, 생년월일* 등)을 찾지 못했습니다. 내려받은 양식을 사용해 주세요." };
+  if (!sheet.headers.includes("이름") || !sheet.headers.includes("반")) {
+    return { error: "양식의 머리글(이름*, 반* 등)을 찾지 못했습니다. 내려받은 양식을 사용해 주세요." };
   }
   // 양식의 예시 줄은 건너뜀
   const rows = sheet.rows.filter((r) => !(r.values["이름"] ?? "").startsWith("(예시)"));
@@ -166,7 +168,7 @@ export async function importSingers(_prev: ImportState, formData: FormData): Pro
 
   const parsed = rows.map((r) => ({ line: r.line, ...parseImportRow(r.values), raw: r.values["이름"] ?? "" }));
 
-  // 보호자 이메일 → 가입 회원 연결
+  // 보호자 이메일 → 가입 회원 연결 (없으면 연결 없이 등록)
   const emails = [...new Set(parsed.map((p) => p.singer?.guardian_email).filter((e): e is string => Boolean(e)))];
   const byEmail = new Map<string, string>();
   if (emails.length) {
@@ -174,41 +176,48 @@ export async function importSingers(_prev: ImportState, formData: FormData): Pro
     for (const p of data ?? []) byEmail.set(String(p.email).toLowerCase(), p.id);
   }
 
-  // 이미 등록된 단원 · 파일 안 중복 (이름+생년월일)
-  const { data: existing, error: loadError } = await supabase.from("singers").select("name, birthdate");
-  if (loadError) return { error: "단원 정보를 불러오지 못했습니다. 0005_singers.sql 실행 여부를 확인해 주세요." };
-  const seen = new Set((existing ?? []).map((s) => `${s.name}|${s.birthdate}`));
+  // 중복: 같은 반에 같은 이름 (이미 등록됐거나 파일 안에서 두 번)
+  const { data: existing, error: loadError } = await supabase.from("singers").select("name, class_name");
+  if (loadError) return { error: "단원 정보를 불러오지 못했습니다. SQL(0005~0012) 실행 여부를 확인해 주세요." };
+  const keyOf = (name: string, cls: string | null) => `${name.replace(/\s/g, "")}|${cls ?? ""}`;
+  const seen = new Set((existing ?? []).map((s) => keyOf(s.name, s.class_name)));
   const inFile = new Set<string>();
 
-  const errors: { line: number; name: string; messages: string[] }[] = [];
+  const skipped: ImportLine[] = [];
+  const warnings: ImportLine[] = [];
+  const toInsert = [];
   for (const p of parsed) {
     const messages = [...p.errors];
     if (p.singer) {
-      const key = `${p.singer.name}|${p.singer.birthdate}`;
-      if (seen.has(key)) messages.push("이미 등록된 단원");
+      const key = keyOf(p.singer.name, p.singer.class_name);
+      if (seen.has(key)) messages.push("이미 등록된 단원 (같은 반·같은 이름)");
       else if (inFile.has(key)) messages.push("파일 안에 같은 단원이 두 번 있음");
       inFile.add(key);
-      if (p.singer.guardian_email && !byEmail.has(p.singer.guardian_email)) {
-        messages.push("보호자 가입 이메일과 일치하는 회원 없음");
-      }
     }
-    if (messages.length) errors.push({ line: p.line, name: p.raw, messages });
+    if (messages.length || !p.singer) {
+      skipped.push({ line: p.line, name: p.raw, messages });
+      continue;
+    }
+    const w = [...p.warnings];
+    const { guardian_email, ...rest } = p.singer;
+    const guardianId = guardian_email ? byEmail.get(guardian_email) : undefined;
+    if (guardian_email && !guardianId) w.push("보호자 가입 이메일과 일치하는 회원 없음 → 연결 안 함");
+    if (w.length) warnings.push({ line: p.line, name: p.raw, messages: w });
+    toInsert.push({ ...rest, guardian_id: guardianId ?? null, consent_version: MEDIA_CONSENT_VERSION });
   }
-  if (errors.length) return { error: `${errors.length}개 줄에 오류가 있어 아무것도 등록하지 않았습니다.`, errors };
+  if (!toInsert.length) return { error: "등록할 수 있는 단원이 없습니다.", skipped, warnings };
 
-  // 한 번의 요청으로 모두 넣으므로, 실패하면 전부 등록되지 않습니다.
-  const values = parsed.map(({ singer }) => {
-    const { guardian_email, ...rest } = singer!;
-    return {
-      ...rest,
-      guardian_id: guardian_email ? byEmail.get(guardian_email)! : null,
-      consent_version: MEDIA_CONSENT_VERSION,
-    };
-  });
-  const { error } = await supabase.from("singers").insert(values);
-  if (error) return { error: "등록하지 못했습니다. 입력값을 확인해 주세요." };
+  const { error } = await supabase.from("singers").insert(toInsert);
+  if (error) {
+    console.error("단원 일괄 등록 실패", error.code);
+    return { error: "등록하지 못했습니다. SQL(0011·0012) 실행 여부를 확인하거나 잠시 후 다시 시도해 주세요.", skipped, warnings };
+  }
 
   revalidatePath("/admin/singers", "layout");
   revalidatePath("/singers");
-  return { success: `${values.length}명을 등록했습니다.` };
+  return {
+    success: `${toInsert.length}명을 등록했습니다.${skipped.length ? ` (${skipped.length}줄은 건너뜀)` : ""} 틀린 칸은 단원 관리에서 고칠 수 있습니다.`,
+    skipped,
+    warnings,
+  };
 }

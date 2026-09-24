@@ -40,7 +40,7 @@ export function SingerTabs({ active }: { active: (typeof TABS)[number]["key"] })
 export function MigrationNotice() {
   return (
     <p className="card border-amber-300 bg-amber-50 text-sm">
-      단원 정보를 불러오지 못했습니다. Supabase SQL Editor 에서 <code>supabase/migrations</code> 의 SQL(0005~0011)을 모두
+      단원 정보를 불러오지 못했습니다. Supabase SQL Editor 에서 <code>supabase/migrations</code> 의 SQL(0005~0012)을 모두
       실행했는지 확인해 주세요.
     </p>
   );

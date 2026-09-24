@@ -1,6 +1,8 @@
 // 사이트 공통 정보.
 // "[입력 필요]" 로 표시된 값은 실제 정보로 교체해야 합니다. 임의로 지어낸 정보를 넣지 않습니다.
 export const site = {
+  // 대표 주소 (공유 미리보기·검색에 쓰는 기준 주소)
+  url: "https://sejonglittlesingers.com",
   name: "세종리틀싱어즈",
   nameEn: "Sejong Little Singers",
   description: "음악을 통해 아이들의 감성과 협동심을 키우는 세종시 어린이 합창단, 세종리틀싱어즈 공식 홈페이지",
