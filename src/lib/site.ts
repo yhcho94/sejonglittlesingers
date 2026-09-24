@@ -5,7 +5,8 @@ export const site = {
   url: "https://sejonglittlesingers.com",
   name: "세종리틀싱어즈",
   nameEn: "Sejong Little Singers",
-  description: "음악을 통해 아이들의 감성과 협동심을 키우는 세종시 어린이 합창단, 세종리틀싱어즈 공식 홈페이지",
+  description:
+    "세종시 어린이 합창단 세종리틀싱어즈 공식 홈페이지. 울림반·화음반·선율반 단원 모집과 입단 안내, 공연 일정, 공연·행사 사진첩을 소개합니다.",
   // 공식 채널
   links: {
     cafe: "https://cafe.naver.com/sejonglittlesingers",

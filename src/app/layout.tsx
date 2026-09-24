@@ -35,6 +35,8 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
   },
   openGraph: {
+    title: `${site.name} | 세종시 어린이 합창단`,
+    description: site.description,
     siteName: site.name,
     locale: "ko_KR",
     type: "website",
