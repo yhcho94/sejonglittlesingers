@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import type { AuditionSong } from "@/lib/audition-songs";
 import type { Concert, Faq, Press, Recruitment } from "@/lib/types";
 
 // 공개 화면용 조회. DB 가 아직 준비되지 않았으면 빈 값으로 표시합니다.
@@ -87,6 +88,20 @@ export function pressSource(item: Pick<Press, "media" | "url">) {
   } catch {
     return "";
   }
+}
+
+// 입단 오디션 지정곡 (0018 실행 전이면 빈 목록)
+export async function listAuditionSongs(): Promise<AuditionSong[]> {
+  await connection();
+  if (!isSupabaseConfigured) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("audition_songs")
+    .select("slot, title, accompaniment_url, file_path, note")
+    .order("slot")
+    .returns<AuditionSong[]>();
+  if (error) return [];
+  return data ?? [];
 }
 
 // 현재 활동 단원 수 (DB 에서 집계). 읽지 못하면 null

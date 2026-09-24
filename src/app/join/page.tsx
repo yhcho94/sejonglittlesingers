@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FaqList } from "@/components/FaqList";
 import { PageHeader } from "@/components/PageHeader";
-import { getRecruitment, listPublishedFaqs } from "@/lib/content";
+import { AuditionSongList } from "@/components/AuditionSongList";
+import { AUDITION_EMAIL } from "@/lib/application-fields";
+import { getRecruitment, listAuditionSongs, listPublishedFaqs } from "@/lib/content";
 import { site, smsHref } from "@/lib/site";
 
 export const metadata: Metadata = { title: "입단 안내" };
@@ -11,12 +13,13 @@ export const metadata: Metadata = { title: "입단 안내" };
 const STEPS = [
   { title: "보호자 회원가입", body: "보호자 명의로 가입하고 이메일 인증을 완료합니다." },
   { title: "온라인 입단 신청", body: "자녀(단원) 정보를 입력해 신청서를 제출합니다." },
-  { title: "심사", body: "신청서를 검토하고, 오디션·면접이 있으면 개별 안내합니다." },
+  { title: "오디션 동영상 제출", body: `지정곡 중 한 곡을 반주에 맞춰 1절 부른 영상을 ${AUDITION_EMAIL} 로 보냅니다.` },
+  { title: "심사", body: "선생님들이 신청서와 동영상을 보고 심사합니다." },
   { title: "결과 확인", body: "마이페이지에서 심사 결과와 안내 사항을 확인합니다." },
 ];
 
 export default async function JoinPage() {
-  const [recruitment, faqs] = await Promise.all([getRecruitment(), listPublishedFaqs()]);
+  const [recruitment, faqs, songs] = await Promise.all([getRecruitment(), listPublishedFaqs(), listAuditionSongs()]);
 
   const overview = [
     { label: "모집 대상", value: recruitment?.target },
@@ -70,7 +73,7 @@ export default async function JoinPage() {
 
         <section>
           <h2 className="mb-5 text-xl font-bold text-navy">지원 절차</h2>
-          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {STEPS.map((step, i) => (
               <li key={step.title} className="card relative">
                 <span className="eyebrow text-gold-deep">Step {i + 1}</span>
@@ -80,6 +83,22 @@ export default async function JoinPage() {
             ))}
           </ol>
         </section>
+
+        {songs.length > 0 && (
+          <section id="audition-songs" className="scroll-mt-24">
+            <h2 className="mb-2 text-xl font-bold text-navy">오디션 지정곡</h2>
+            <p className="mb-4 text-sm text-ink-soft">
+              아래 곡 중 한 곡을 골라 반주에 맞춰 1절을 부르는 모습을 휴대폰으로 찍어{" "}
+              <a href={`mailto:${AUDITION_EMAIL}`} className="font-medium text-navy underline">
+                {AUDITION_EMAIL}
+              </a>{" "}
+              로 보내 주세요. 반주는 다른 기기로 틀어 주세요.
+            </p>
+            <div className="rounded-sm border border-line bg-white px-4 md:px-6">
+              <AuditionSongList songs={songs} />
+            </div>
+          </section>
+        )}
 
         {recruitment?.audition && (
           <section>

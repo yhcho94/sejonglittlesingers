@@ -165,6 +165,13 @@ export function ApplyForm({ defaults }: { defaults?: { childName: string; childB
         <p className="mt-1">
           신청서를 제출한 뒤 오디션 동영상을 <strong>{AUDITION_EMAIL}</strong> 로 보내 주세요. 영상까지 받아야 심사가 시작됩니다.
         </p>
+        <p className="mt-1">
+          지정곡과 반주는{" "}
+          <Link href="/join#audition-songs" target="_blank" className="font-medium text-navy underline">
+            입단 안내 → 오디션 지정곡
+          </Link>
+          에서 듣고 내려받을 수 있습니다.
+        </p>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-ink-soft">
           {AUDITION_GUIDE.map((line) => (
             <li key={line}>{line}</li>
