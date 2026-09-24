@@ -30,7 +30,7 @@
 
 | 항목 | 값 |
 |---|---|
-| Site URL | 실제 사이트 주소 (예: `https://sejonglittlesingers.vercel.app`) |
+| Site URL | 실제 사이트 주소 (`https://sejonglittlesingers.com`) |
 | Redirect URLs | `https://<실제 사이트 주소>/**` 추가 |
 
 - Vercel 미리보기(Preview) 주소에서도 가입·비밀번호 재설정을 시험하려면 미리보기 주소 패턴도 추가합니다.
