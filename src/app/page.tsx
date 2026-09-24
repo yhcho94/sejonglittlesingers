@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ConcertCard } from "@/components/ConcertCard";
 import { CountUp } from "@/components/CountUp";
 import { NoticeList } from "@/components/NoticeList";
-import { getRecruitment, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
+import { getActiveSingerCount, getRecruitment, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
 import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
 import { site, smsHref } from "@/lib/site";
@@ -18,10 +18,10 @@ const {
 } = getImageProps({ ...heroCommon, src: heroImage, sizes: "65vw" });
 const { props: heroImg } = getImageProps({ ...heroCommon, src: heroMobileImage, sizes: "100vw" });
 
-// 합창단이 제공한 소개 글의 수치
+// 합창단이 제공한 소개 글의 수치 (단원 수는 DB 의 현재 활동 단원 수로 바꿔 표시)
 const STATS: { value: string; unit?: string; label: string; count?: boolean }[] = [
   { value: "2023", label: "창단" },
-  { value: "150", unit: "명", label: "단원", count: true },
+  { value: "150", unit: "명", label: "활동 단원", count: true },
   { value: "20", unit: "회", label: "연간 공연 (내외)", count: true },
   { value: "4", unit: "회", label: "연간 주최 음악회", count: true },
 ];
@@ -61,13 +61,15 @@ function SectionTitle({
 }
 
 export default async function HomePage() {
-  const [notices, concerts, recruitment, press, RECENT_STAGES] = await Promise.all([
+  const [notices, concerts, recruitment, press, RECENT_STAGES, singerCount] = await Promise.all([
     listPublishedNotices(4),
     listConcerts("upcoming", 3),
     getRecruitment(),
     listPublishedPress(),
     recentStages(),
+    getActiveSingerCount(),
   ]);
+  const stats = STATS.map((s) => (s.label === "활동 단원" && singerCount ? { ...s, value: String(singerCount) } : s));
 
   return (
     <>
@@ -159,7 +161,7 @@ export default async function HomePage() {
 
         <div className="container-page mt-9 md:mt-14">
           <dl data-reveal className="grid grid-cols-2 border-y border-line md:grid-cols-4">
-            {STATS.map((s, i) => (
+            {stats.map((s, i) => (
               <div
                 key={s.label}
                 className={`flex flex-col-reverse items-center py-6 text-center md:py-7 ${
