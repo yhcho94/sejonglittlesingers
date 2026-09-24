@@ -66,10 +66,9 @@ export async function Header() {
 
           <DesktopNav />
 
-          {/* 휴대폰·태블릿: 공식 채널 · 주소 복사 · 메뉴 */}
+          {/* 휴대폰·태블릿: 공식 채널 · 메뉴 (주소 복사는 메뉴 안에) */}
           <div className="flex items-center lg:hidden">
-            <SocialLinks itemClassName="h-10 w-8 justify-center text-navy/80 hover:text-navy sm:w-10" />
-            <CopyLinkButton className="h-10 w-8 justify-center text-navy/80 hover:text-navy max-[359px]:hidden sm:w-10" />
+            <SocialLinks stacked className="gap-1 sm:gap-2" itemClassName="h-11 min-w-9 justify-center px-0.5 text-ink-soft hover:text-navy" />
             <MobileMenu account={accountLinks} />
           </div>
         </div>

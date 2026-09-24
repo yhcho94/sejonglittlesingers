@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MobileNavLinks } from "./NavLinks";
+import { CopyLinkButton } from "./CopyLinkButton";
 import { SocialLinks } from "./SocialLinks";
 
 // 모바일 전체 화면 메뉴. 페이지를 이동하면 자동으로 닫힙니다.
@@ -53,6 +54,7 @@ function MobileMenuInner({ account }: { account: React.ReactNode }) {
               className="mt-6 flex-wrap gap-x-5 gap-y-3 text-sm text-ink-soft"
               itemClassName="hover:text-navy"
             />
+            <CopyLinkButton showLabel className="mt-4 text-sm text-ink-soft hover:text-navy" />
             <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm" onClick={() => setOpen(false)}>
               {account}
             </div>
