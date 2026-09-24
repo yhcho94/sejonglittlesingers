@@ -89,6 +89,17 @@ export function pressSource(item: Pick<Press, "media" | "url">) {
   }
 }
 
+// 현재 활동 단원 수 (DB 에서 집계). 읽지 못하면 null
+export async function getActiveSingerCount() {
+  await connection();
+  if (!isSupabaseConfigured) return null;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("singer_public_counts");
+  if (error || !data) return null;
+  const total = (data as { singers: number }[]).reduce((sum, c) => sum + c.singers, 0);
+  return total > 0 ? total : null;
+}
+
 // 공개 '단원 소개': 반별 인원 수 + 활동 단원 이름·반 (게시 중단 요청 단원 제외, DB 함수가 필요한 값만 돌려줌)
 // 학년·출생연도는 공개하지 않습니다 (관리자 통계 화면에서만).
 export async function getPublicSingers() {

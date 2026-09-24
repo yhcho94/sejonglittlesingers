@@ -3,6 +3,7 @@ import Link from "next/link";
 import { OrgChart } from "@/components/OrgChart";
 import { PageHeader } from "@/components/PageHeader";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
+import { getActiveSingerCount } from "@/lib/content";
 import { organization } from "@/lib/staff";
 
 export const metadata: Metadata = {
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 // 아래 수치와 문구는 합창단이 제공한 소개 글을 그대로 옮긴 것입니다.
 const STATS = [
   { value: "2023", label: "창단" },
-  { value: "150", unit: "명", label: "단원 (2026년 4기)" },
+  { value: "150", unit: "명", label: "활동 단원 (2026년 4기)" },
   { value: "3", unit: "개 반", label: "울림반 · 화음반 · 선율반" },
   { value: "11", unit: "명", label: "전문 강사진 · 운영진" },
   { value: "20", unit: "회", label: "연간 공연 (내외)" },
@@ -31,7 +32,10 @@ function Heading({ eyebrow, title }: { eyebrow: string; title: string }) {
   );
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  // 단원 수는 DB 의 현재 활동 단원 수 (읽지 못하면 소개 글의 수치)
+  const singerCount = await getActiveSingerCount();
+  const stats = STATS.map((s) => (s.label.startsWith("활동 단원") && singerCount ? { ...s, value: String(singerCount) } : s));
   return (
     <>
       <PageHeader
@@ -53,7 +57,7 @@ export default function AboutPage() {
           </div>
           <div className="space-y-5 leading-relaxed text-ink-soft md:col-span-7 md:pt-7 md:text-lg md:leading-relaxed">
             <p>
-              창단 당시 25명으로 출발해 꾸준한 성장을 이어왔으며, 2026년에는 4기를 맞아 초등부까지 확대된 총 150명의
+              창단 당시 25명으로 출발해 꾸준한 성장을 이어왔으며, 2026년에는 4기를 맞아 초등부까지 확대된 총 {singerCount ?? 150}명의
               단원이 함께하는 세종시 대표 어린이 합창단으로 자리매김하고 있습니다.
             </p>
             <p>
@@ -69,11 +73,11 @@ export default function AboutPage() {
 
         <div className="container-page mt-9 md:mt-12">
           <dl className="grid grid-cols-2 gap-px overflow-hidden border border-line bg-line sm:grid-cols-3 lg:grid-cols-5">
-            {STATS.map((s, i) => (
+            {stats.map((s, i) => (
               <div
                 key={s.label}
                 className={`flex flex-col-reverse items-center bg-white px-3 py-4 md:py-6 text-center ${
-                  i === STATS.length - 1 ? "col-span-2 sm:col-span-1" : ""
+                  i === stats.length - 1 ? "col-span-2 sm:col-span-1" : ""
                 }`}
               >
                 <dt className="mt-2 text-xs text-ink-soft">{s.label}</dt>
