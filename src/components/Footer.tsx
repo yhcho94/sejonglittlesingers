@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { InstallButton } from "@/components/InstallButton";
+import { LogoMark } from "@/components/LogoMark";
 import { SocialLinks } from "@/components/SocialLinks";
 import { NAV } from "@/lib/nav";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
@@ -9,8 +10,13 @@ export function Footer() {
     <footer data-print-hide className="bg-navy-dark text-white/75">
       <div className="container-page grid gap-8 py-9 md:grid-cols-12 md:py-10">
         <div className="md:col-span-5">
-          <p className="font-[family-name:var(--font-serif)] text-2xl font-bold text-white">{site.name}</p>
-          <p className="eyebrow mt-2 text-[10px] text-gold">{site.nameEn}</p>
+          <div className="flex items-center gap-3">
+            <LogoMark className="h-12 w-12 shrink-0" />
+            <div>
+              <p className="font-[family-name:var(--font-serif)] text-2xl font-bold text-white">{site.name}</p>
+              <p className="eyebrow mt-1.5 text-[10px] text-gold">{site.nameEn}</p>
+            </div>
+          </div>
           <p className="mt-6 max-w-sm text-sm leading-relaxed">
             음악을 통해 아이들의 감성과 협동심을 키우는 세종시 어린이 합창단
           </p>

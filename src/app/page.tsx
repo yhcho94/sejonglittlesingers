@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ConcertCard } from "@/components/ConcertCard";
 import { CountUp } from "@/components/CountUp";
 import { NoticeList } from "@/components/NoticeList";
+import { VisitorCounter } from "@/components/VisitorCounter";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
 import { getActiveSingerCount, getRecruitment, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
 import { EVENT_ALBUMS } from "@/lib/event-albums";
@@ -145,6 +146,7 @@ export default async function HomePage() {
                 공연 보기
               </Link>
             </div>
+            <VisitorCounter className="animate-rise mt-5 text-xs tracking-wide text-white/60 lg:mt-7" />
           </div>
         </div>
       </section>
