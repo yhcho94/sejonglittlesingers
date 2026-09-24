@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- 세종리틀싱어즈 앱 아이콘: 웜 화이트 배경 + 파스텔 무지개 + 샴페인 골드 음표 (src/components/LogoMark.tsx 와 같은 모양) -->
+  <!-- 세종리틀싱어즈 앱 아이콘: 웜 화이트 배경 + 파스텔 무지개(안쪽에 SLS) + 샴페인 골드 음표 (src/components/LogoMark.tsx 와 같은 모양) -->
   <rect width="512" height="512" rx="112" fill="#faf8f4"/>
   <g transform="translate(256 262) scale(8.4) translate(-26 -27)">
     <g fill="none" stroke-linecap="round" stroke-width="2.4">
       <path d="M10 35 A18 18 0 0 1 46 35" stroke="#eab2b6"/>
       <path d="M14 35 A14 14 0 0 1 42 35" stroke="#eccb7f"/>
       <path d="M18 35 A10 10 0 0 1 38 35" stroke="#abc8a6"/>
-      <path d="M22 35 A6 6 0 0 1 34 35" stroke="#a9c1e0"/>
     </g>
     <g fill="#b08d4f">
       <ellipse cx="11.5" cy="38.5" rx="4.6" ry="3.4" transform="rotate(-22 11.5 38.5)"/>
       <rect x="14.6" y="12" width="2" height="26.5" rx="1"/>
       <path d="M15.6 12 C19 15.5 24.5 16.5 23.5 24.5 C22.6 20 19.6 18.6 15.6 18.2 Z"/>
     </g>
+    <text x="28" y="35.6" text-anchor="middle" font-size="7" font-weight="700" letter-spacing="0.4" fill="#121a3a" font-family="'Cormorant Garamond', Georgia, 'Times New Roman', serif">SLS</text>
   </g>
 </svg>

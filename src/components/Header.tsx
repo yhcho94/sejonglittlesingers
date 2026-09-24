@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { site } from "@/lib/site";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { InstallButton } from "./InstallButton";
-import { LogoMark } from "./LogoMark";
+import { LogoBadge } from "./LogoMark";
 import { MobileMenu } from "./MobileMenu";
 import { DesktopNav } from "./NavLinks";
 import { SocialLinks } from "./SocialLinks";
@@ -60,7 +60,10 @@ export async function Header() {
       <header data-print-hide className="sticky top-0 z-30 h-[var(--header-h)] border-b border-line/80 bg-ivory/90 backdrop-blur-md">
         <div className="container-page flex h-full items-center justify-between gap-2 lg:gap-6">
           <Link href="/" className="flex shrink-0 items-center gap-1.5 max-[379px]:gap-1 lg:gap-2.5" aria-label={`${site.name} 홈`}>
-            <LogoMark className="h-8 w-8 shrink-0 max-[379px]:h-7 max-[379px]:w-7 lg:h-11 lg:w-11" />
+            <LogoBadge
+              markClassName="h-auto w-10 max-[379px]:w-8 lg:w-14"
+              sinceClassName="mt-0.5 text-[6.5px] text-ink-soft max-[379px]:text-[6px] max-[379px]:tracking-normal lg:text-[8px]"
+            />
             <span className="flex flex-col leading-none whitespace-nowrap">
               <span className="font-[family-name:var(--font-serif)] text-lg font-bold tracking-tight text-navy max-[379px]:text-base lg:text-xl">
                 {site.name}
