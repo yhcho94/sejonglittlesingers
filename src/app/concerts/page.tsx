@@ -14,7 +14,7 @@ export default async function ConcertsPage() {
       <PageHeader eyebrow="Concerts" title="공연" description="다가오는 공연과 지금까지 함께한 무대를 소개합니다." />
       <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
         <section>
-          <h2 className="mb-5 text-xl font-bold text-navy">다가오는 공연</h2>
+          <h2 className="mb-5 text-xl font-semibold text-navy">다가오는 공연</h2>
           {upcoming.length ? (
             <div className="grid gap-4 sm:grid-cols-2">
               {upcoming.map((c) => (
@@ -28,7 +28,7 @@ export default async function ConcertsPage() {
 
         {past.length > 0 && (
           <section>
-            <h2 className="mb-5 text-xl font-bold text-navy">지난 공연</h2>
+            <h2 className="mb-5 text-xl font-semibold text-navy">지난 공연</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {past.map((c) => (
                 <ConcertCard key={c.id} concert={c} />
@@ -38,7 +38,7 @@ export default async function ConcertsPage() {
         )}
 
         <section id="history" className="scroll-mt-24">
-          <h2 className="mb-5 text-xl font-bold text-navy">공연 이력</h2>
+          <h2 className="mb-5 text-xl font-semibold text-navy">공연 이력</h2>
           <PerformanceHistory />
         </section>
       </div>

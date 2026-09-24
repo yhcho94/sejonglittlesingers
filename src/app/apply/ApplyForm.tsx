@@ -161,7 +161,7 @@ export function ApplyForm({ defaults }: { defaults?: { childName: string; childB
       </fieldset>
 
       <section className="rounded-sm border border-gold/60 bg-gold-soft/50 p-4 text-sm">
-        <h2 className="font-bold text-navy">오디션 동영상 제출 안내</h2>
+        <h2 className="font-semibold text-navy">오디션 동영상 제출 안내</h2>
         <p className="mt-1">
           신청서를 제출한 뒤 오디션 동영상을 <strong>{AUDITION_EMAIL}</strong> 로 보내 주세요. 영상까지 받아야 심사가 시작됩니다.
         </p>

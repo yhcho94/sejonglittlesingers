@@ -22,7 +22,7 @@ export default function FacultyPage() {
             <div className="flex flex-wrap items-end justify-between gap-4 bg-navy px-4 py-5 text-white md:px-6 md:py-6">
               <div>
                 <p className="eyebrow text-gold">{conductor.role}</p>
-                <h2 className="mt-1 font-[family-name:var(--font-serif)] text-2xl font-bold md:text-3xl">
+                <h2 className="mt-1 font-[family-name:var(--font-serif)] text-2xl font-semibold md:text-3xl">
                   {conductor.name}
                 </h2>
               </div>
@@ -46,7 +46,7 @@ export default function FacultyPage() {
 
           {staffGroups.map((group) => (
             <div key={group.title} className="mt-7">
-              <h2 className="flex items-center gap-4 font-[family-name:var(--font-serif)] text-xl font-bold text-navy">
+              <h2 className="flex items-center gap-4 font-[family-name:var(--font-serif)] text-xl font-semibold text-navy">
                 {group.title}
                 <span className="h-px flex-1 bg-line" />
               </h2>

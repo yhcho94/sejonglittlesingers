@@ -53,7 +53,7 @@ export default async function SingersPage() {
                   <div className="h-1" style={{ background: c.color }} />
                   <div className="flex flex-1 flex-col p-6 md:p-6">
                     <div className="flex items-baseline justify-between gap-4">
-                      <h2 className="text-2xl font-bold text-navy">{c.name}</h2>
+                      <h2 className="text-2xl font-semibold text-navy">{c.name}</h2>
                       {inClass > 0 && (
                         <p className="text-sm text-ink-soft">
                           <strong className="text-2xl font-semibold text-ink">{inClass}</strong>명

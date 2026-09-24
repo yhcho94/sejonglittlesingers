@@ -3,7 +3,9 @@ import Link from "next/link";
 import { ConcertCard } from "@/components/ConcertCard";
 import { CountUp } from "@/components/CountUp";
 import { NoticeList } from "@/components/NoticeList";
+import { CLASS_OPTIONS } from "@/lib/application-fields";
 import { getActiveSingerCount, getRecruitment, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
+import { EVENT_ALBUMS } from "@/lib/event-albums";
 import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
 import { site, smsHref } from "@/lib/site";
@@ -25,6 +27,12 @@ const STATS: { value: string; unit?: string; label: string; count?: boolean }[] 
   { value: "20", unit: "회", label: "연간 공연 (내외)", count: true },
   { value: "4", unit: "회", label: "연간 주최 음악회", count: true },
 ];
+
+// 사진첩 미리보기: 최근 행사의 단체사진 6장 (3:2 틀에 잘 맞는 가로 사진만)
+const MOMENTS = EVENT_ALBUMS.flatMap((a) => {
+  const photo = a.photos.find((p) => p.width / p.height >= 1.3 && p.width / p.height <= 1.7);
+  return photo ? [{ id: a.id, title: a.title, date: a.date, photo }] : [];
+}).slice(0, 6);
 
 // 공연 이력에서 장소가 있는 최근 무대 3개 (최신순, 끝난 공연 일정 포함)
 async function recentStages() {
@@ -49,7 +57,7 @@ function SectionTitle({
     <div data-reveal className="mb-6 flex items-end justify-between gap-4 md:mb-8">
       <div>
         <p className="eyebrow text-gold-deep">{eyebrow}</p>
-        <h2 className="mt-3 text-2xl font-bold text-navy md:text-4xl">{title}</h2>
+        <h2 className="mt-2 text-2xl font-semibold text-navy md:text-[2.25rem]">{title}</h2>
       </div>
       {href && (
         <Link href={href} className="shrink-0 pb-1 text-sm text-ink-soft transition hover:text-navy">
@@ -99,7 +107,7 @@ export default async function HomePage() {
                 <span className="mx-2 text-white/40">·</span> Since 2023
               </span>
             </p>
-            <h1 style={{ "--rise-delay": "120ms" } as React.CSSProperties} className="animate-rise mt-4 whitespace-nowrap text-[2.4rem] font-bold leading-[1.15] sm:text-6xl lg:mt-6 lg:text-[3.5rem]">{site.name}</h1>
+            <h1 style={{ "--rise-delay": "120ms" } as React.CSSProperties} className="animate-rise mt-4 whitespace-nowrap text-[2.4rem] font-semibold leading-[1.15] sm:text-6xl lg:mt-6 lg:text-[3.5rem]">{site.name}</h1>
             <span style={{ "--rise-delay": "240ms" } as React.CSSProperties} className="gold-rule animate-rise mt-5 w-14 lg:mt-6" />
             <p style={{ "--rise-delay": "320ms" } as React.CSSProperties} className="animate-rise mt-5 max-w-xl text-base leading-relaxed text-white/85 md:text-lg lg:mt-6">
               음악을 통해 아이들의 감성과 협동심을 키우는
@@ -119,10 +127,10 @@ export default async function HomePage() {
 
       {/* ── 모집 배너 (관리자 > 입단 안내에서 '모집 중' 체크 시) ── */}
       {recruitment?.is_open && (
-        <Link href="/join" className="group block bg-gold text-navy-dark">
-          <div className="container-page flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-4">
+        <Link href="/join" className="group block bg-sage-deep text-white">
+          <div className="container-page flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-3.5">
             <p className="font-medium">
-              <span className="eyebrow mr-3 text-[10px]">Now Recruiting</span>
+              <span className="eyebrow mr-3 text-[10px] text-white/75">Now Recruiting</span>
               단원 모집 중{recruitment.period ? ` · ${recruitment.period}` : ""}
             </p>
             <span className="text-sm font-medium">
@@ -132,43 +140,121 @@ export default async function HomePage() {
         </Link>
       )}
 
+      {/* ── 공연: 예정 공연이 없으면 최근 무대 ─────────── */}
+      <section className="section-y">
+        <div className="container-page">
+          {concerts.length ? (
+            <>
+              <SectionTitle eyebrow="Upcoming" title="다가오는 공연" href="/concerts" linkLabel="전체 일정" />
+              <div className="grid gap-4 md:grid-cols-3">
+                {concerts.map((c, i) => (
+                  <div key={c.id} data-reveal style={{ "--reveal-delay": `${i * 110}ms` } as React.CSSProperties}>
+                    <ConcertCard concert={c} />
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <SectionTitle eyebrow="Stage" title="최근 무대" href="/concerts#history" linkLabel="공연 이력" />
+              <ul className="grid border-t border-navy md:grid-cols-3">
+                {RECENT_STAGES.map((s, i) => (
+                  <li
+                    key={`${s.year}-${s.date}-${s.title}`}
+                    data-reveal
+                    style={{ "--reveal-delay": `${i * 110}ms` } as React.CSSProperties}
+                    className={`flex gap-4 border-b border-line py-4 md:flex-col md:gap-2 md:border-b-0 md:py-5 ${
+                      i > 0 ? "md:border-l md:pl-6" : ""
+                    } ${i < 2 ? "md:pr-6" : ""}`}
+                  >
+                    <p className="w-20 shrink-0 font-[family-name:var(--font-display)] text-lg leading-tight font-semibold text-navy md:w-auto md:text-2xl">
+                      {s.date}
+                      <span className="block text-xs font-medium tracking-widest text-ink-soft">{s.year}</span>
+                    </p>
+                    <div className="min-w-0">
+                      <p className="font-medium leading-snug text-ink">{s.title}</p>
+                      <p className="mt-1 text-sm text-ink-soft">{s.place}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* ── 사진첩 미리보기: 가로로 넘겨 보기 ─────────── */}
+      <section className="section-y bg-cream">
+        <div className="container-page">
+          <SectionTitle eyebrow="Stage Moments" title="무대 위의 순간들" href="/gallery" linkLabel="사진첩" />
+        </div>
+        <ul
+          data-reveal
+          // 본문과 같은 왼쪽 여백에서 시작하고, 넘길 때도 그 위치에 맞춰 멈춤
+          className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [--edge:1.25rem] md:gap-4 md:[--edge:max(2rem,calc((100vw-72rem)/2+2rem))] [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none", paddingInline: "var(--edge)", scrollPaddingInline: "var(--edge)" }}
+        >
+          {MOMENTS.map((m, i) => (
+            <li key={m.id} className="w-[78%] shrink-0 snap-start sm:w-[46%] lg:w-[31%]">
+              <Link href="/gallery" className="group block">
+                <div className="relative aspect-[3/2] overflow-hidden bg-navy-dark">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- 미리 줄여 둔 공개 사진 */}
+                  <img
+                    src={m.photo.src}
+                    alt={m.photo.alt}
+                    width={m.photo.width}
+                    height={m.photo.height}
+                    loading={i < 2 ? "eager" : "lazy"}
+                    style={{ objectPosition: m.photo.focus }}
+                    className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                </div>
+                <p className="mt-3 font-[family-name:var(--font-display)] text-sm font-semibold tracking-widest text-sage-deep">
+                  {m.date.replaceAll("-", ". ")}
+                </p>
+                <p className="mt-1 line-clamp-1 font-medium text-ink group-hover:text-navy">{m.title}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {/* ── 소개 ─────────────────────────────── */}
-      <section className="section-y bg-ivory">
+      <section className="section-y">
         <div className="container-page grid gap-7 md:grid-cols-12 md:gap-10">
           <div data-reveal className="md:col-span-5">
             <p className="eyebrow text-gold-deep">About</p>
-            <h2 className="mt-4 text-3xl font-bold leading-snug text-navy md:text-[2.75rem] md:leading-tight">
-              ‘즐거운 합창’
+            <h2 className="mt-3 text-3xl leading-snug font-semibold text-navy md:text-[2.6rem] md:leading-tight">
+              &lsquo;즐거운 합창&rsquo;
               <br />
               노래로 자라는 아이들
             </h2>
-            <span className="gold-rule mt-6" />
           </div>
-          <div data-reveal style={{ "--reveal-delay": "120ms" } as React.CSSProperties} className="md:col-span-7">
+          <div data-reveal style={{ "--reveal-delay": "120ms" } as React.CSSProperties} className="md:col-span-7 md:pt-8">
             <p className="text-lg leading-relaxed text-ink md:text-xl md:leading-relaxed">
               세종리틀싱어즈는 2023년 창단된 세종시 어린이 합창단으로, 음악을 통해 아이들의 감성과 협동심을 키우는 전문
               합창 교육단체입니다.
             </p>
-            <p className="mt-5 leading-relaxed text-ink-soft">
+            <p className="mt-4 leading-relaxed text-ink-soft">
               지휘자, 부지휘자, 반주자, 이론 강사, 사무국장 등 총 11명의 전문 강사진과 운영진이 함께하며, 12년 경력의
               어린이 합창 전문가인 단장이 직접 수업을 이끕니다.
             </p>
-            <Link href="/about" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-navy">
+            <Link href="/about" className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-navy">
               합창단 소개 <span aria-hidden>→</span>
             </Link>
           </div>
         </div>
 
-        <div className="container-page mt-9 md:mt-14">
-          <dl data-reveal className="grid grid-cols-2 border-y border-line md:grid-cols-4">
+        <div className="container-page mt-9 md:mt-12">
+          <dl data-reveal className="grid grid-cols-2 border-t border-navy md:grid-cols-4">
             {stats.map((s, i) => (
               <div
                 key={s.label}
-                className={`flex flex-col-reverse items-center py-6 text-center md:py-7 ${
-                  i % 2 === 1 ? "border-l border-line" : ""
-                } ${i >= 2 ? "border-t border-line md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
+                className={`flex flex-col-reverse items-start border-b border-line py-5 pl-1 md:border-b-0 md:py-6 ${
+                  i % 2 === 1 ? "pl-5 md:pl-6" : ""
+                } ${i >= 1 ? "md:border-l md:pl-6" : ""}`}
               >
-                <dt className="mt-2 text-xs tracking-wide text-ink-soft md:text-sm">{s.label}</dt>
+                <dt className="mt-1 text-xs tracking-wide text-ink-soft md:text-sm">{s.label}</dt>
                 <dd className="font-[family-name:var(--font-display)] text-4xl font-semibold text-navy md:text-5xl">
                   {s.count ? <CountUp value={Number(s.value)} /> : s.value}
                   {s.unit && (
@@ -184,29 +270,25 @@ export default async function HomePage() {
       </section>
 
       {/* ── 반 구성 ──────────────────────────── */}
-      <section className="section-y">
+      <section className="section-y bg-cream">
         <div className="container-page">
           <SectionTitle eyebrow="Classes" title="세 개의 반, 하나의 하모니" href="/faculty" linkLabel="강사진" />
-          <div className="grid grid-cols-3 gap-px overflow-hidden border border-line bg-line">
+          <div className="grid grid-cols-3 gap-3 md:gap-6">
             {organization.classes.map((c, i) => (
               <div
                 key={c.name}
                 data-reveal
-                style={{ "--reveal-delay": `${i * 110}ms` } as React.CSSProperties}
-                className="group relative bg-white p-3 transition-colors duration-500 hover:bg-ivory sm:p-5 md:p-6"
+                // 윗줄: 반 색 띠
+                style={{ "--reveal-delay": `${i * 110}ms`, borderColor: c.color } as React.CSSProperties}
+                className="border-t-2 pt-3 md:pt-5"
               >
-                <span
-                  aria-hidden
-                  className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
-                  style={{ background: c.color }}
-                />
-                <p className="font-[family-name:var(--font-display)] text-sm font-semibold tracking-[0.2em] text-gold-deep">
-                  0{i + 1}
-                </p>
-                <p className="mt-2 font-[family-name:var(--font-serif)] text-lg font-bold sm:text-2xl md:mt-3" style={{ color: c.color }}>
+                <p className="font-[family-name:var(--font-serif)] text-lg font-semibold sm:text-2xl" style={{ color: c.color }}>
                   {c.name}
                 </p>
-                <p className="mt-2 text-xs text-ink-soft sm:text-sm md:mt-4">
+                <p className="mt-1 text-xs text-ink-soft sm:text-sm">
+                  {CLASS_OPTIONS.find((o) => o.name === c.name)?.day} 수업
+                </p>
+                <p className="mt-2 text-xs text-ink-soft sm:text-sm md:mt-3">
                   <span className="hidden sm:inline">부지휘자 </span>
                   <span className="font-medium text-ink sm:ml-1">
                     {c.members.find((m) => m.role === "부지휘자")?.name}
@@ -215,44 +297,6 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ── 공연: 예정 공연이 없으면 최근 무대 ─────────── */}
-      <section className="section-y bg-ivory">
-        <div className="container-page">
-          {concerts.length ? (
-            <>
-              <SectionTitle eyebrow="Upcoming" title="다가오는 공연" href="/concerts" linkLabel="전체" />
-              <div className="grid gap-4 md:grid-cols-3">
-                {concerts.map((c, i) => (
-                  <div key={c.id} data-reveal style={{ "--reveal-delay": `${i * 110}ms` } as React.CSSProperties}>
-                    <ConcertCard concert={c} />
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            <>
-              <SectionTitle eyebrow="Stage" title="최근 무대" href="/concerts#history" linkLabel="공연 이력" />
-              <ul className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
-                {RECENT_STAGES.map((s, i) => (
-                  <li
-                    key={`${s.year}-${s.date}-${s.title}`}
-                    data-reveal
-                    style={{ "--reveal-delay": `${i * 110}ms` } as React.CSSProperties}
-                    className="flex flex-col bg-white px-4 py-3.5 transition-colors duration-500 hover:bg-cream/60 md:p-5"
-                  >
-                    <p className="font-[family-name:var(--font-display)] text-base font-semibold text-gold-deep md:text-lg">
-                      {s.year}. {s.date}
-                    </p>
-                    <p className="mt-1.5 font-medium leading-snug text-ink">{s.title}</p>
-                    <p className="mt-auto pt-1.5 text-sm text-ink-soft md:pt-3">{s.place}</p>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
         </div>
       </section>
 
@@ -297,11 +341,11 @@ export default async function HomePage() {
 
       {/* ── 입단 안내 ─────────────────────────── */}
       <section className="relative isolate overflow-hidden bg-navy text-white">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(195,162,102,0.18),transparent_60%)]" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(111,143,114,0.28),transparent_60%)]" />
         <div data-reveal className="container-page flex flex-col items-start gap-7 py-12 md:flex-row md:items-end md:justify-between md:py-16">
           <div>
             <p className="eyebrow text-gold">Audition</p>
-            <h2 className="mt-4 text-3xl font-bold leading-snug md:text-5xl md:leading-tight">
+            <h2 className="mt-3 text-3xl leading-snug font-semibold md:text-5xl md:leading-tight">
               노래를 사랑하는
               <br />
               어린이 단원을 기다립니다

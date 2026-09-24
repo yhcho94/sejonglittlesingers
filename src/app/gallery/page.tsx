@@ -26,7 +26,7 @@ export default async function GalleryPage() {
           <div className="mb-4 flex flex-wrap items-end justify-between gap-2 md:mb-5">
             <div>
               <p className="eyebrow text-gold-deep">Stage Moments</p>
-              <h2 className="mt-1.5 text-xl font-bold text-navy md:text-2xl">공연·행사 사진첩</h2>
+              <h2 className="mt-1.5 text-xl font-semibold text-navy md:text-2xl">공연·행사 사진첩</h2>
             </div>
             <p className="text-xs text-ink-soft">사진을 누르면 크게 볼 수 있습니다.</p>
           </div>
@@ -38,7 +38,7 @@ export default async function GalleryPage() {
       {albums.length > 0 && (
         <section className="section-y bg-ivory">
           <div className="container-page">
-            <h2 className="mb-4 text-xl font-bold text-navy md:mb-5 md:text-2xl">앨범</h2>
+            <h2 className="mb-4 text-xl font-semibold text-navy md:mb-5 md:text-2xl">앨범</h2>
             <ul className="grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
               {albums.map((a, i) => (
                 <li key={a.id} data-reveal style={{ "--reveal-delay": `${(i % 3) * 100}ms` } as React.CSSProperties}>

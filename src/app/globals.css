@@ -1,21 +1,24 @@
 @import "tailwindcss";
 
 /*
- * 디자인 토큰 — 아이보리 · 딥 네이비 · 샴페인 골드
- * gold 는 장식선·어두운 배경용, 밝은 배경 위 글자에는 gold-deep 을 씁니다. (명도 대비 확보)
+ * 디자인 토큰 — 클래식 에디토리얼: 웜 화이트 · 미드나잇 네이비 · 샴페인(한 섹션에 한 번) · 세이지 그린(보조)
+ * gold·sage 는 장식선·어두운 배경용, 밝은 배경 위 글자에는 gold-deep·sage-deep 을 씁니다. (명도 대비 4.5 이상)
  */
 @theme {
-  --color-cream: #f8f5ef;
-  --color-ivory: #fdfbf7;
-  --color-ink: #1b1e2b;
+  --color-cream: #f4f1ea;
+  --color-ivory: #faf8f4;
+  --color-ink: #1a1d29;
   --color-ink-soft: #5c6173;
-  --color-navy: #16224d;
-  --color-navy-dark: #0c1533;
-  --color-gold: #c3a266;
-  --color-gold-deep: #86672f;
-  --color-gold-soft: #f3ecdd;
-  --color-line: #e5dfd3;
-  --font-sans: var(--font-noto-sans-kr), "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --color-navy: #121a3a;
+  --color-navy-dark: #0b1230;
+  --color-gold: #b89b6a;
+  --color-gold-deep: #7d6334;
+  --color-gold-soft: #f1ebdf;
+  --color-sage: #6f8f72;
+  --color-sage-deep: #4c6b50;
+  --color-sage-soft: #e7eee5;
+  --color-line: #e4ded2;
+  --font-sans: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-serif: var(--font-noto-serif-kr), "AppleMyungjo", "Batang", serif;
   --font-display: var(--font-cormorant), var(--font-noto-serif-kr), serif;
 }
@@ -36,7 +39,7 @@
     scroll-behavior: smooth;
   }
   body {
-    background: var(--color-cream);
+    background: var(--color-ivory);
     color: var(--color-ink);
     word-break: keep-all;
     overflow-wrap: anywhere;
@@ -44,7 +47,7 @@
   h1,
   h2 {
     font-family: var(--font-serif);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
   /* 영문 장식 글꼴의 숫자를 일반 높이 숫자로 (STEP 1, 2023 등) */
   [class*="var(--font-display)"] {
@@ -73,7 +76,7 @@
   @apply btn bg-navy text-white hover:bg-navy-dark;
 }
 @utility btn-gold {
-  @apply btn bg-gold text-navy-dark hover:bg-[#d2b37a];
+  @apply btn bg-gold text-navy-dark hover:bg-[#c9ae80];
 }
 @utility btn-outline {
   @apply btn border border-line bg-white text-ink hover:border-navy;
@@ -92,7 +95,7 @@
   @apply font-[family-name:var(--font-display)] text-xs font-semibold tracking-[0.32em] uppercase;
   font-variant-numeric: lining-nums;
 }
-/* 섹션 제목 아래 짧은 금색 선 */
+/* 섹션 제목 아래 짧은 선 (샴페인) */
 @utility gold-rule {
   @apply block h-px w-10 bg-gold;
 }

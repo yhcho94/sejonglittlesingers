@@ -4,6 +4,7 @@ import { OrgChart } from "@/components/OrgChart";
 import { PageHeader } from "@/components/PageHeader";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
 import { getActiveSingerCount } from "@/lib/content";
+import { EVENT_ALBUMS } from "@/lib/event-albums";
 import { organization } from "@/lib/staff";
 
 export const metadata: Metadata = {
@@ -21,13 +22,16 @@ const STATS = [
   { value: "20", unit: "회", label: "연간 공연 (내외)" },
 ];
 
+// 합창단 전체가 나온 정기연주회 단체사진 (공연·행사 사진첩에서)
+const STAGE_PHOTO = EVENT_ALBUMS.filter((a) => a.title.includes("정기연주회")).map((a) => ({ title: a.title, photo: a.photos[0] }))[0];
+
 const CONCERTS = ["1학기 기획연주회", "2학기 정기연주회", "향상 음악회", "전국 음악 콩쿠르"];
 
 function Heading({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
     <div className="mb-7 md:mb-9">
       <p className="eyebrow text-gold-deep">{eyebrow}</p>
-      <h2 className="mt-3 text-2xl font-bold text-navy md:text-4xl">{title}</h2>
+      <h2 className="mt-3 text-2xl font-semibold text-navy md:text-4xl">{title}</h2>
     </div>
   );
 }
@@ -71,16 +75,31 @@ export default async function AboutPage() {
           </div>
         </div>
 
+        {STAGE_PHOTO && (
+          <figure className="container-page mt-9 md:mt-12">
+            {/* eslint-disable-next-line @next/next/no-img-element -- 미리 줄여 둔 공개 사진 */}
+            <img
+              src={STAGE_PHOTO.photo.src}
+              alt={STAGE_PHOTO.photo.alt}
+              width={STAGE_PHOTO.photo.width}
+              height={STAGE_PHOTO.photo.height}
+              loading="lazy"
+              className="aspect-[16/9] w-full object-cover md:aspect-[21/9]"
+            />
+            <figcaption className="mt-2 text-xs text-ink-soft">{STAGE_PHOTO.title}</figcaption>
+          </figure>
+        )}
+
         <div className="container-page mt-9 md:mt-12">
-          <dl className="grid grid-cols-2 gap-px overflow-hidden border border-line bg-line sm:grid-cols-3 lg:grid-cols-5">
+          <dl className="grid grid-cols-2 border-t border-navy sm:grid-cols-3 lg:grid-cols-5">
             {stats.map((s, i) => (
               <div
                 key={s.label}
-                className={`flex flex-col-reverse items-center bg-white px-3 py-4 md:py-6 text-center ${
-                  i === stats.length - 1 ? "col-span-2 sm:col-span-1" : ""
+                className={`flex flex-col-reverse items-start border-b border-line py-4 pr-3 md:py-5 lg:border-b-0 ${
+                  i > 0 ? "lg:border-l lg:pl-5" : ""
                 }`}
               >
-                <dt className="mt-2 text-xs text-ink-soft">{s.label}</dt>
+                <dt className="mt-1 text-xs text-ink-soft">{s.label}</dt>
                 <dd className="font-[family-name:var(--font-display)] text-4xl font-semibold text-navy">
                   {s.value}
                   {s.unit && (

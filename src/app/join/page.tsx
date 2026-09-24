@@ -46,7 +46,7 @@ export default async function JoinPage() {
         )}
 
         <section>
-          <h2 className="mb-5 text-xl font-bold text-navy">모집 요강</h2>
+          <h2 className="mb-5 text-xl font-semibold text-navy">모집 요강</h2>
           {overview.length ? (
             <dl className="grid gap-px overflow-hidden rounded-sm border border-line bg-line sm:grid-cols-2">
               {overview.map((item) => (
@@ -66,13 +66,13 @@ export default async function JoinPage() {
 
         {recruitment?.classes && (
           <section>
-            <h2 className="mb-5 text-xl font-bold text-navy">반 구성</h2>
+            <h2 className="mb-5 text-xl font-semibold text-navy">반 구성</h2>
             <div className="card whitespace-pre-wrap leading-relaxed">{recruitment.classes}</div>
           </section>
         )}
 
         <section>
-          <h2 className="mb-5 text-xl font-bold text-navy">지원 절차</h2>
+          <h2 className="mb-5 text-xl font-semibold text-navy">지원 절차</h2>
           <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {STEPS.map((step, i) => (
               <li key={step.title} className="card relative">
@@ -86,7 +86,7 @@ export default async function JoinPage() {
 
         {songs.length > 0 && (
           <section id="audition-songs" className="scroll-mt-24">
-            <h2 className="mb-2 text-xl font-bold text-navy">오디션 지정곡</h2>
+            <h2 className="mb-2 text-xl font-semibold text-navy">오디션 지정곡</h2>
             <p className="mb-4 text-sm text-ink-soft">
               아래 곡 중 한 곡을 골라 반주에 맞춰 1절을 부르는 모습을 휴대폰으로 찍어{" "}
               <a href={`mailto:${AUDITION_EMAIL}`} className="font-medium text-navy underline">
@@ -102,21 +102,21 @@ export default async function JoinPage() {
 
         {recruitment?.audition && (
           <section>
-            <h2 className="mb-5 text-xl font-bold text-navy">오디션 · 심사</h2>
+            <h2 className="mb-5 text-xl font-semibold text-navy">오디션 · 심사</h2>
             <div className="card whitespace-pre-wrap leading-relaxed">{recruitment.audition}</div>
           </section>
         )}
 
         {recruitment?.notes && (
           <section>
-            <h2 className="mb-5 text-xl font-bold text-navy">기타 안내</h2>
+            <h2 className="mb-5 text-xl font-semibold text-navy">기타 안내</h2>
             <div className="card whitespace-pre-wrap leading-relaxed">{recruitment.notes}</div>
           </section>
         )}
 
         {faqs.length > 0 && (
           <section>
-            <h2 className="mb-5 text-xl font-bold text-navy">자주 묻는 질문</h2>
+            <h2 className="mb-5 text-xl font-semibold text-navy">자주 묻는 질문</h2>
             <FaqList faqs={faqs} />
           </section>
         )}

@@ -283,7 +283,7 @@ export const organization = {
   classes: [
     {
       name: "울림반",
-      color: "#1f6fa8",
+      color: "#4a6f9c",
       members: [
         { role: "부지휘자", name: "오승하" },
         { role: "학부모대표", name: "국지은" },
@@ -294,7 +294,7 @@ export const organization = {
     },
     {
       name: "화음반",
-      color: "#8a2b3d",
+      color: "#a45a66",
       members: [
         { role: "부지휘자", name: "김연주" },
         { role: "학부모대표", name: "박지윤" },
@@ -304,7 +304,7 @@ export const organization = {
     },
     {
       name: "선율반",
-      color: "#3f6b4f",
+      color: "#557a5c",
       members: [
         { role: "부지휘자", name: "서지선" },
         { role: "학부모대표", name: "김소영" },

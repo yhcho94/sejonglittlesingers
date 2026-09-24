@@ -8,7 +8,7 @@ export default function ForgotPasswordPage() {
   const [state, action] = useActionState(requestPasswordReset, undefined);
   return (
     <div className="mx-auto max-w-md px-4 py-10">
-      <h1 className="mb-6 text-2xl font-bold text-navy">비밀번호 찾기</h1>
+      <h1 className="mb-6 text-2xl font-semibold text-navy">비밀번호 찾기</h1>
       <div className="card">
         <form action={action} className="space-y-4">
           <div>
