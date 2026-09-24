@@ -16,7 +16,13 @@ const PHOTO_TYPES: Record<string, string> = {
   "image/webp": "webp",
 };
 
-export function ApplyForm({ userId }: { userId: string }) {
+export function ApplyForm({
+  userId,
+  defaults,
+}: {
+  userId: string;
+  defaults?: { childName: string; childBirthdate: string };
+}) {
   const [hasPhoto, setHasPhoto] = useState(false);
   const [joinSource, setJoinSource] = useState("");
 
@@ -58,11 +64,18 @@ export function ApplyForm({ userId }: { userId: string }) {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="child_name" className="label">이름 *</label>
-            <input id="child_name" name="child_name" required maxLength={50} className="input" />
+            <input id="child_name" name="child_name" required maxLength={50} defaultValue={defaults?.childName} className="input" />
           </div>
           <div>
             <label htmlFor="child_birthdate" className="label">생년월일 *</label>
-            <input id="child_birthdate" name="child_birthdate" type="date" required className="input" />
+            <input
+              id="child_birthdate"
+              name="child_birthdate"
+              type="date"
+              required
+              defaultValue={defaults?.childBirthdate}
+              className="input"
+            />
           </div>
           <div>
             <label htmlFor="school" className="label">학교</label>
@@ -158,7 +171,7 @@ export function ApplyForm({ userId }: { userId: string }) {
       </fieldset>
 
       <FormMessage state={state} />
-      <SubmitButton pendingText="신청서 제출 중...">입단 신청서 제출</SubmitButton>
+      <SubmitButton pendingText="신청서 제출 중...">{defaults ? "입단 신청서 다시 제출" : "입단 신청서 제출"}</SubmitButton>
     </form>
   );
 }
