@@ -6,7 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_NAMES } from "@/lib/singers";
 import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
-import { JOIN_SOURCES } from "@/lib/join-source";
+import { JOIN_SOURCES, JOIN_SOURCE_OTHER } from "@/lib/join-source";
 import { parseImportRow } from "@/lib/singers-import";
 import { readSheet } from "@/lib/singers-xlsx";
 import type { FormState } from "@/lib/types";
@@ -70,6 +70,8 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
   if (photoPath && !PHOTO_RE.test(photoPath)) return { error: "사진 정보가 올바르지 않습니다. 다시 올려 주세요." };
 
   const media = readMediaConsent(formData);
+  const joinSourceRaw = String(formData.get("join_source") ?? "");
+  const joinSource = (JOIN_SOURCES as readonly string[]).includes(joinSourceRaw) ? joinSourceRaw : null;
   const values = {
     name,
     // 출생연도만 아는 경우 그해 1월 1일로 저장 (화면에는 'OOOO년생'으로 표시)
@@ -88,7 +90,8 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
     guardian_phone: text(formData, "guardian_phone", 20),
     photo_path: photoPath || null,
     birth_year_only: Boolean(birth.value) && formData.get("birth_year_only") === "on",
-    join_source: (JOIN_SOURCES as readonly string[]).includes(String(formData.get("join_source"))) ? String(formData.get("join_source")) : null,
+    join_source: joinSource,
+    join_source_detail: joinSource === JOIN_SOURCE_OTHER ? text(formData, "join_source_detail", 100) : null,
     // 초상권 동의 (③ 게시물·영상 자막 이름 표시)
     consent_media_channels: media.channels,
     consent_media_press: media.press,

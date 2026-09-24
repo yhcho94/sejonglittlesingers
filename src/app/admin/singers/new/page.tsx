@@ -12,6 +12,7 @@ type AppPrefill = Pick<Application, "id" | "guardian_id" | "child_name" | "child
   consent_media_press?: boolean;
   consent_media_name?: boolean;
   join_source?: string | null;
+  join_source_detail?: string | null;
 };
 
 export default async function NewSingerPage({ searchParams }: PageProps<"/admin/singers/new">) {
@@ -26,7 +27,7 @@ export default async function NewSingerPage({ searchParams }: PageProps<"/admin/
     if (existing) redirect(`/admin/singers/${existing.id}`);
     const { data } = await supabase
       .from("applications")
-      .select("id, guardian_id, child_name, child_birthdate, school, status, consent_media_channels, consent_media_press, consent_media_name, join_source")
+      .select("id, guardian_id, child_name, child_birthdate, school, status, consent_media_channels, consent_media_press, consent_media_name, join_source, join_source_detail")
       .eq("id", appId)
       .maybeSingle<AppPrefill>();
     app = data?.status === "approved" ? data : null;
@@ -61,6 +62,7 @@ export default async function NewSingerPage({ searchParams }: PageProps<"/admin/
                   consent_media_press: app.consent_media_press ?? false,
                   name_public: app.consent_media_name ?? false,
                   join_source: app.join_source ?? null,
+                  join_source_detail: app.join_source_detail ?? null,
                   joined_on: today,
                   status: "active",
                 }

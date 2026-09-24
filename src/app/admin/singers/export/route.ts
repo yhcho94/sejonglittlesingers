@@ -46,6 +46,7 @@ const emptySinger = {
   birthdate: "2000-01-01",
   birth_year_only: false,
   join_source: null,
+  join_source_detail: null,
   gender: null,
   school: null,
   grade_override: null,

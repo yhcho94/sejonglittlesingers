@@ -118,7 +118,7 @@ export function ApplyForm({
           {joinSource === "기타" && (
             <div>
               <label htmlFor="join_source_detail" className="label">기타 가입경로</label>
-              <input id="join_source_detail" name="join_source_detail" maxLength={100} placeholder="직접 입력" className="input" />
+              <input id="join_source_detail" name="join_source_detail" maxLength={100} placeholder="어떻게 알게 되셨는지 적어 주세요" className="input" />
             </div>
           )}
         </div>

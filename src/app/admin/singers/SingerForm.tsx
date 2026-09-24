@@ -5,7 +5,7 @@ import { saveSinger } from "@/app/actions/singers";
 import { FormMessage, SubmitButton } from "@/components/form";
 import { MediaConsentFields } from "@/components/MediaConsentFields";
 import { resizeImage } from "@/lib/image-resize";
-import { JOIN_SOURCES } from "@/lib/join-source";
+import { JOIN_SOURCES, JOIN_SOURCE_OTHER, normalizeJoinSource } from "@/lib/join-source";
 import { createClient } from "@/lib/supabase/client";
 import { CLASS_NAMES, STATUS_LABEL, gradeCode, gradeLabel, type Singer } from "@/lib/singers";
 import type { GuardianProfile } from "@/lib/singers-data";
@@ -28,6 +28,13 @@ export function SingerForm({
   const [photoError, setPhotoError] = useState("");
   const [birthdate, setBirthdate] = useState(initial.birthdate ?? "");
   const [yearOnly, setYearOnly] = useState(initial.birth_year_only ?? false);
+  // 예전 선택지로 저장된 값은 새 선택지로 맞춰 보여 줍니다.
+  const initialJoin =
+    initial.join_source && !(JOIN_SOURCES as readonly string[]).includes(initial.join_source)
+      ? normalizeJoinSource(initial.join_source)
+      : null;
+  const [joinSource, setJoinSource] = useState(initialJoin?.source ?? initial.join_source ?? "");
+  const joinDetailDefault = initialJoin ? initialJoin.detail : (initial.join_source_detail ?? null);
   const [gradeOverride, setGradeOverride] = useState(
     initial.grade_override === null || initial.grade_override === undefined ? "" : String(initial.grade_override),
   );
@@ -199,12 +206,28 @@ export function SingerForm({
           </div>
           <div>
             <label htmlFor="join_source" className="label">가입경로</label>
-            <select id="join_source" name="join_source" defaultValue={initial.join_source ?? ""} className="input">
+            <select
+              id="join_source"
+              name="join_source"
+              value={joinSource}
+              onChange={(e) => setJoinSource(e.target.value)}
+              className="input"
+            >
               <option value="">미입력</option>
               {JOIN_SOURCES.map((j) => (
                 <option key={j}>{j}</option>
               ))}
             </select>
+            {joinSource === JOIN_SOURCE_OTHER && (
+              <input
+                name="join_source_detail"
+                aria-label="기타 가입경로"
+                maxLength={100}
+                defaultValue={joinDetailDefault ?? ""}
+                placeholder="기타 가입경로 직접 입력"
+                className="input mt-2"
+              />
+            )}
           </div>
           <div>
             <label htmlFor="joined_on" className="label">입단일</label>
