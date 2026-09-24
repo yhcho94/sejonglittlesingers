@@ -80,8 +80,8 @@ export default async function HomePage() {
             <source media="(min-width: 1024px)" srcSet={heroDesktop} sizes="65vw" />
             <img
               {...heroImg}
-              alt="세종리틀싱어즈 단원들이 콘서트홀 무대에서 노래하고 관객이 환호하는 모습"
-              className="animate-hero-zoom absolute inset-0 h-full w-full object-cover object-[50%_40%] lg:object-[48%_58%]"
+              alt="세종리틀싱어즈 단원들이 무대에서 지휘에 맞춰 노래하는 모습"
+              className="animate-hero-zoom absolute inset-0 h-full w-full object-cover object-center lg:object-[50%_62%]"
             />
           </picture>
           {/* 사진과 글자 영역이 자연스럽게 이어지도록 */}
