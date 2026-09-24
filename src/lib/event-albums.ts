@@ -7,7 +7,7 @@ export type EventAlbum = { id: string; title: string; date: string; venue: strin
 export const EVENT_ALBUMS: EventAlbum[] = [
   {
     id: "224417208787",
-    title: "세종시민체육대회 애국가 제창",
+    title: "제15회 세종시민체육대회 애국가 제창",
     date: "2026-09-19",
     venue: "세종시민체육관",
     post: "https://blog.naver.com/sejonglittlesingers/224417208787",
@@ -92,7 +92,7 @@ export const EVENT_ALBUMS: EventAlbum[] = [
   },
   {
     id: "224355132062",
-    title: "세종 리틀싱어즈 제4회 기획연주회 「무지개빛 하모니」",
+    title: "세종 리틀싱어즈 제4회 기획연주회 「무지갯빛 하모니」",
     date: "2026-07-18",
     venue: "대전 김인홀",
     post: "https://blog.naver.com/sejonglittlesingers/224355132062",
