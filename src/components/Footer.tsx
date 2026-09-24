@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { InstallButton } from "@/components/InstallButton";
-import { LogoMark } from "@/components/LogoMark";
+import { LogoBadge } from "@/components/LogoMark";
 import { SocialLinks } from "@/components/SocialLinks";
 import { NAV } from "@/lib/nav";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
@@ -11,7 +11,11 @@ export function Footer() {
       <div className="container-page grid gap-8 py-9 md:grid-cols-12 md:py-10">
         <div className="md:col-span-5">
           <div className="flex items-center gap-3">
-            <LogoMark className="h-16 w-16 shrink-0" />
+            <LogoBadge
+              markClassName="h-16 w-16"
+              sinceClassName="mt-1 text-[9px] text-white/60"
+              textColor="#e8d6b0"
+            />
             <div>
               <p className="font-[family-name:var(--font-serif)] text-2xl font-bold text-white">{site.name}</p>
               <p className="eyebrow mt-1.5 text-[10px] text-gold">{site.nameEn}</p>
