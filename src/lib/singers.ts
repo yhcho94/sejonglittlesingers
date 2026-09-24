@@ -31,6 +31,7 @@ export type Singer = {
   consent_media_channels: boolean;
   consent_media_press: boolean;
   consent_updated_at: string | null;
+  consent_note: string | null; // 초상권 동의 비고 (예: 서면으로 받았음)
   join_source: string | null;
   join_source_detail: string | null; // 가입경로 '기타'에 직접 입력한 내용
   application_id: number | null;
@@ -38,7 +39,7 @@ export type Singer = {
 };
 
 export const SINGER_COLUMNS =
-  "id, name, birthdate, gender, school, grade_override, class_name, part, cohort, joined_on, left_on, status, guardian_id, guardian_name, guardian_phone, photo_path, name_public, name_hidden, consent_media_channels, consent_media_press, consent_updated_at, birth_year_only, join_source, join_source_detail, application_id, notes";
+  "id, name, birthdate, gender, school, grade_override, class_name, part, cohort, joined_on, left_on, status, guardian_id, guardian_name, guardian_phone, photo_path, name_public, name_hidden, consent_media_channels, consent_media_press, consent_updated_at, consent_note, birth_year_only, join_source, join_source_detail, application_id, notes";
 
 // 한국 시간 기준 오늘 (연·월·일)
 export function todayKst(now = new Date()) {
@@ -217,6 +218,7 @@ export function rosterRow(s: Singer, guardian?: { guardian_name: string; phone: 
     "보호자 이메일": guardian?.email ?? "",
     가입경로: joinSourceLabel(s.join_source, s.join_source_detail),
     "초상권 동의": consentSummary(s).detail || "미동의",
+    "초상권 비고": s.consent_note ?? "",
     비고: s.notes ?? "",
   };
 }

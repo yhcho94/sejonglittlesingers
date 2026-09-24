@@ -274,7 +274,7 @@ export function SingerForm({
       <fieldset className="space-y-3 border-t border-line pt-6">
         <legend className="mb-2 pt-6 font-bold text-navy">초상권(사진·영상) 이용 동의</legend>
         <p className="text-xs text-ink-soft">
-          보호자에게 동의를 받은 항목만 체크하세요 (입단 신청서·종이 동의서 등). 보호자가 마이페이지에서 바꾸면 이곳에도
+          보호자에게 동의를 받은 항목만 체크하세요 (입단 신청서·종이 동의서 등). 동의는 동의일(마지막 변경일)부터 5년간 유효합니다. 보호자가 마이페이지에서 바꾸면 이곳에도
           반영되며, 모든 변경은 동의 기록에 남습니다.
         </p>
         <MediaConsentFields
@@ -285,6 +285,17 @@ export function SingerForm({
             name: initial.name_public ?? false,
           }}
         />
+        <div>
+          <label htmlFor="consent_note" className="label">초상권 동의 비고</label>
+          <input
+            id="consent_note"
+            name="consent_note"
+            maxLength={200}
+            defaultValue={initial.consent_note ?? ""}
+            placeholder="예: 서면으로 받았음"
+            className="input"
+          />
+        </div>
         <label className="flex items-start gap-2 border-t border-line pt-3 text-sm">
           <input type="checkbox" name="name_hidden" defaultChecked={initial.name_hidden ?? false} className="mt-1" />
           <span>

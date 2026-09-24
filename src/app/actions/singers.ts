@@ -98,6 +98,7 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
     name_public: media.name,
     name_hidden: formData.get("name_hidden") === "on",
     consent_version: MEDIA_CONSENT_VERSION,
+    consent_note: text(formData, "consent_note", 200),
     notes: text(formData, "notes", 2000),
   };
 

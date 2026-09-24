@@ -22,6 +22,7 @@
    - `0013_public_names.sql`: 단원 소개에 활동 단원 이름·반 게시 (보호자 요청 시 게시 중단)
    - `0014_public_counts.sql`: 단원 소개에는 반별 인원 수만 제공 (학년·출생연도 비공개)
    - `0015_join_source_options.sql`: 가입경로 선택지 변경 (지인소개·SNS·인터넷 검색·세종리틀싱어즈 공연관람·기타 직접 입력)
+   - `0016_consent_note_written.sql`: 초상권 동의 비고 칸 · 기존 단원 서면 동의 반영
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.

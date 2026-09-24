@@ -166,7 +166,7 @@ export function ApplyForm({
       </fieldset>
 
       <fieldset className="space-y-3 rounded-sm border border-line p-4">
-        <legend className="px-1 text-sm font-medium">초상권(사진·영상) 이용 동의 (선택)</legend>
+        <legend className="px-1 text-sm font-medium">초상권(사진·영상) 이용 동의 (선택 · 동의일부터 5년)</legend>
         <MediaConsentFields />
       </fieldset>
 

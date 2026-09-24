@@ -8,7 +8,7 @@ import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { Application } from "@/lib/types";
-import { MEDIA_NOTICE } from "@/lib/media-consent";
+import { MEDIA_NOTICE, consentExpiresOn } from "@/lib/media-consent";
 import { MediaConsentForm } from "./MediaConsentForm";
 import { ProfileForm } from "./ProfileForm";
 
@@ -142,7 +142,10 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
                   <p className="mb-3 font-medium">
                     {s.name} <span className="text-sm text-ink-soft">{s.class_name ?? ""}</span>
                     {s.consent_updated_at && (
-                      <span className="ml-2 text-xs text-ink-soft">최근 변경 {formatDate(s.consent_updated_at)}</span>
+                      <span className="ml-2 text-xs text-ink-soft">
+                        최근 변경 {formatDate(s.consent_updated_at)} · 유효기간{" "}
+                        {formatDate(consentExpiresOn(s.consent_updated_at)!)}까지
+                      </span>
                     )}
                   </p>
                   <MediaConsentForm singer={s} />
