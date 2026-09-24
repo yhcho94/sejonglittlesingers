@@ -17,7 +17,7 @@ export default async function ConcertDetailPage({ params }: PageProps<"/concerts
   const embed = youtubeEmbedUrl(concert.video_url);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12">
+    <div className="mx-auto max-w-3xl px-4 py-8">
       <Link href="/concerts" className="text-sm text-ink-soft hover:underline">
         ← 공연 일정
       </Link>
@@ -48,7 +48,7 @@ export default async function ConcertDetailPage({ params }: PageProps<"/concerts
         )}
 
         {embed && (
-          <div className="mt-8 aspect-video overflow-hidden rounded-sm bg-black">
+          <div className="mt-6 aspect-video overflow-hidden rounded-sm bg-black">
             <iframe
               src={embed}
               title={`${concert.title} 영상`}

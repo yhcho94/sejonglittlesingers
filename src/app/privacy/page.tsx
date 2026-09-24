@@ -9,12 +9,12 @@ export default function PrivacyPage() {
   return (
     <>
       <PageHeader eyebrow="Privacy Policy" title="개인정보처리방침" />
-      <div className="mx-auto max-w-3xl px-4 py-10">
+      <div className="mx-auto max-w-3xl px-4 py-7">
         <p className="mb-6 rounded-sm border border-dashed border-gold bg-gold-soft p-4 text-sm">
           이 문서는 <strong>초안</strong>입니다. 법률 검토를 거친 뒤 확정해 주세요.
         </p>
 
-        <article className="card space-y-8 leading-relaxed [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-navy [&_li]:ml-5 [&_li]:list-disc">
+        <article className="card space-y-5 text-sm leading-relaxed md:text-[15px] [&_h2]:mb-1.5 [&_h2]:text-base md:[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-navy [&_li]:ml-5 [&_li]:list-disc">
           <p>
             {site.name}(이하 &quot;합창단&quot;)은 「개인정보 보호법」에 따라 정보주체의
             개인정보를 보호하고 관련 고충을 원활하게 처리하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다.
@@ -79,7 +79,8 @@ export default function PrivacyPage() {
               </li>
               <li>단원 명부 정보와 초상권 동의 기록: 단원 활동 종료(퇴단) 후 1년</li>
               <li>
-                게시한 사진·영상: 게시물을 내릴 때까지. 동의를 철회하면 이후 새 게시물에는 사용하지 않으며, 요청하시면 이미 게시한
+                초상권(사진·영상) 이용 동의: 동의한 날부터 5년. 기간이 끝나면 다시 동의를 받으며, 다시 동의하지 않으면 새로 게시하지
+                않습니다. 기간 중에도 언제든 철회할 수 있으며, 철회하면 이후 새 게시물에는 사용하지 않고, 요청하시면 이미 게시한
                 사진·영상을 삭제하거나 얼굴을 가립니다. 다만 이미 배포된 앨범·인쇄물·언론 기사 등 합창단이 회수할 수 없는 경우는
                 제외됩니다.
               </li>

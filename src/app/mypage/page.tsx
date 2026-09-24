@@ -8,7 +8,7 @@ import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { Application } from "@/lib/types";
-import { MEDIA_NOTICE } from "@/lib/media-consent";
+import { MEDIA_NOTICE, consentExpiresOn } from "@/lib/media-consent";
 import { MediaConsentForm } from "./MediaConsentForm";
 import { ProfileForm } from "./ProfileForm";
 
@@ -25,6 +25,17 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
     .eq("guardian_id", user.id)
     .order("created_at", { ascending: false })
     .returns<Pick<Application, "id" | "child_name" | "child_birthdate" | "status" | "admin_note" | "created_at">[]>();
+
+  // 반려된 신청 뒤에 같은 자녀로 다시 낸 신청이 있으면 '다시 신청' 버튼을 숨깁니다.
+  const resubmitted = (app: NonNullable<typeof applications>[number]) =>
+    (applications ?? []).some(
+      (other) =>
+        other.id !== app.id &&
+        other.status !== "rejected" &&
+        other.child_name === app.child_name &&
+        other.child_birthdate === app.child_birthdate &&
+        other.created_at > app.created_at,
+    );
 
   // 보호자 계정과 연결된 자녀 단원 (0008 실행 전이면 빈 목록)
   const { data: mySingers } = await supabase.rpc("my_singers");
@@ -43,7 +54,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
   return (
     <>
       <PageHeader eyebrow="My Page" title="마이페이지" />
-      <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 md:grid-cols-3">
+      <div className="mx-auto grid max-w-5xl gap-6 px-4 py-7 md:grid-cols-3">
         <section className="card md:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold text-navy">입단 신청 내역</h2>
@@ -55,7 +66,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             </p>
           )}
           {!applications?.length ? (
-            <p className="py-8 text-center text-ink-soft">신청 내역이 없습니다.</p>
+            <p className="py-6 text-center text-ink-soft">신청 내역이 없습니다.</p>
           ) : (
             <ul className="divide-y divide-line">
               {applications.map((app) => (
@@ -66,11 +77,24 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
                     </p>
                     <p className="text-sm text-ink-soft">신청일 {formatDate(app.created_at)}</p>
                     {app.status !== "pending" && app.admin_note && (
-                      <p className="mt-1 text-sm">안내: {app.admin_note}</p>
+                      <p className="mt-1 whitespace-pre-line text-sm">안내: {app.admin_note}</p>
+                    )}
+                    {app.status === "rejected" && !resubmitted(app) && (
+                      <p className="mt-1 text-xs text-ink-soft">
+                        안내 내용을 참고해 고친 뒤 다시 신청할 수 있습니다. 반려 기록은 5일 뒤 자동 삭제됩니다.
+                      </p>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
                     <StatusBadge status={app.status} />
+                    {app.status === "rejected" &&
+                      (resubmitted(app) ? (
+                        <span className="text-xs text-ink-soft">다시 신청함</span>
+                      ) : (
+                        <Link href={`/apply?from=${app.id}`} className="btn-primary px-3 py-1.5 text-sm">
+                          수정 후 다시 신청
+                        </Link>
+                      ))}
                     {app.status === "pending" && (
                       <form action={cancelApplication}>
                         <input type="hidden" name="id" value={app.id} />
@@ -118,7 +142,10 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
                   <p className="mb-3 font-medium">
                     {s.name} <span className="text-sm text-ink-soft">{s.class_name ?? ""}</span>
                     {s.consent_updated_at && (
-                      <span className="ml-2 text-xs text-ink-soft">최근 변경 {formatDate(s.consent_updated_at)}</span>
+                      <span className="ml-2 text-xs text-ink-soft">
+                        최근 변경 {formatDate(s.consent_updated_at)} · 유효기간{" "}
+                        {formatDate(consentExpiresOn(s.consent_updated_at)!)}까지
+                      </span>
                     )}
                   </p>
                   <MediaConsentForm singer={s} />

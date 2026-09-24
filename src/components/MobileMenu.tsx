@@ -45,15 +45,15 @@ function MobileMenuInner({ account }: { account: React.ReactNode }) {
         createPortal(
           <div
             id="mobile-menu"
-            className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-40 overflow-y-auto bg-ivory px-6 pb-10 pt-4"
+            className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-40 overflow-y-auto bg-ivory px-6 pb-7 pt-4"
           >
             <MobileNavLinks onNavigate={() => setOpen(false)} />
             <SocialLinks
               showLabel
-              className="mt-8 flex-wrap gap-x-5 gap-y-3 text-sm text-ink-soft"
+              className="mt-6 flex-wrap gap-x-5 gap-y-3 text-sm text-ink-soft"
               itemClassName="hover:text-navy"
             />
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm" onClick={() => setOpen(false)}>
+            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm" onClick={() => setOpen(false)}>
               {account}
             </div>
           </div>,

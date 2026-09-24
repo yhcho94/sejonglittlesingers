@@ -29,7 +29,7 @@ export default async function JoinPage() {
     <>
       <PageHeader eyebrow="Audition" title="입단 안내" description="노래를 사랑하는 어린이 단원을 기다립니다." />
 
-      <div className="mx-auto max-w-4xl space-y-14 px-4 py-12">
+      <div className="mx-auto max-w-4xl space-y-9 px-4 py-8">
         {recruitment?.is_open && (
           <div className="flex flex-wrap items-center justify-between gap-4 rounded-sm bg-navy px-6 py-5 text-white">
             <div>
@@ -102,7 +102,7 @@ export default async function JoinPage() {
           </section>
         )}
 
-        <section className="rounded-sm border border-line bg-white p-8 text-center">
+        <section className="rounded-sm border border-line bg-white p-6 text-center">
           <p className="text-lg font-bold text-navy">입단 신청은 온라인으로 받습니다</p>
           <p className="mt-2 text-sm text-ink-soft">보호자 회원가입 후 신청할 수 있습니다.</p>
           <p className="mt-1 text-sm text-ink-soft">

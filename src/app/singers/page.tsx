@@ -29,7 +29,7 @@ export default async function SingersPage() {
       <section className="section-y">
         <div className="container-page">
           {total > 0 && (
-            <div className="mb-12 flex flex-wrap items-end gap-x-10 gap-y-4 border-b border-line pb-10">
+            <div className="mb-8 flex flex-wrap items-end gap-x-7 gap-y-4 border-b border-line pb-7">
               <div>
                 <p className="eyebrow text-gold-deep">Singers</p>
                 <p className="mt-2 font-[family-name:var(--font-display)] text-6xl font-semibold text-navy md:text-7xl">
@@ -51,7 +51,7 @@ export default async function SingersPage() {
               return (
                 <article key={c.name} className="flex flex-col border border-line bg-white">
                   <div className="h-1" style={{ background: c.color }} />
-                  <div className="flex flex-1 flex-col p-6 md:p-8">
+                  <div className="flex flex-1 flex-col p-6 md:p-6">
                     <div className="flex items-baseline justify-between gap-4">
                       <h2 className="text-2xl font-bold text-navy">{c.name}</h2>
                       {inClass > 0 && (
@@ -86,10 +86,10 @@ export default async function SingersPage() {
           </div>
 
           {total === 0 && !data?.names.length && (
-            <p className="mt-10 text-center text-sm text-ink-soft">단원 현황은 준비 중입니다.</p>
+            <p className="mt-7 text-center text-sm text-ink-soft">단원 현황은 준비 중입니다.</p>
           )}
 
-          <div className="mt-12 flex flex-col items-start justify-between gap-6 border-t border-line pt-10 md:flex-row md:items-center">
+          <div className="mt-8 flex flex-col items-start justify-between gap-6 border-t border-line pt-7 md:flex-row md:items-center">
             <p className="max-w-2xl text-xs leading-relaxed text-ink-soft">
               이 화면에는 활동 중인 단원의 이름과 반만 게시하며, 사진·생년월일·학교 등 다른 정보는 공개하지 않습니다. 이름 게시를
               원하지 않으시면 마이페이지 또는 합창단({site.contact.phone})으로 알려 주세요. 바로 게시를 중단합니다.

@@ -16,7 +16,7 @@ export default async function NoticeDetailPage({ params }: PageProps<"/notices/[
   if (!notice) notFound();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12">
+    <div className="mx-auto max-w-3xl px-4 py-8">
       <Link href="/notices" className="text-sm text-ink-soft hover:underline">
         ← 공지사항 목록
       </Link>

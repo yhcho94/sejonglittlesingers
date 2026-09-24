@@ -1,6 +1,9 @@
 // 초상권(사진·영상) 이용 동의: 신청서·마이페이지·관리자 화면 공통 문구
 // 문구를 바꾸면 VERSION 도 올려 주세요. (동의 기록에 어떤 문구에 동의했는지 남습니다)
-export const MEDIA_CONSENT_VERSION = "2026-09-24";
+export const MEDIA_CONSENT_VERSION = "2026-09-24-5y";
+
+// 초상권 동의 이용 기간 (동의한 날부터)
+export const MEDIA_CONSENT_YEARS = 5;
 
 export const MEDIA_ITEMS = [
   {
@@ -26,11 +29,21 @@ export type MediaKey = (typeof MEDIA_ITEMS)[number]["key"];
 export const MEDIA_NOTICE = [
   "목적: 합창단 공연·활동 기록과 홍보",
   "항목: 단원의 얼굴이 나온 사진·영상, (③ 동의 시) 이름",
-  "게시 기간: 게시물을 내릴 때까지. 동의를 철회하면 이후 새 게시물에는 사용하지 않고, 요청하시면 이미 올린 게시물도 삭제하거나 얼굴을 가립니다.",
+  "이용 기간: 동의한 날부터 5년. 기간이 끝나면 다시 동의를 받으며, 다시 동의하지 않으면 새로 게시하지 않습니다.",
+  "기간 중에도 언제든 철회할 수 있습니다. 철회하면 이후 새 게시물에는 사용하지 않고, 요청하시면 이미 올린 게시물도 삭제하거나 얼굴을 가립니다.",
   "이미 배포된 앨범·인쇄물·언론 기사처럼 합창단이 회수할 수 없는 경우가 있습니다.",
   "관객·언론 등 다른 사람이 공연장에서 촬영한 사진·영상은 합창단이 관리할 수 없습니다.",
   "동의하지 않아도 입단과 활동에 불이익이 없으며, 마이페이지에서 언제든 항목별로 바꿀 수 있습니다.",
 ];
+
+// 동의 유효기간 끝나는 날 (마지막 동의·변경일 + 5년)
+export function consentExpiresOn(updatedAt: string | null | undefined) {
+  if (!updatedAt) return null;
+  const d = new Date(updatedAt);
+  if (Number.isNaN(d.getTime())) return null;
+  d.setFullYear(d.getFullYear() + MEDIA_CONSENT_YEARS);
+  return d.toISOString();
+}
 
 // 명부·엑셀 표시용 요약
 export function consentSummary(s: { consent_media_channels: boolean; consent_media_press: boolean; name_public: boolean }) {

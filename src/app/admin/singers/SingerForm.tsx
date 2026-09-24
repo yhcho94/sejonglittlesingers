@@ -5,7 +5,7 @@ import { saveSinger } from "@/app/actions/singers";
 import { FormMessage, SubmitButton } from "@/components/form";
 import { MediaConsentFields } from "@/components/MediaConsentFields";
 import { resizeImage } from "@/lib/image-resize";
-import { JOIN_SOURCES } from "@/lib/join-source";
+import { JOIN_SOURCES, JOIN_SOURCE_OTHER, normalizeJoinSource } from "@/lib/join-source";
 import { createClient } from "@/lib/supabase/client";
 import { CLASS_NAMES, STATUS_LABEL, gradeCode, gradeLabel, type Singer } from "@/lib/singers";
 import type { GuardianProfile } from "@/lib/singers-data";
@@ -28,6 +28,13 @@ export function SingerForm({
   const [photoError, setPhotoError] = useState("");
   const [birthdate, setBirthdate] = useState(initial.birthdate ?? "");
   const [yearOnly, setYearOnly] = useState(initial.birth_year_only ?? false);
+  // 예전 선택지로 저장된 값은 새 선택지로 맞춰 보여 줍니다.
+  const initialJoin =
+    initial.join_source && !(JOIN_SOURCES as readonly string[]).includes(initial.join_source)
+      ? normalizeJoinSource(initial.join_source)
+      : null;
+  const [joinSource, setJoinSource] = useState(initialJoin?.source ?? initial.join_source ?? "");
+  const joinDetailDefault = initialJoin ? initialJoin.detail : (initial.join_source_detail ?? null);
   const [gradeOverride, setGradeOverride] = useState(
     initial.grade_override === null || initial.grade_override === undefined ? "" : String(initial.grade_override),
   );
@@ -199,12 +206,28 @@ export function SingerForm({
           </div>
           <div>
             <label htmlFor="join_source" className="label">가입경로</label>
-            <select id="join_source" name="join_source" defaultValue={initial.join_source ?? ""} className="input">
+            <select
+              id="join_source"
+              name="join_source"
+              value={joinSource}
+              onChange={(e) => setJoinSource(e.target.value)}
+              className="input"
+            >
               <option value="">미입력</option>
               {JOIN_SOURCES.map((j) => (
                 <option key={j}>{j}</option>
               ))}
             </select>
+            {joinSource === JOIN_SOURCE_OTHER && (
+              <input
+                name="join_source_detail"
+                aria-label="기타 가입경로"
+                maxLength={100}
+                defaultValue={joinDetailDefault ?? ""}
+                placeholder="기타 가입경로 직접 입력"
+                className="input mt-2"
+              />
+            )}
           </div>
           <div>
             <label htmlFor="joined_on" className="label">입단일</label>
@@ -251,7 +274,7 @@ export function SingerForm({
       <fieldset className="space-y-3 border-t border-line pt-6">
         <legend className="mb-2 pt-6 font-bold text-navy">초상권(사진·영상) 이용 동의</legend>
         <p className="text-xs text-ink-soft">
-          보호자에게 동의를 받은 항목만 체크하세요 (입단 신청서·종이 동의서 등). 보호자가 마이페이지에서 바꾸면 이곳에도
+          보호자에게 동의를 받은 항목만 체크하세요 (입단 신청서·종이 동의서 등). 동의는 동의일(마지막 변경일)부터 5년간 유효합니다. 보호자가 마이페이지에서 바꾸면 이곳에도
           반영되며, 모든 변경은 동의 기록에 남습니다.
         </p>
         <MediaConsentFields
@@ -262,6 +285,17 @@ export function SingerForm({
             name: initial.name_public ?? false,
           }}
         />
+        <div>
+          <label htmlFor="consent_note" className="label">초상권 동의 비고</label>
+          <input
+            id="consent_note"
+            name="consent_note"
+            maxLength={200}
+            defaultValue={initial.consent_note ?? ""}
+            placeholder="예: 서면으로 받았음"
+            className="input"
+          />
+        </div>
         <label className="flex items-start gap-2 border-t border-line pt-3 text-sm">
           <input type="checkbox" name="name_hidden" defaultChecked={initial.name_hidden ?? false} className="mt-1" />
           <span>

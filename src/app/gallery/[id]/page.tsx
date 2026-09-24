@@ -34,9 +34,9 @@ export default async function AlbumPage({ params }: PageProps<"/gallery/[id]">) 
         title={album.title}
         description={album.description ?? undefined}
       />
-      <section className="py-10 md:py-16">
+      <section className="py-7 md:py-10">
         <div className="container-page">
-          <div className="mb-8 flex items-center justify-between text-sm">
+          <div className="mb-6 flex items-center justify-between text-sm">
             <Link href="/gallery" className="text-ink-soft hover:text-navy">
               ← 전체 앨범
             </Link>

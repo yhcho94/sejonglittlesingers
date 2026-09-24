@@ -68,6 +68,7 @@ export type ImportedSinger = {
   birthdate: string | null;
   birth_year_only: boolean;
   join_source: string | null;
+  join_source_detail: string | null;
   gender: "여" | "남" | null;
   class_name: string | null;
   school: string | null;
@@ -196,6 +197,7 @@ export function parseImportRow(values: Record<string, string>): {
   const mediaName = yesNo(get("초상권③ 이름표시") || (values["이름 공개 동의"] ?? ""), "초상권③");
 
   if (errors.length) return { errors, warnings };
+  const joinSource = normalizeJoinSource(get("가입경로"));
   return {
     errors,
     warnings,
@@ -203,7 +205,8 @@ export function parseImportRow(values: Record<string, string>): {
       name,
       birthdate,
       birth_year_only: birthYear !== null,
-      join_source: normalizeJoinSource(get("가입경로")),
+      join_source: joinSource?.source ?? null,
+      join_source_detail: joinSource?.detail ?? null,
       gender,
       class_name: className,
       school: opt("학교", 100),

@@ -10,7 +10,7 @@ export default async function NoticesPage() {
   return (
     <>
       <PageHeader eyebrow="Notice" title="공지사항" />
-      <div className="mx-auto max-w-4xl px-4 py-10">
+      <div className="mx-auto max-w-4xl px-4 py-7">
         <div className="card">
           <NoticeList notices={notices} />
         </div>

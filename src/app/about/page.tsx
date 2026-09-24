@@ -24,7 +24,7 @@ const CONCERTS = ["1학기 기획연주회", "2학기 정기연주회", "향상 
 
 function Heading({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
-    <div className="mb-10 md:mb-14">
+    <div className="mb-7 md:mb-9">
       <p className="eyebrow text-gold-deep">{eyebrow}</p>
       <h2 className="mt-3 text-2xl font-bold text-navy md:text-4xl">{title}</h2>
     </div>
@@ -42,16 +42,16 @@ export default function AboutPage() {
 
       {/* 인사 · 이야기 */}
       <section className="section-y">
-        <div className="container-page grid gap-10 md:grid-cols-12 md:gap-16">
+        <div className="container-page grid gap-7 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-5">
             <p className="eyebrow text-gold-deep">Our Story</p>
-            <p className="mt-4 font-[family-name:var(--font-serif)] text-2xl font-bold leading-snug text-navy md:text-[2rem] md:leading-snug">
+            <p className="mt-3 font-[family-name:var(--font-serif)] text-xl font-bold leading-snug text-navy md:text-[1.75rem] md:leading-snug">
               세종리틀싱어즈는 2023년 창단된 세종시 어린이 합창단으로, 음악을 통해 아이들의 감성과 협동심을 키우는 전문 합창
               교육단체입니다.
             </p>
-            <span className="gold-rule mt-8" />
+            <span className="gold-rule mt-6" />
           </div>
-          <div className="space-y-5 leading-relaxed text-ink-soft md:col-span-7 md:pt-10 md:text-lg md:leading-relaxed">
+          <div className="space-y-5 leading-relaxed text-ink-soft md:col-span-7 md:pt-7 md:text-lg md:leading-relaxed">
             <p>
               창단 당시 25명으로 출발해 꾸준한 성장을 이어왔으며, 2026년에는 4기를 맞아 초등부까지 확대된 총 150명의
               단원이 함께하는 세종시 대표 어린이 합창단으로 자리매김하고 있습니다.
@@ -67,12 +67,12 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <div className="container-page mt-14 md:mt-20">
+        <div className="container-page mt-9 md:mt-12">
           <dl className="grid grid-cols-2 gap-px overflow-hidden border border-line bg-line sm:grid-cols-3 lg:grid-cols-5">
             {STATS.map((s, i) => (
               <div
                 key={s.label}
-                className={`flex flex-col-reverse items-center bg-white px-3 py-8 text-center ${
+                className={`flex flex-col-reverse items-center bg-white px-3 py-4 md:py-6 text-center ${
                   i === STATS.length - 1 ? "col-span-2 sm:col-span-1" : ""
                 }`}
               >
@@ -96,7 +96,7 @@ export default function AboutPage() {
         <div className="container-page">
           <Heading eyebrow="Program" title="수업과 활동" />
           <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
-            <div className="bg-white p-8 md:p-10">
+            <div className="bg-white p-4 md:p-6">
               <p className="font-[family-name:var(--font-serif)] text-xl font-bold text-navy">수업 · 반 구성</p>
               <p className="mt-4 leading-relaxed text-ink-soft">
                 수업은 울림반·화음반·선율반의 3개 반으로 나누어 진행되며, ‘즐거운 합창’이라는 모토 아래 아이들이 음악을
@@ -114,7 +114,7 @@ export default function AboutPage() {
                 ))}
               </ul>
             </div>
-            <div className="bg-white p-8 md:p-10">
+            <div className="bg-white p-4 md:p-6">
               <p className="font-[family-name:var(--font-serif)] text-xl font-bold text-navy">공연 · 초청 무대</p>
               <p className="mt-4 leading-relaxed text-ink-soft">
                 세종시에서 가장 활발한 활동을 펼치는 어린이 합창단으로, 연 20회 내외의 공연 및 주요 문화·공공 행사에
@@ -124,13 +124,13 @@ export default function AboutPage() {
                 공연 이력 보기 <span aria-hidden>→</span>
               </Link>
             </div>
-            <div className="bg-white p-8 md:p-10">
+            <div className="bg-white p-4 md:p-6">
               <p className="font-[family-name:var(--font-serif)] text-xl font-bold text-navy">앨범 · 뮤직비디오</p>
               <p className="mt-4 leading-relaxed text-ink-soft">
                 매년 창작곡을 바탕으로 앨범(연 2회)과 뮤직비디오(연 6편)를 제작합니다.
               </p>
             </div>
-            <div className="bg-white p-8 md:p-10">
+            <div className="bg-white p-4 md:p-6">
               <p className="font-[family-name:var(--font-serif)] text-xl font-bold text-navy">주최 음악회 · 연 4회</p>
               <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1.5 text-ink-soft">
                 {CONCERTS.map((c) => (
@@ -155,7 +155,7 @@ export default function AboutPage() {
         <div className="container-page">
           <Heading eyebrow="Organization" title={`${organization.year} 조직도`} />
           <OrgChart />
-          <Link href="/faculty" className="mt-10 inline-flex items-center gap-2 text-sm font-medium text-navy">
+          <Link href="/faculty" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-navy">
             지휘자 · 강사진 소개 보기 <span aria-hidden>→</span>
           </Link>
         </div>
@@ -163,7 +163,7 @@ export default function AboutPage() {
 
       {/* 공식 채널 · 문의 */}
       <section className="section-y bg-ivory">
-        <div className="container-page grid gap-14 md:grid-cols-2 md:gap-12">
+        <div className="container-page grid gap-9 md:grid-cols-2 md:gap-8">
           <div>
             <Heading eyebrow="Channels" title="공식 채널" />
             <div className="grid gap-px overflow-hidden border border-line bg-line">

@@ -5,6 +5,8 @@ import { ConfirmButton } from "@/components/ConfirmButton";
 import { StatusBadge } from "@/components/StatusBadge";
 import { requireAdmin } from "@/lib/auth";
 import { formatDate, formatDateTime } from "@/lib/format";
+import { joinSourceLabel } from "@/lib/join-source";
+import { consentExpiresOn } from "@/lib/media-consent";
 import { birthLabel, gradeCode, gradeLabel, singerAge } from "@/lib/singers";
 import { getSinger, guardianMap, signedPhotoUrls, singersOfGuardian } from "@/lib/singers-data";
 import { createClient } from "@/lib/supabase/server";
@@ -57,7 +59,7 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
           ? `${birthLabel(singer)} (생일 미입력)`
           : `${singer.birthdate} (만 ${singerAge(singer)}세)`,
     ],
-    ["가입경로", singer.join_source],
+    ["가입경로", joinSourceLabel(singer.join_source, singer.join_source_detail) || null],
     ["단원 소개 이름", singer.name_hidden ? "숨김 (보호자 요청)" : singer.status === "active" ? "게시 중" : "게시 안 함 (활동 단원만 게시)"],
     ["성별", singer.gender],
     ["학교", singer.school],
@@ -200,6 +202,22 @@ export default async function AdminSingerDetail({ params }: PageProps<"/admin/si
                 </li>
               ))}
             </ul>
+            <dl className="mt-3 space-y-1 border-t border-line pt-3 text-sm">
+              {singer.consent_updated_at && (
+                <div className="flex justify-between gap-3">
+                  <dt className="text-ink-soft">유효기간</dt>
+                  <dd>
+                    {formatDate(singer.consent_updated_at)} ~ {formatDate(consentExpiresOn(singer.consent_updated_at)!)}
+                  </dd>
+                </div>
+              )}
+              {singer.consent_note && (
+                <div className="flex justify-between gap-3">
+                  <dt className="text-ink-soft">비고</dt>
+                  <dd className="text-right">{singer.consent_note}</dd>
+                </div>
+              )}
+            </dl>
             {consentLog.length > 0 && (
               <details className="mt-4 text-xs">
                 <summary className="cursor-pointer text-ink-soft">변경 기록 {consentLog.length}건</summary>

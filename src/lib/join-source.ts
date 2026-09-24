@@ -1,25 +1,25 @@
-// 가입경로 (입단 신청서 선택지 · 통계 공통)
-export const JOIN_SOURCES = [
-  "지인 소개",
-  "인터넷 검색",
-  "SNS (인스타그램 등)",
-  "네이버 카페·블로그",
-  "유튜브",
-  "공연 관람",
-  "유치원·학교 안내",
-  "기타",
-] as const;
+// 가입경로 (입단 신청서 선택지 · 단원 명부 · 통계 공통). '기타'는 직접 입력한 내용을 따로 저장합니다.
+export const JOIN_SOURCES = ["지인소개", "SNS", "인터넷 검색", "세종리틀싱어즈 공연관람", "기타"] as const;
 
-// 기존 명단의 표기를 선택지로 맞춤 (예: '지인소개' → '지인 소개')
-export function normalizeJoinSource(raw: string): string | null {
-  const v = raw.replace(/\s/g, "");
+export const JOIN_SOURCE_OTHER = "기타";
+
+// 화면·엑셀 표시용: '기타 (직접 입력한 내용)'
+export function joinSourceLabel(source: string | null | undefined, detail?: string | null) {
+  if (!source) return "";
+  return detail ? `${source} (${detail})` : source;
+}
+
+// 기존 명단·예전 선택지의 표기를 새 선택지로 맞춤 (예: '지인 소개' → '지인소개', '유튜브' → 'SNS')
+// 선택지에 딱 맞지 않으면 '기타'로 두고 원래 적힌 내용을 detail 에 남깁니다.
+export function normalizeJoinSource(raw: string): { source: string; detail: string | null } | null {
+  const text = raw.trim();
+  const v = text.replace(/\s/g, "");
   if (!v) return null;
-  if (v.includes("지인")) return "지인 소개";
-  if (v.includes("인터넷") || v.includes("검색")) return "인터넷 검색";
-  if (/sns|인스타|페이스북|instagram/i.test(v)) return "SNS (인스타그램 등)";
-  if (v.includes("카페") || v.includes("블로그")) return "네이버 카페·블로그";
-  if (v.includes("유튜브") || /youtube/i.test(v)) return "유튜브";
-  if (v.includes("공연")) return "공연 관람";
-  if (v.includes("유치원") || v.includes("학교")) return "유치원·학교 안내";
-  return "기타";
+  const keep = (source: string) => ({ source, detail: null });
+  if (v.includes("지인")) return keep("지인소개");
+  if (v.includes("공연")) return keep("세종리틀싱어즈 공연관람");
+  if (/sns|인스타|페이스북|instagram|facebook|카페|블로그|유튜브|youtube|카카오/i.test(v)) return keep("SNS");
+  if (v.includes("인터넷") || v.includes("검색")) return keep("인터넷 검색");
+  const detail = text.replace(/^기타\s*[:(]?\s*/, "").replace(/\)$/, "").trim();
+  return { source: JOIN_SOURCE_OTHER, detail: detail ? detail.slice(0, 100) : null };
 }
