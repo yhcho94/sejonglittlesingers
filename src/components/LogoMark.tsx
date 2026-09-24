@@ -12,7 +12,7 @@ export function LogoMark({
   halo?: string;
 }) {
   return (
-    <svg viewBox="5 8 42 37" className={className} aria-hidden>
+    <svg viewBox="5 11 42 32" className={className} aria-hidden>
       <g fill="none" strokeLinecap="round" strokeWidth="2.4">
         <path d="M10 35 A18 18 0 0 1 46 35" stroke="#eab2b6" />
         <path d="M14 35 A14 14 0 0 1 42 35" stroke="#eccb7f" />

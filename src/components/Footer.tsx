@@ -12,7 +12,7 @@ export function Footer() {
         <div className="md:col-span-5">
           <div className="flex items-center gap-3">
             <LogoBadge
-              markClassName="h-16 w-16"
+              markClassName="h-auto w-[72px]"
               sinceClassName="mt-1 text-[9px] text-white/60"
               textColor="#e8d6b0"
             />

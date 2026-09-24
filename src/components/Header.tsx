@@ -61,8 +61,8 @@ export async function Header() {
         <div className="container-page flex h-full items-center justify-between gap-2 lg:gap-6">
           <Link href="/" className="flex shrink-0 items-center gap-1.5 max-[379px]:gap-1 lg:gap-2.5" aria-label={`${site.name} 홈`}>
             <LogoBadge
-              markClassName="h-9 w-9 max-[379px]:h-8 max-[379px]:w-8 lg:h-12 lg:w-12"
-              sinceClassName="mt-px text-[6.5px] text-ink-soft max-[379px]:text-[6px] max-[379px]:tracking-normal lg:text-[8px]"
+              markClassName="h-auto w-10 max-[379px]:w-8 lg:w-14"
+              sinceClassName="mt-0.5 text-[6.5px] text-ink-soft max-[379px]:text-[6px] max-[379px]:tracking-normal lg:text-[8px]"
             />
             <span className="flex flex-col leading-none whitespace-nowrap">
               <span className="font-[family-name:var(--font-serif)] text-lg font-bold tracking-tight text-navy max-[379px]:text-base lg:text-xl">
