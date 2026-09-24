@@ -46,8 +46,10 @@ export const metadata: Metadata = {
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
     other: {
-      // 네이버 서치어드바이저: https://sejonglittlesingers.com
-      "naver-site-verification": process.env.NAVER_SITE_VERIFICATION || "9d35db5993cb5daf52e1e45e49e64cebe8bb8647",
+      // 네이버 서치어드바이저: https://sejonglittlesingers.com (대표 주소), https://www.sejonglittlesingers.com
+      "naver-site-verification": process.env.NAVER_SITE_VERIFICATION
+        ? [process.env.NAVER_SITE_VERIFICATION]
+        : ["af187d752cb32279934e77b3ba62b80cbb6270e0", "9d35db5993cb5daf52e1e45e49e64cebe8bb8647"],
     },
   },
 };
