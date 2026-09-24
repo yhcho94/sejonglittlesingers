@@ -29,11 +29,6 @@ export default async function SingersPage() {
   }));
   const total = rows.length;
 
-  const gradeCounts = new Map<number, number>();
-  // 학년을 모르는 단원(생년월일 미입력)은 반별 인원에만 포함
-  for (const r of rows) if (r.grade !== null) gradeCounts.set(r.grade, (gradeCounts.get(r.grade) ?? 0) + 1);
-  const grades = [...gradeCounts.entries()].sort((a, b) => a[0] - b[0]);
-  const maxGrade = Math.max(1, ...grades.map(([, v]) => v));
 
   return (
     <>
@@ -106,41 +101,13 @@ export default async function SingersPage() {
             })}
           </div>
 
-          {grades.length > 0 && (
-            <div className="mt-12 border border-line bg-white p-6 md:p-8">
-              <h2 className="text-xl font-bold text-navy">학년별 단원</h2>
-              <p className="mt-1 text-sm text-ink-soft">활동 단원 기준 · 출생연도로 계산한 학년</p>
-              <ul className="mt-6 space-y-1.5">
-                {grades.map(([g, v]) => (
-                  <li
-                    key={g}
-                    title={`${gradeLabel(g)} ${v}명`}
-                    className="grid grid-cols-[6.5rem_1fr] items-center gap-3 text-sm"
-                  >
-                    <span className="text-ink-soft">{gradeLabel(g)}</span>
-                    <span className="flex items-center gap-2">
-                      <span
-                        className="h-4 rounded-r-[4px] bg-navy"
-                        style={{ width: `calc((100% - 3.5rem) * ${v / maxGrade})` }}
-                      />
-                      <span className="tabular-nums">
-                        {v}
-                        <span className="text-xs text-ink-soft">명</span>
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
           {total === 0 && (
             <p className="mt-10 text-center text-sm text-ink-soft">단원 현황은 준비 중입니다.</p>
           )}
 
           <div className="mt-12 flex flex-col items-start justify-between gap-6 border-t border-line pt-10 md:flex-row md:items-center">
             <p className="max-w-2xl text-xs leading-relaxed text-ink-soft">
-              단원의 개인정보 보호를 위해 이 화면에는 반별·학년별 인원만 공개하며, 단원 이름은 보호자가 공개에 동의한 경우에만
+              단원의 개인정보 보호를 위해 이 화면에는 반별 인원만 공개하며, 단원 이름은 보호자가 공개에 동의한 경우에만
               게시합니다. 사진·생년월일·학교 등 다른 정보는 공개하지 않습니다.
             </p>
             <Link href="/join" className="btn-primary shrink-0">

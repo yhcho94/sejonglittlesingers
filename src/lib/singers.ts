@@ -53,7 +53,8 @@ export function gradeCode(birthdate: string | null, override: number | null, now
   if (!birthdate) return null;
   const { year, month } = todayKst(now);
   const schoolYear = month >= 3 ? year : year - 1;
-  return schoolYear - Number(birthdate.slice(0, 4)) - 6;
+  // 미취학(0 이하)과 졸업 이후(13 이상)는 각각 하나로 묶어 같은 이름이 두 줄로 나오지 않게 합니다.
+  return Math.min(13, Math.max(0, schoolYear - Number(birthdate.slice(0, 4)) - 6));
 }
 
 export function gradeLabel(code: number | null) {
