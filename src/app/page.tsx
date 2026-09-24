@@ -184,7 +184,7 @@ export default async function HomePage() {
       {/* ── 반 구성 ──────────────────────────── */}
       <section className="section-y">
         <div className="container-page">
-          <SectionTitle eyebrow="Classes" title="세 개의 반, 하나의 하모니" href="/about" linkLabel="강사진" />
+          <SectionTitle eyebrow="Classes" title="세 개의 반, 하나의 하모니" href="/faculty" linkLabel="강사진" />
           <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
             {organization.classes.map((c, i) => (
               <div

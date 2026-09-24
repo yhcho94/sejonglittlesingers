@@ -3,7 +3,7 @@ import Link from "next/link";
 import { OrgChart } from "@/components/OrgChart";
 import { PageHeader } from "@/components/PageHeader";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
-import { conductor, organization, staffGroups, type BioSection, type StaffMember } from "@/lib/staff";
+import { organization } from "@/lib/staff";
 
 export const metadata: Metadata = {
   title: "합창단 소개",
@@ -155,65 +155,14 @@ export default function AboutPage() {
         <div className="container-page">
           <Heading eyebrow="Organization" title={`${organization.year} 조직도`} />
           <OrgChart />
-        </div>
-      </section>
-
-      {/* 지휘자 · 강사진 */}
-      <section className="section-y bg-ivory">
-        <div className="container-page">
-          <Heading eyebrow="Conductor & Faculty" title="지휘자 · 강사진" />
-
-          <article className="border border-line bg-white">
-            <div className="flex flex-wrap items-end justify-between gap-4 bg-navy px-6 py-7 text-white md:px-10 md:py-9">
-              <div>
-                <p className="eyebrow text-gold">{conductor.role}</p>
-                <h3 className="mt-2 font-[family-name:var(--font-serif)] text-3xl font-bold md:text-4xl">
-                  {conductor.name}
-                </h3>
-              </div>
-              {conductor.website && (
-                <a
-                  href={conductor.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost-light px-4 py-2 text-xs"
-                >
-                  개인 홈페이지 ↗
-                </a>
-              )}
-            </div>
-            <div className="grid gap-x-12 gap-y-8 p-6 md:grid-cols-2 md:p-10">
-              {conductor.sections.map((section) => (
-                <BioList key={section.title} section={section} />
-              ))}
-            </div>
-          </article>
-
-          {staffGroups.map((group) => (
-            <div key={group.title} className="mt-14">
-              <h3 className="flex items-center gap-4 font-[family-name:var(--font-serif)] text-xl font-bold text-navy">
-                {group.title}
-                <span className="h-px flex-1 bg-line" />
-              </h3>
-              <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                {group.members.map((member) => (
-                  <article key={member.name} className="border border-line bg-white p-6 md:p-7">
-                    <StaffHeading member={member} />
-                    <div className="mt-5 space-y-6">
-                      {member.sections.map((section) => (
-                        <BioList key={section.title} section={section} />
-                      ))}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          ))}
+          <Link href="/faculty" className="mt-10 inline-flex items-center gap-2 text-sm font-medium text-navy">
+            지휘자 · 강사진 소개 보기 <span aria-hidden>→</span>
+          </Link>
         </div>
       </section>
 
       {/* 공식 채널 · 문의 */}
-      <section className="section-y">
+      <section className="section-y bg-ivory">
         <div className="container-page grid gap-14 md:grid-cols-2 md:gap-12">
           <div>
             <Heading eyebrow="Channels" title="공식 채널" />
@@ -282,40 +231,5 @@ export default function AboutPage() {
         </div>
       </section>
     </>
-  );
-}
-
-function StaffHeading({ member }: { member: StaffMember }) {
-  const color = organization.classes.find((c) => c.name === member.className)?.color;
-  return (
-    <div className="flex flex-wrap items-start justify-between gap-2">
-      <div>
-        <p className="text-xs text-ink-soft">{member.role}</p>
-        <h4 className="mt-1 font-[family-name:var(--font-serif)] text-xl font-bold">{member.name}</h4>
-      </div>
-      {member.className && (
-        <span className="border px-2.5 py-0.5 text-xs font-medium" style={{ color, borderColor: color }}>
-          {member.className}
-        </span>
-      )}
-    </div>
-  );
-}
-
-function BioList({ section }: { section: BioSection }) {
-  return (
-    <div>
-      <h5 className="border-b border-line pb-2 text-xs font-bold tracking-wider text-gold-deep">{section.title}</h5>
-      <ul className="mt-3 space-y-2 text-sm leading-relaxed">
-        {section.items.map((item) => (
-          <li key={item} className="flex gap-2">
-            <span className="text-gold" aria-hidden>
-              ·
-            </span>
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }
