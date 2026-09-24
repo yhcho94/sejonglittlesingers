@@ -5,6 +5,7 @@ import { conductor, organization, staffGroups, type BioSection, type StaffMember
 export const metadata: Metadata = {
   title: "강사진 소개",
   description: "세종리틀싱어즈를 이끄는 지휘자와 부지휘자·반주자·보컬트레이너·이론선생님을 소개합니다.",
+  alternates: { canonical: "/faculty" },
 };
 
 export default function FacultyPage() {

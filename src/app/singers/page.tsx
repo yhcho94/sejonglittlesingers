@@ -8,6 +8,7 @@ import { organization } from "@/lib/staff";
 export const metadata: Metadata = {
   title: "단원 소개",
   description: "세종리틀싱어즈의 울림반·화음반·선율반 단원들을 소개합니다.",
+  alternates: { canonical: "/singers" },
 };
 
 // 공개 화면에는 교사진만 표시 (학부모 임원 이름은 싣지 않음)

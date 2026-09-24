@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = { title: "개인정보처리방침" };
+export const metadata: Metadata = {
+  title: "개인정보처리방침",
+  description: "세종리틀싱어즈 홈페이지 개인정보처리방침입니다.",
+  alternates: { canonical: "/privacy" },
+};
 
 // 초안입니다. 게시 전 합창단 운영 주체의 확인과 법률 검토를 거쳐야 합니다.
 export default function PrivacyPage() {

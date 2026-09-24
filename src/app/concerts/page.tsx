@@ -4,7 +4,11 @@ import { PageHeader } from "@/components/PageHeader";
 import { PerformanceHistory } from "@/components/PerformanceHistory";
 import { listConcerts } from "@/lib/content";
 
-export const metadata: Metadata = { title: "공연 일정" };
+export const metadata: Metadata = {
+  title: "공연 일정",
+  description: "세종리틀싱어즈의 다가오는 공연 일정과 지금까지의 공연 이력입니다.",
+  alternates: { canonical: "/concerts" },
+};
 
 export default async function ConcertsPage() {
   const [upcoming, past] = await Promise.all([listConcerts("upcoming"), listConcerts("past")]);

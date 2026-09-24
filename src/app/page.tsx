@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getImageProps } from "next/image";
 import Link from "next/link";
 import { ConcertCard } from "@/components/ConcertCard";
@@ -12,6 +13,28 @@ import { site, smsHref } from "@/lib/site";
 import { organization } from "@/lib/staff";
 import heroMobileImage from "../../public/images/hero-mobile.jpg";
 import heroImage from "../../public/images/hero.jpg";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
+
+// 검색엔진용 구조화 데이터: 합창단(공연 단체)과 웹사이트 정보. 홈페이지에 공개된 사실만 넣습니다.
+const JSON_LD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicGroup",
+    name: site.name,
+    alternateName: [site.nameEn, "세종 리틀싱어즈"],
+    url: site.url,
+    logo: `${site.url}/icons/icon-512.png`,
+    image: `${site.url}/images/og.jpg`,
+    description: site.description,
+    foundingDate: "2023",
+    genre: "어린이 합창",
+    keywords: "세종시 합창단, 세종 어린이 합창단, 세종시 어린이 합창단, 세종리틀싱어즈",
+    address: { "@type": "PostalAddress", addressRegion: "세종특별자치시", addressCountry: "KR" },
+    sameAs: [site.links.youtube, site.links.blog, site.links.cafe],
+  },
+  { "@context": "https://schema.org", "@type": "WebSite", name: site.name, alternateName: site.nameEn, url: site.url },
+];
 
 // 대표 사진 (화면 크기별로 다른 사진: Next.js getImageProps 아트 디렉션)
 const heroCommon = { alt: "", priority: true, quality: 80 } as const;
@@ -81,6 +104,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD).replace(/</g, "\\u003c") }} />
       {/* ── 대표 영역 ───────────────────────────── */}
       {/* 휴대폰·태블릿: 사진 아래에 글자 / PC: 왼쪽 글자, 오른쪽 사진 (아이들을 가리지 않도록) */}
       <section className="bg-navy-dark text-white lg:grid lg:min-h-[min(calc(100svh-var(--header-h)-var(--util-h)),820px)] lg:grid-cols-[calc(max(2rem,(100vw-72rem)/2+2rem)+28rem)_1fr]">
