@@ -21,7 +21,39 @@ function detectMode(): Mode {
   return isIOS ? "ios" : "guide";
 }
 
-export function InstallButton({ className = "" }: { className?: string }) {
+function InstallIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
+      <rect x="6" y="2.5" width="12" height="19" rx="2.5" />
+      <path d="M12 7.5v7m0 0l-3-3m3 3l3-3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10.5 18.5h3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// variant: text(글자만) · inline(아이콘+글자) · stacked(아이콘 아래 짧은 글자, 휴대폰 머리글)
+export function InstallButton({
+  className = "",
+  variant = "text",
+}: {
+  className?: string;
+  variant?: "text" | "inline" | "stacked";
+}) {
+  const label =
+    variant === "stacked" ? (
+      <>
+        <InstallIcon className="h-5 w-5 text-navy" />
+        <span className="text-[10px] leading-none font-medium">앱 설치</span>
+      </>
+    ) : variant === "inline" ? (
+      <>
+        <InstallIcon className="h-4 w-4" />
+        <span>앱 설치</span>
+      </>
+    ) : (
+      "홈 화면에 앱 설치"
+    );
+  const layout = variant === "stacked" ? "inline-flex flex-col items-center gap-0.5" : variant === "inline" ? "inline-flex items-center gap-1.5" : "";
   const [mode, setMode] = useState<Mode>("hidden");
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
 
@@ -53,7 +85,8 @@ export function InstallButton({ className = "" }: { className?: string }) {
     return (
       <button
         type="button"
-        className={className}
+        className={`${layout} ${className}`}
+        aria-label="홈 화면에 앱 설치"
         onClick={async () => {
           await deferred.prompt();
           await deferred.userChoice;
@@ -61,15 +94,19 @@ export function InstallButton({ className = "" }: { className?: string }) {
           setMode("guide");
         }}
       >
-        홈 화면에 앱 설치
+        {label}
       </button>
     );
   }
 
   // 아이폰(사파리)은 설치 버튼을 제공하지 않으므로 방법을 안내합니다.
   return (
-    <Link href={mode === "ios" ? "/install#iphone" : "/install"} className={className}>
-      홈 화면에 앱 설치
+    <Link
+      href={mode === "ios" ? "/install#iphone" : "/install"}
+      className={`${layout} ${className}`}
+      aria-label="홈 화면에 앱 설치 방법"
+    >
+      {label}
     </Link>
   );
 }

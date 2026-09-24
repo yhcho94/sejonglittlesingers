@@ -25,6 +25,7 @@
    - `0016_consent_note_written.sql`: 초상권 동의 비고 칸 · 기존 단원 서면 동의 반영
    - `0017_application_fields.sql`: 입단 신청서 항목 정리 (성별·원하는 반·사는 동·소개해 준 사람·특이사항, 사진 제외)
    - `0018_audition_songs.sql`: 입단 오디션 지정곡(최대 5곡)과 반주 음원 저장소(audition-songs, 공개)
+   - `0019_site_visits.sql`: 방문자 수 (날짜별 방문 수만 저장, 개인정보 없음)
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.

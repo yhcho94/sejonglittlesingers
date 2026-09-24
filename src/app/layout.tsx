@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { site } from "@/lib/site";
 import "./globals.css";
 import { REVEAL_BOOT_SCRIPT, RevealObserver } from "@/components/Reveal";
+import { VisitRecorder } from "@/components/VisitRecorder";
 
 const notoSerifKr = Noto_Serif_KR({
   variable: "--font-noto-serif-kr",
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col">
         <RevealObserver />
+        <VisitRecorder />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
