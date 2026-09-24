@@ -1,7 +1,7 @@
 // 로고 표식: 파스텔 무지개 + 샴페인 골드 음표 (앱 아이콘 src/app/icon.svg 와 같은 모양)
 export function LogoMark({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className={className} aria-hidden>
+    <svg viewBox="5 8 42 37" className={className} aria-hidden>
       <g fill="none" strokeLinecap="round" strokeWidth="2.4">
         <path d="M10 35 A18 18 0 0 1 46 35" stroke="#eab2b6" />
         <path d="M14 35 A14 14 0 0 1 42 35" stroke="#eccb7f" />

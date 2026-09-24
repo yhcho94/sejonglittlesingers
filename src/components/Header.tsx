@@ -60,7 +60,7 @@ export async function Header() {
       <header data-print-hide className="sticky top-0 z-30 h-[var(--header-h)] border-b border-line/80 bg-ivory/90 backdrop-blur-md">
         <div className="container-page flex h-full items-center justify-between gap-2 lg:gap-6">
           <Link href="/" className="flex shrink-0 items-center gap-1.5 max-[379px]:gap-1 lg:gap-2.5" aria-label={`${site.name} 홈`}>
-            <LogoMark className="h-8 w-8 shrink-0 max-[379px]:h-7 max-[379px]:w-7 lg:h-11 lg:w-11" />
+            <LogoMark className="h-10 w-10 shrink-0 max-[379px]:h-8 max-[379px]:w-8 lg:h-14 lg:w-14" />
             <span className="flex flex-col leading-none whitespace-nowrap">
               <span className="font-[family-name:var(--font-serif)] text-lg font-bold tracking-tight text-navy max-[379px]:text-base lg:text-xl">
                 {site.name}
