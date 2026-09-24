@@ -47,7 +47,7 @@ export default function InstallPage() {
   return (
     <>
       <PageHeader eyebrow="Install" title="홈 화면에 앱 설치" description="앱처럼 아이콘을 눌러 바로 접속할 수 있습니다." />
-      <div className="mx-auto max-w-3xl space-y-8 px-4 py-10">
+      <div className="mx-auto max-w-3xl space-y-6 px-4 py-7">
         <div className="card flex flex-wrap items-center gap-5">
           <Image src="/icons/icon-192.png" alt="" width={72} height={72} className="rounded-[22%]" />
           <div className="min-w-[10rem] flex-1">

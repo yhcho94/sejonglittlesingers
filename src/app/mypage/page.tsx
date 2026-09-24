@@ -54,7 +54,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
   return (
     <>
       <PageHeader eyebrow="My Page" title="마이페이지" />
-      <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 md:grid-cols-3">
+      <div className="mx-auto grid max-w-5xl gap-6 px-4 py-7 md:grid-cols-3">
         <section className="card md:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold text-navy">입단 신청 내역</h2>
@@ -66,7 +66,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             </p>
           )}
           {!applications?.length ? (
-            <p className="py-8 text-center text-ink-soft">신청 내역이 없습니다.</p>
+            <p className="py-6 text-center text-ink-soft">신청 내역이 없습니다.</p>
           ) : (
             <ul className="divide-y divide-line">
               {applications.map((app) => (

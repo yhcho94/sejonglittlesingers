@@ -46,7 +46,7 @@ function SectionTitle({
   linkLabel?: string;
 }) {
   return (
-    <div data-reveal className="mb-8 flex items-end justify-between gap-4 md:mb-12">
+    <div data-reveal className="mb-6 flex items-end justify-between gap-4 md:mb-8">
       <div>
         <p className="eyebrow text-gold-deep">{eyebrow}</p>
         <h2 className="mt-3 text-2xl font-bold text-navy md:text-4xl">{title}</h2>
@@ -90,7 +90,7 @@ export default async function HomePage() {
         </div>
 
         <div className="flex items-center lg:order-1">
-          <div className="w-full px-5 pb-12 pt-6 sm:px-8 md:pb-16 lg:py-20 lg:pl-[max(2rem,calc((100vw-72rem)/2+2rem))] lg:pr-10">
+          <div className="w-full px-5 pb-8 pt-6 sm:px-8 md:pb-10 lg:py-12 lg:pl-[max(2rem,calc((100vw-72rem)/2+2rem))] lg:pr-10">
             <p className="eyebrow animate-rise text-gold">
               {site.nameEn}
               <span className="hidden sm:inline">
@@ -98,12 +98,12 @@ export default async function HomePage() {
               </span>
             </p>
             <h1 style={{ "--rise-delay": "120ms" } as React.CSSProperties} className="animate-rise mt-4 whitespace-nowrap text-[2.4rem] font-bold leading-[1.15] sm:text-6xl lg:mt-6 lg:text-[3.5rem]">{site.name}</h1>
-            <span style={{ "--rise-delay": "240ms" } as React.CSSProperties} className="gold-rule animate-rise mt-5 w-14 lg:mt-8" />
+            <span style={{ "--rise-delay": "240ms" } as React.CSSProperties} className="gold-rule animate-rise mt-5 w-14 lg:mt-6" />
             <p style={{ "--rise-delay": "320ms" } as React.CSSProperties} className="animate-rise mt-5 max-w-xl text-base leading-relaxed text-white/85 md:text-lg lg:mt-6">
               음악을 통해 아이들의 감성과 협동심을 키우는
               <br className="hidden sm:block lg:hidden" /> 세종시 어린이 합창단
             </p>
-            <div style={{ "--rise-delay": "440ms" } as React.CSSProperties} className="animate-rise mt-8 flex flex-col gap-3 sm:flex-row lg:mt-10">
+            <div style={{ "--rise-delay": "440ms" } as React.CSSProperties} className="animate-rise mt-6 flex flex-col gap-3 sm:flex-row lg:mt-7">
               <Link href="/join" className="btn-gold px-8 py-3.5">
                 입단 안내
               </Link>
@@ -132,7 +132,7 @@ export default async function HomePage() {
 
       {/* ── 소개 ─────────────────────────────── */}
       <section className="section-y bg-ivory">
-        <div className="container-page grid gap-10 md:grid-cols-12 md:gap-16">
+        <div className="container-page grid gap-7 md:grid-cols-12 md:gap-10">
           <div data-reveal className="md:col-span-5">
             <p className="eyebrow text-gold-deep">About</p>
             <h2 className="mt-4 text-3xl font-bold leading-snug text-navy md:text-[2.75rem] md:leading-tight">
@@ -140,7 +140,7 @@ export default async function HomePage() {
               <br />
               노래로 자라는 아이들
             </h2>
-            <span className="gold-rule mt-8" />
+            <span className="gold-rule mt-6" />
           </div>
           <div data-reveal style={{ "--reveal-delay": "120ms" } as React.CSSProperties} className="md:col-span-7">
             <p className="text-lg leading-relaxed text-ink md:text-xl md:leading-relaxed">
@@ -151,18 +151,18 @@ export default async function HomePage() {
               지휘자, 부지휘자, 반주자, 이론 강사, 사무국장 등 총 11명의 전문 강사진과 운영진이 함께하며, 12년 경력의
               어린이 합창 전문가인 단장이 직접 수업을 이끕니다.
             </p>
-            <Link href="/about" className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-navy">
+            <Link href="/about" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-navy">
               합창단 소개 <span aria-hidden>→</span>
             </Link>
           </div>
         </div>
 
-        <div className="container-page mt-14 md:mt-24">
+        <div className="container-page mt-9 md:mt-14">
           <dl data-reveal className="grid grid-cols-2 border-y border-line md:grid-cols-4">
             {STATS.map((s, i) => (
               <div
                 key={s.label}
-                className={`flex flex-col-reverse items-center py-8 text-center md:py-10 ${
+                className={`flex flex-col-reverse items-center py-6 text-center md:py-7 ${
                   i % 2 === 1 ? "border-l border-line" : ""
                 } ${i >= 2 ? "border-t border-line md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
               >
@@ -185,13 +185,13 @@ export default async function HomePage() {
       <section className="section-y">
         <div className="container-page">
           <SectionTitle eyebrow="Classes" title="세 개의 반, 하나의 하모니" href="/faculty" linkLabel="강사진" />
-          <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
+          <div className="grid grid-cols-3 gap-px overflow-hidden border border-line bg-line">
             {organization.classes.map((c, i) => (
               <div
                 key={c.name}
                 data-reveal
                 style={{ "--reveal-delay": `${i * 110}ms` } as React.CSSProperties}
-                className="group relative bg-white p-8 transition-colors duration-500 hover:bg-ivory md:p-10"
+                className="group relative bg-white p-3 transition-colors duration-500 hover:bg-ivory sm:p-5 md:p-6"
               >
                 <span
                   aria-hidden
@@ -201,12 +201,12 @@ export default async function HomePage() {
                 <p className="font-[family-name:var(--font-display)] text-sm font-semibold tracking-[0.2em] text-gold-deep">
                   0{i + 1}
                 </p>
-                <p className="mt-4 font-[family-name:var(--font-serif)] text-2xl font-bold" style={{ color: c.color }}>
+                <p className="mt-2 font-[family-name:var(--font-serif)] text-lg font-bold sm:text-2xl md:mt-3" style={{ color: c.color }}>
                   {c.name}
                 </p>
-                <p className="mt-6 text-sm text-ink-soft">
-                  부지휘자{" "}
-                  <span className="ml-1 font-medium text-ink">
+                <p className="mt-2 text-xs text-ink-soft sm:text-sm md:mt-4">
+                  <span className="hidden sm:inline">부지휘자 </span>
+                  <span className="font-medium text-ink sm:ml-1">
                     {c.members.find((m) => m.role === "부지휘자")?.name}
                   </span>
                 </p>
@@ -239,13 +239,13 @@ export default async function HomePage() {
                     key={`${s.year}-${s.date}-${s.title}`}
                     data-reveal
                     style={{ "--reveal-delay": `${i * 110}ms` } as React.CSSProperties}
-                    className="flex flex-col bg-white p-7 transition-colors duration-500 hover:bg-cream/60 md:p-8"
+                    className="flex flex-col bg-white px-4 py-3.5 transition-colors duration-500 hover:bg-cream/60 md:p-5"
                   >
-                    <p className="font-[family-name:var(--font-display)] text-lg font-semibold text-gold-deep">
+                    <p className="font-[family-name:var(--font-display)] text-base font-semibold text-gold-deep md:text-lg">
                       {s.year}. {s.date}
                     </p>
-                    <p className="mt-3 font-medium leading-snug text-ink">{s.title}</p>
-                    <p className="mt-auto pt-4 text-sm text-ink-soft">{s.place}</p>
+                    <p className="mt-1.5 font-medium leading-snug text-ink">{s.title}</p>
+                    <p className="mt-auto pt-1.5 text-sm text-ink-soft md:pt-3">{s.place}</p>
                   </li>
                 ))}
               </ul>
@@ -256,7 +256,7 @@ export default async function HomePage() {
 
       {/* ── 소식 ─────────────────────────────── */}
       <section className="section-y">
-        <div className="container-page grid gap-16 md:grid-cols-2 md:gap-12">
+        <div className="container-page grid gap-10 md:grid-cols-2 md:gap-8">
           <div data-reveal className="min-w-0">
             <SectionTitle eyebrow="Notice" title="공지사항" href="/notices" linkLabel="전체" />
             <div className="border-t border-navy">
@@ -287,7 +287,7 @@ export default async function HomePage() {
                   </a>
                 </li>
               ))}
-              {press.length === 0 && <li className="py-10 text-center text-ink-soft">등록된 보도자료가 없습니다.</li>}
+              {press.length === 0 && <li className="py-7 text-center text-ink-soft">등록된 보도자료가 없습니다.</li>}
             </ul>
           </div>
         </div>
@@ -296,7 +296,7 @@ export default async function HomePage() {
       {/* ── 입단 안내 ─────────────────────────── */}
       <section className="relative isolate overflow-hidden bg-navy text-white">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,rgba(195,162,102,0.18),transparent_60%)]" />
-        <div data-reveal className="container-page flex flex-col items-start gap-10 py-20 md:flex-row md:items-end md:justify-between md:py-28">
+        <div data-reveal className="container-page flex flex-col items-start gap-7 py-12 md:flex-row md:items-end md:justify-between md:py-16">
           <div>
             <p className="eyebrow text-gold">Audition</p>
             <h2 className="mt-4 text-3xl font-bold leading-snug md:text-5xl md:leading-tight">

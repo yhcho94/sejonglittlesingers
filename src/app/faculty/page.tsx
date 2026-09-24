@@ -19,10 +19,10 @@ export default function FacultyPage() {
       <section className="section-y bg-ivory">
         <div className="container-page">
           <article className="border border-line bg-white">
-            <div className="flex flex-wrap items-end justify-between gap-4 bg-navy px-6 py-7 text-white md:px-10 md:py-9">
+            <div className="flex flex-wrap items-end justify-between gap-4 bg-navy px-4 py-5 text-white md:px-6 md:py-6">
               <div>
                 <p className="eyebrow text-gold">{conductor.role}</p>
-                <h2 className="mt-2 font-[family-name:var(--font-serif)] text-3xl font-bold md:text-4xl">
+                <h2 className="mt-1 font-[family-name:var(--font-serif)] text-2xl font-bold md:text-3xl">
                   {conductor.name}
                 </h2>
               </div>
@@ -37,7 +37,7 @@ export default function FacultyPage() {
                 </a>
               )}
             </div>
-            <div className="grid gap-x-12 gap-y-8 p-6 md:grid-cols-2 md:p-10">
+            <div className="grid gap-x-8 gap-y-4 p-4 md:grid-cols-2 md:p-6">
               {conductor.sections.map((section) => (
                 <BioList key={section.title} section={section} />
               ))}
@@ -45,16 +45,16 @@ export default function FacultyPage() {
           </article>
 
           {staffGroups.map((group) => (
-            <div key={group.title} className="mt-14">
+            <div key={group.title} className="mt-7">
               <h2 className="flex items-center gap-4 font-[family-name:var(--font-serif)] text-xl font-bold text-navy">
                 {group.title}
                 <span className="h-px flex-1 bg-line" />
               </h2>
-              <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-3 grid gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
                 {group.members.map((member) => (
-                  <article key={member.name} className="border border-line bg-white p-6 md:p-7">
+                  <article key={member.name} className="border border-line bg-white p-4 md:p-5">
                     <StaffHeading member={member} />
-                    <div className="mt-5 space-y-6">
+                    <div className="mt-3 space-y-4">
                       {member.sections.map((section) => (
                         <BioList key={section.title} section={section} />
                       ))}
@@ -91,8 +91,8 @@ function StaffHeading({ member }: { member: StaffMember }) {
 function BioList({ section }: { section: BioSection }) {
   return (
     <div>
-      <h4 className="border-b border-line pb-2 text-xs font-bold tracking-wider text-gold-deep">{section.title}</h4>
-      <ul className="mt-3 space-y-2 text-sm leading-relaxed">
+      <h4 className="border-b border-line pb-1.5 text-xs font-bold tracking-wider text-gold-deep">{section.title}</h4>
+      <ul className="mt-2 space-y-1 text-sm leading-snug">
         {section.items.map((item) => (
           <li key={item} className="flex gap-2">
             <span className="text-gold" aria-hidden>

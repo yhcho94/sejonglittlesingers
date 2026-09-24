@@ -4,7 +4,7 @@ import type { Notice } from "@/lib/types";
 
 export function NoticeList({ notices }: { notices: Notice[] }) {
   if (notices.length === 0) {
-    return <p className="py-10 text-center text-ink-soft">등록된 공지사항이 없습니다.</p>;
+    return <p className="py-7 text-center text-ink-soft">등록된 공지사항이 없습니다.</p>;
   }
   return (
     <ul className="divide-y divide-line">

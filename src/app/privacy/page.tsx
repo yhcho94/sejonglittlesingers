@@ -9,12 +9,12 @@ export default function PrivacyPage() {
   return (
     <>
       <PageHeader eyebrow="Privacy Policy" title="개인정보처리방침" />
-      <div className="mx-auto max-w-3xl px-4 py-10">
+      <div className="mx-auto max-w-3xl px-4 py-7">
         <p className="mb-6 rounded-sm border border-dashed border-gold bg-gold-soft p-4 text-sm">
           이 문서는 <strong>초안</strong>입니다. 법률 검토를 거친 뒤 확정해 주세요.
         </p>
 
-        <article className="card space-y-8 leading-relaxed [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-navy [&_li]:ml-5 [&_li]:list-disc">
+        <article className="card space-y-5 text-sm leading-relaxed md:text-[15px] [&_h2]:mb-1.5 [&_h2]:text-base md:[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-navy [&_li]:ml-5 [&_li]:list-disc">
           <p>
             {site.name}(이하 &quot;합창단&quot;)은 「개인정보 보호법」에 따라 정보주체의
             개인정보를 보호하고 관련 고충을 원활하게 처리하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다.

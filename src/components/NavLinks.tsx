@@ -13,7 +13,7 @@ function isActive(pathname: string, href: string) {
 export function DesktopNav() {
   const pathname = usePathname();
   return (
-    <nav className="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="주 메뉴">
+    <nav className="hidden items-center gap-6 lg:flex xl:gap-6" aria-label="주 메뉴">
       {NAV.map((item) => {
         const active = isActive(pathname, item.href);
         return (

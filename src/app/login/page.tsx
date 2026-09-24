@@ -11,7 +11,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const linkError = params.error === "link";
 
   return (
-    <div className="mx-auto max-w-md px-4 py-16">
+    <div className="mx-auto max-w-md px-4 py-10">
       <h1 className="mb-6 text-2xl font-bold text-navy">로그인</h1>
       {linkError && (
         <p className="mb-4 rounded-sm bg-gold-soft px-3 py-2 text-sm">

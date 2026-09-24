@@ -22,9 +22,9 @@ export default async function GalleryPage() {
       <section className="section-y">
         <div className="container-page">
           {albums.length === 0 ? (
-            <p className="py-16 text-center text-ink-soft">사진을 준비하고 있습니다.</p>
+            <p className="py-10 text-center text-ink-soft">사진을 준비하고 있습니다.</p>
           ) : (
-            <ul className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
               {albums.map((a, i) => (
                 <li key={a.id} data-reveal style={{ "--reveal-delay": `${(i % 3) * 100}ms` } as React.CSSProperties}>
                   <Link href={`/gallery/${a.id}`} className="group block">

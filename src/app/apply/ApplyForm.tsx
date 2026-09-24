@@ -58,7 +58,7 @@ export function ApplyForm({
   }, undefined);
 
   return (
-    <form action={action} className="space-y-8">
+    <form action={action} className="space-y-6">
       <fieldset className="space-y-4">
         <legend className="mb-2 text-lg font-bold text-navy">단원(자녀) 정보</legend>
         <div className="grid gap-4 sm:grid-cols-2">

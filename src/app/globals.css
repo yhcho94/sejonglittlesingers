@@ -85,7 +85,7 @@
   @apply btn border border-red-200 bg-white text-red-700 hover:bg-red-50;
 }
 @utility card {
-  @apply rounded-sm border border-line bg-white p-6 md:p-8;
+  @apply rounded-sm border border-line bg-white p-5 md:p-6;
 }
 /* 영문 소제목: SEJONG LITTLE SINGERS 같은 작은 대문자 */
 @utility eyebrow {
@@ -98,7 +98,7 @@
 }
 /* 섹션 여백 */
 @utility section-y {
-  @apply py-16 md:py-24;
+  @apply py-8 md:py-14;
 }
 @utility container-page {
   @apply mx-auto w-full max-w-6xl px-5 md:px-8;

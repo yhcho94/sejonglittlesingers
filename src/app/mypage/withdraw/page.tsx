@@ -12,7 +12,7 @@ export default async function WithdrawPage() {
   return (
     <>
       <PageHeader eyebrow="My Page" title="회원 탈퇴" />
-      <div className="mx-auto max-w-2xl px-4 py-10">
+      <div className="mx-auto max-w-2xl px-4 py-7">
         <section className="card space-y-6">
           <div>
             <h2 className="font-bold text-navy">탈퇴하면 바로 삭제되는 정보</h2>
