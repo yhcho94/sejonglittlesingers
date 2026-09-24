@@ -89,7 +89,7 @@ export function pressSource(item: Pick<Press, "media" | "url">) {
   }
 }
 
-// 공개 '단원 소개': 이름 없는 인원 통계 + 이름 공개에 동의한 단원 (DB 함수가 필요한 값만 돌려줌)
+// 공개 '단원 소개': 반별 인원 통계 + 활동 단원 이름·반 (게시 중단 요청 단원 제외, DB 함수가 필요한 값만 돌려줌)
 export async function getPublicSingers() {
   await connection();
   if (!isSupabaseConfigured) return null;

@@ -19,6 +19,7 @@
    - `0010_gallery.sql`: 사진 갤러리 (앨범·사진, 공개 저장소 `gallery-photos`)
    - `0011_birth_year_join_source.sql`: 출생연도만 아는 단원, 가입경로
    - `0012_optional_birthdate.sql`: 단원 생년월일 선택 입력 (이름·반만으로 등록)
+   - `0013_public_names.sql`: 단원 소개에 활동 단원 이름·반 게시 (보호자 요청 시 게시 중단)
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.

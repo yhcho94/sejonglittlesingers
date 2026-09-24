@@ -25,7 +25,8 @@ export type Singer = {
   guardian_name: string | null;
   guardian_phone: string | null;
   photo_path: string | null;
-  name_public: boolean;
+  name_public: boolean; // 초상권 ③ 게시물·영상 자막 이름 표시 동의
+  name_hidden: boolean; // 보호자 요청으로 '단원 소개' 화면 이름 게시 중단
   consent_media_channels: boolean;
   consent_media_press: boolean;
   consent_updated_at: string | null;
@@ -35,7 +36,7 @@ export type Singer = {
 };
 
 export const SINGER_COLUMNS =
-  "id, name, birthdate, gender, school, grade_override, class_name, part, cohort, joined_on, left_on, status, guardian_id, guardian_name, guardian_phone, photo_path, name_public, consent_media_channels, consent_media_press, consent_updated_at, birth_year_only, join_source, application_id, notes";
+  "id, name, birthdate, gender, school, grade_override, class_name, part, cohort, joined_on, left_on, status, guardian_id, guardian_name, guardian_phone, photo_path, name_public, name_hidden, consent_media_channels, consent_media_press, consent_updated_at, birth_year_only, join_source, application_id, notes";
 
 // 한국 시간 기준 오늘 (연·월·일)
 export function todayKst(now = new Date()) {

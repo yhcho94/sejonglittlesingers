@@ -1,6 +1,6 @@
 // 초상권(사진·영상) 이용 동의: 신청서·마이페이지·관리자 화면 공통 문구
 // 문구를 바꾸면 VERSION 도 올려 주세요. (동의 기록에 어떤 문구에 동의했는지 남습니다)
-export const MEDIA_CONSENT_VERSION = "2026-11-01";
+export const MEDIA_CONSENT_VERSION = "2026-09-24";
 
 export const MEDIA_ITEMS = [
   {
@@ -16,7 +16,7 @@ export const MEDIA_ITEMS = [
   {
     key: "name",
     label: "이름 표시",
-    text: "게시물·영상 자막과 홈페이지 '단원 소개' 화면에 단원 이름(반 포함)을 표시하는 것에 동의합니다.",
+    text: "사진·영상 게시물과 영상 자막에 단원 이름을 표시하는 것에 동의합니다.",
   },
 ] as const;
 

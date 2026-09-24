@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { getPublicSingers } from "@/lib/content";
 import { gradeCode, gradeLabel } from "@/lib/singers";
+import { site } from "@/lib/site";
 import { organization } from "@/lib/staff";
 
 export const metadata: Metadata = {
@@ -87,8 +88,8 @@ export default async function SingersPage() {
 
                     {names.length > 0 && (
                       <div className="mt-6 border-t border-line pt-5">
-                        <p className="eyebrow text-gold-deep">Members</p>
-                        <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 text-sm">
+                        <p className="eyebrow text-gold-deep">Members · {names.length}</p>
+                        <ul className="mt-3 grid grid-cols-3 gap-x-3 gap-y-1.5 text-sm sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4">
                           {names.map((n, i) => (
                             <li key={`${n.name}-${i}`}>{n.name}</li>
                           ))}
@@ -107,8 +108,8 @@ export default async function SingersPage() {
 
           <div className="mt-12 flex flex-col items-start justify-between gap-6 border-t border-line pt-10 md:flex-row md:items-center">
             <p className="max-w-2xl text-xs leading-relaxed text-ink-soft">
-              단원의 개인정보 보호를 위해 이 화면에는 반별 인원만 공개하며, 단원 이름은 보호자가 공개에 동의한 경우에만
-              게시합니다. 사진·생년월일·학교 등 다른 정보는 공개하지 않습니다.
+              이 화면에는 활동 중인 단원의 이름과 반만 게시하며, 사진·생년월일·학교 등 다른 정보는 공개하지 않습니다. 이름 게시를
+              원하지 않으시면 마이페이지 또는 합창단({site.contact.phone})으로 알려 주세요. 바로 게시를 중단합니다.
             </p>
             <Link href="/join" className="btn-primary shrink-0">
               입단 안내 보기

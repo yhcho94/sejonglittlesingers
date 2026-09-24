@@ -128,6 +128,10 @@ export function ApplyForm({ userId }: { userId: string }) {
         <ul className="list-disc space-y-1 pl-5 text-ink-soft">
           <li>수집 항목: 단원 이름, 생년월일 (필수) / 학교, 학년, 주소, 음악 경력, 지원 동기, 사진 (선택)</li>
           <li>이용 목적: 입단 신청 접수·심사 및 결과 안내, 합창단 운영</li>
+          <li>
+            입단이 승인되면 홈페이지 &lsquo;단원 소개&rsquo;에 단원의 이름과 반이 게시됩니다. 원하지 않으면 마이페이지에서 언제든
+            게시를 중단할 수 있습니다.
+          </li>
           <li>보유 기간: 개인정보처리방침에 따름</li>
         </ul>
         <p className="text-ink-soft">

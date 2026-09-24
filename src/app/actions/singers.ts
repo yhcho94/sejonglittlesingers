@@ -89,10 +89,11 @@ export async function saveSinger(_prev: FormState, formData: FormData): Promise<
     photo_path: photoPath || null,
     birth_year_only: Boolean(birth.value) && formData.get("birth_year_only") === "on",
     join_source: (JOIN_SOURCES as readonly string[]).includes(String(formData.get("join_source"))) ? String(formData.get("join_source")) : null,
-    // 초상권 동의 (③ 이름 표시 = 단원 소개 이름 공개)
+    // 초상권 동의 (③ 게시물·영상 자막 이름 표시)
     consent_media_channels: media.channels,
     consent_media_press: media.press,
     name_public: media.name,
+    name_hidden: formData.get("name_hidden") === "on",
     consent_version: MEDIA_CONSENT_VERSION,
     notes: text(formData, "notes", 2000),
   };

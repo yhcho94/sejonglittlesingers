@@ -60,6 +60,7 @@ const emptySinger = {
   guardian_phone: null,
   photo_path: null,
   name_public: false,
+  name_hidden: false,
   consent_media_channels: false,
   consent_media_press: false,
   consent_updated_at: null,

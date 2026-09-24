@@ -262,6 +262,13 @@ export function SingerForm({
             name: initial.name_public ?? false,
           }}
         />
+        <label className="flex items-start gap-2 border-t border-line pt-3 text-sm">
+          <input type="checkbox" name="name_hidden" defaultChecked={initial.name_hidden ?? false} className="mt-1" />
+          <span>
+            <strong className="font-medium">&lsquo;단원 소개&rsquo; 화면에 이름 숨김</strong>{" "}
+            <span className="text-ink-soft">— 보호자가 이름 게시 중단을 요청한 경우 체크 (활동 단원 이름은 기본으로 게시됩니다)</span>
+          </span>
+        </label>
       </fieldset>
 
       <FormMessage state={state} />
