@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { Application } from "@/lib/types";
 import { MEDIA_NOTICE, consentExpiresOn } from "@/lib/media-consent";
+import { AUDITION_EMAIL, auditionMailto } from "@/lib/application-fields";
 import { MediaConsentForm } from "./MediaConsentForm";
 import { ProfileForm } from "./ProfileForm";
 
@@ -62,7 +63,8 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
           </div>
           {applied && (
             <p className="mb-4 rounded-sm bg-green-50 px-3 py-2 text-sm text-green-800">
-              입단 신청이 접수되었습니다. 심사 결과는 이 화면에서 확인할 수 있습니다.
+              입단 신청이 접수되었습니다. 아래 안내에 따라 오디션 동영상을 이메일로 보내 주세요. 심사 결과는 이 화면에서 확인할 수
+              있습니다.
             </p>
           )}
           {!applications?.length ? (
@@ -78,6 +80,15 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
                     <p className="text-sm text-ink-soft">신청일 {formatDate(app.created_at)}</p>
                     {app.status !== "pending" && app.admin_note && (
                       <p className="mt-1 whitespace-pre-line text-sm">안내: {app.admin_note}</p>
+                    )}
+                    {app.status === "pending" && (
+                      <p className="mt-1 text-xs text-ink-soft">
+                        오디션 동영상:{" "}
+                        <a href={auditionMailto(app.child_name, app.child_birthdate)} className="font-medium text-navy underline">
+                          {AUDITION_EMAIL}
+                        </a>{" "}
+                        로 보내 주세요 (메일 제목: [입단 오디션] {app.child_name} ({app.child_birthdate}))
+                      </p>
                     )}
                     {app.status === "rejected" && !resubmitted(app) && (
                       <p className="mt-1 text-xs text-ink-soft">

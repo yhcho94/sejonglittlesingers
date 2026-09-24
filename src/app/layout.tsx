@@ -44,6 +44,13 @@ export const metadata: Metadata = {
     type: "website",
     images: [{ url: "/images/og.jpg", width: 1200, height: 630, alt: `${site.name} 공연 모습` }],
   },
+  // 검색엔진 사이트 소유 확인 코드 (Vercel 환경변수에 넣으면 <meta> 로 표시)
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.NAVER_SITE_VERIFICATION
+      ? { "naver-site-verification": process.env.NAVER_SITE_VERIFICATION }
+      : undefined,
+  },
 };
 
 export const viewport: Viewport = {

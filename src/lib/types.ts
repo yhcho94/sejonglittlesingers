@@ -39,6 +39,11 @@ export type Application = {
   consent_media_name?: boolean;
   join_source?: string | null;
   join_source_detail?: string | null;
+  gender?: string | null;
+  desired_class?: string | null;
+  neighborhood?: string | null;
+  referrer?: string | null;
+  notes?: string | null;
   status: ApplicationStatus;
   admin_note: string | null;
   reviewed_at: string | null;

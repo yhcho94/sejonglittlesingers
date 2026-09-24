@@ -23,6 +23,8 @@
    - `0014_public_counts.sql`: 단원 소개에는 반별 인원 수만 제공 (학년·출생연도 비공개)
    - `0015_join_source_options.sql`: 가입경로 선택지 변경 (지인소개·SNS·인터넷 검색·세종리틀싱어즈 공연관람·기타 직접 입력)
    - `0016_consent_note_written.sql`: 초상권 동의 비고 칸 · 기존 단원 서면 동의 반영
+   - `0017_application_fields.sql`: 입단 신청서 항목 정리 (성별·원하는 반·사는 동·소개해 준 사람·특이사항, 사진 제외)
+   - `0018_audition_songs.sql`: 입단 오디션 지정곡(최대 5곡)과 반주 음원 저장소(audition-songs, 공개)
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.
@@ -44,6 +46,7 @@
 
 Supabase 기본 메일 발송은 **테스트용**입니다. 발송량이 적게 제한되고 수신 대상에도 제약이 있습니다.
 실제 보호자들이 가입하려면 **Authentication → Emails → SMTP Settings** 에서 외부 메일 발송 서비스(SMTP)를 연결해야 합니다.
+메일 문구는 `docs/email-templates/README.md` 를 보고 한국어로 바꿉니다.
 (정확한 제한 사항은 Supabase 문서에서 최신 내용을 확인하세요.)
 
 ## 4. Vercel: 환경변수
@@ -105,3 +108,13 @@ update public.profiles set role = 'admin' where email = '관리자이메일@exam
 - 소개·연혁·지휘자: `src/app/about/page.tsx`
 - 대표 문구·입단 안내: `src/app/page.tsx`
 - 개인정보처리방침(초안): `src/app/privacy/page.tsx` → **게시 전 법률 검토 필요**
+
+## 검색엔진 등록 (네이버·구글)
+
+- 사이트맵: `https://sejonglittlesingers.com/sitemap.xml`, 수집 규칙: `/robots.txt` (관리자·회원 화면 제외)
+- 소유 확인은 **HTML 태그** 방식을 고르고, 태그의 `content="..."` 값만 Vercel 환경변수에 넣은 뒤 다시 배포합니다.
+
+| 이름 | 값 |
+|---|---|
+| `NAVER_SITE_VERIFICATION` | 네이버 서치어드바이저가 준 코드 |
+| `GOOGLE_SITE_VERIFICATION` | 구글 서치콘솔(URL 접두어 방식)이 준 코드 |

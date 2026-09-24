@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
-import { todayKst } from "@/lib/singers";
+import { todayKst, CLASS_NAMES } from "@/lib/singers";
 import { listGuardianOptions } from "@/lib/singers-data";
 import { createClient } from "@/lib/supabase/server";
 import type { Application } from "@/lib/types";
@@ -13,6 +13,8 @@ type AppPrefill = Pick<Application, "id" | "guardian_id" | "child_name" | "child
   consent_media_name?: boolean;
   join_source?: string | null;
   join_source_detail?: string | null;
+  gender?: string | null;
+  desired_class?: string | null;
 };
 
 export default async function NewSingerPage({ searchParams }: PageProps<"/admin/singers/new">) {
@@ -27,7 +29,7 @@ export default async function NewSingerPage({ searchParams }: PageProps<"/admin/
     if (existing) redirect(`/admin/singers/${existing.id}`);
     const { data } = await supabase
       .from("applications")
-      .select("id, guardian_id, child_name, child_birthdate, school, status, consent_media_channels, consent_media_press, consent_media_name, join_source, join_source_detail")
+      .select("id, guardian_id, child_name, child_birthdate, school, status, consent_media_channels, consent_media_press, consent_media_name, join_source, join_source_detail, gender, desired_class")
       .eq("id", appId)
       .maybeSingle<AppPrefill>();
     app = data?.status === "approved" ? data : null;
@@ -63,6 +65,8 @@ export default async function NewSingerPage({ searchParams }: PageProps<"/admin/
                   name_public: app.consent_media_name ?? false,
                   join_source: app.join_source ?? null,
                   join_source_detail: app.join_source_detail ?? null,
+                  gender: app.gender === "여" || app.gender === "남" ? app.gender : null,
+                  class_name: CLASS_NAMES.find((c) => c === app.desired_class) ?? null,
                   joined_on: today,
                   status: "active",
                 }
