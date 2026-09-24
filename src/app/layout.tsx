@@ -42,12 +42,13 @@ export const metadata: Metadata = {
     type: "website",
     images: [{ url: "/images/og.jpg", width: 1200, height: 630, alt: `${site.name} 공연 모습` }],
   },
-  // 검색엔진 사이트 소유 확인 코드 (Vercel 환경변수에 넣으면 <meta> 로 표시)
+  // 검색엔진 사이트 소유 확인 코드 (공개 값. Vercel 환경변수가 있으면 그 값을 우선)
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
-    other: process.env.NAVER_SITE_VERIFICATION
-      ? { "naver-site-verification": process.env.NAVER_SITE_VERIFICATION }
-      : undefined,
+    other: {
+      // 네이버 서치어드바이저: https://sejonglittlesingers.com
+      "naver-site-verification": process.env.NAVER_SITE_VERIFICATION || "9d35db5993cb5daf52e1e45e49e64cebe8bb8647",
+    },
   },
 };
 
