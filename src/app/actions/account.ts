@@ -1,5 +1,6 @@
 "use server";
 
+import { canAccess } from "@/lib/admin-perms";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -55,7 +56,7 @@ export async function withdraw(_prev: FormState, formData: FormData): Promise<Fo
 // ── 관리자의 회원 삭제 ───────────────────────────
 export async function adminDeleteMember(formData: FormData) {
   const current = await getCurrentUser();
-  if (current?.profile?.role !== "admin") return;
+  if (!current || !canAccess(current.profile, "members")) return;
   const targetId = String(formData.get("id") ?? "");
   if (!UUID_RE.test(targetId) || targetId === current.user.id) return;
 

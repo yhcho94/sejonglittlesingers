@@ -26,6 +26,7 @@
    - `0017_application_fields.sql`: 입단 신청서 항목 정리 (성별·원하는 반·사는 동·소개해 준 사람·특이사항, 사진 제외)
    - `0018_audition_songs.sql`: 입단 오디션 지정곡(최대 5곡)과 반주 음원 저장소(audition-songs, 공개)
    - `0019_site_visits.sql`: 방문자 수 (날짜별 방문 수만 저장, 개인정보 없음)
+   - `0020_admin_permissions.sql`: 관리자 신청·승인과 메뉴별 권한 (실행 시점의 기존 관리자는 최상위 관리자가 됨)
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.
@@ -88,11 +89,13 @@ Vercel **Settings → Environment Variables** 에 추가합니다. (Production, 
 2. Supabase **SQL Editor** 에서 아래를 실행 (이메일만 바꿔서)
 
 ```sql
-update public.profiles set role = 'admin' where email = '관리자이메일@example.com';
+update public.profiles set role = 'admin', is_super = true where email = '관리자이메일@example.com';
 ```
 
 3. 다시 로그인하면 상단에 **관리자** 메뉴가 보입니다.
    이후 관리자 추가·해제는 사이트의 **관리자 → 회원 관리** 화면에서 할 수 있습니다.
+   회원이 **마이페이지 → 관리자 권한 신청**을 하면, 최상위 관리자가 회원 관리 화면에서 맡길 메뉴를 체크해 승인합니다.
+   일반 관리자는 체크된 메뉴만 보고 고칠 수 있고, 회원 관리(관리자 승인·권한 부여)는 최상위 관리자만 할 수 있습니다.
 
 ## 7. 내용 채우기
 

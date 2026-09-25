@@ -7,7 +7,7 @@ import type { Concert } from "@/lib/types";
 import { ConcertForm } from "../ConcertForm";
 
 export default async function EditConcertPage({ params }: PageProps<"/admin/concerts/[id]">) {
-  await requireAdmin();
+  await requireAdmin("concerts");
   const id = Number((await params).id);
   if (!Number.isSafeInteger(id)) notFound();
 

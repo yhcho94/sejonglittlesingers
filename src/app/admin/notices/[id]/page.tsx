@@ -7,7 +7,7 @@ import type { Notice } from "@/lib/types";
 import { NoticeForm } from "../NoticeForm";
 
 export default async function EditNoticePage({ params }: PageProps<"/admin/notices/[id]">) {
-  await requireAdmin();
+  await requireAdmin("notices");
   const id = Number((await params).id);
   if (!Number.isSafeInteger(id)) notFound();
 

@@ -5,7 +5,7 @@ import { getSinger, listGuardianOptions, signedPhotoUrls } from "@/lib/singers-d
 import { SingerForm } from "../../SingerForm";
 
 export default async function EditSingerPage({ params }: PageProps<"/admin/singers/[id]/edit">) {
-  await requireAdmin();
+  await requireAdmin("singers");
   const singer = await getSinger(Number((await params).id));
   if (!singer) notFound();
   const [guardians, photos] = await Promise.all([listGuardianOptions(), signedPhotoUrls([singer.photo_path], 600)]);

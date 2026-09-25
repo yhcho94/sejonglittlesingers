@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Faq } from "@/lib/types";
 
 export default async function AdminFaqsPage() {
-  await requireAdmin();
+  await requireAdmin("recruitment");
   const supabase = await createClient();
   const { data: faqs } = await supabase
     .from("faqs")

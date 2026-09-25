@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Press } from "@/lib/types";
 
 export default async function AdminPressPage() {
-  await requireAdmin();
+  await requireAdmin("press");
   const supabase = await createClient();
   const { data: items } = await supabase
     .from("press")

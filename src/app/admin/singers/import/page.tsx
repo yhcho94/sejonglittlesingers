@@ -3,7 +3,7 @@ import { SingerTabs } from "../SingerTabs";
 import { ImportForm } from "./ImportForm";
 
 export default async function ImportSingersPage() {
-  await requireAdmin();
+  await requireAdmin("singers");
   return (
     <>
       <SingerTabs active="import" />

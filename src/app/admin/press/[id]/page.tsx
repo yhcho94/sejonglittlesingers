@@ -7,7 +7,7 @@ import type { Press } from "@/lib/types";
 import { PressForm } from "../PressForm";
 
 export default async function EditPressPage({ params }: PageProps<"/admin/press/[id]">) {
-  await requireAdmin();
+  await requireAdmin("press");
   const id = Number((await params).id);
   if (!Number.isSafeInteger(id)) notFound();
 

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { canAccess, type AdminGate } from "@/lib/admin-perms";
 import type { Profile } from "@/lib/types";
 
 // 현재 로그인한 사용자와 프로필. 로그인하지 않았으면 null.
@@ -16,11 +17,18 @@ export async function getCurrentUser() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data: profile } = await supabase
+  const base = "id, guardian_name, phone, email, role, created_at";
+  const first = await supabase
     .from("profiles")
-    .select("id, guardian_name, phone, email, role, created_at")
+    .select(`${base}, is_super, admin_perms, admin_requested_at, admin_request_note`)
     .eq("id", user.id)
     .single<Profile>();
+  let profile = first.data;
+  if (first.error && !profile) {
+    // 0020 실행 전: 관리자 칸이 없으면 예전처럼 관리자 = 모든 권한
+    const { data } = await supabase.from("profiles").select(base).eq("id", user.id).single<Profile>();
+    profile = data ? { ...data, is_super: data.role === "admin", admin_perms: [] } : null;
+  }
 
   return { user, profile };
 }
@@ -31,9 +39,18 @@ export async function requireUser(next: string) {
   return current;
 }
 
-export async function requireAdmin() {
+// 관리자 화면 입구. gate 를 주면 그 메뉴 권한(또는 최상위 관리자)이 있어야 합니다.
+export async function requireAdmin(gate?: AdminGate) {
   const current = await requireUser("/admin");
   if (current.profile?.role !== "admin") redirect("/");
+  if (!canAccess(current.profile, gate)) redirect("/admin?denied=1");
+  return current;
+}
+
+// 서버 액션용: 권한이 있으면 사용자 정보, 없으면 null
+export async function adminFor(gate?: AdminGate) {
+  const current = await getCurrentUser();
+  if (!current || !canAccess(current.profile, gate)) return null;
   return current;
 }
 

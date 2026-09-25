@@ -2,14 +2,14 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "@/lib/auth";
+import { adminFor } from "@/lib/auth";
 import { GALLERY_BUCKET } from "@/lib/gallery";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/lib/types";
 
+// gallery 메뉴 권한이 있는 관리자만 (DB 규칙에서도 한 번 더 막힘)
 async function adminClient() {
-  const current = await getCurrentUser();
-  if (current?.profile?.role !== "admin") return null;
+  if (!(await adminFor("gallery"))) return null;
   return await createClient();
 }
 

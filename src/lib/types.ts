@@ -8,6 +8,11 @@ export type Profile = {
   email: string;
   role: UserRole;
   created_at: string;
+  // 0020: 관리자 권한 (없으면 예전 DB)
+  is_super?: boolean;
+  admin_perms?: string[];
+  admin_requested_at?: string | null;
+  admin_request_note?: string | null;
 };
 
 export type Notice = {

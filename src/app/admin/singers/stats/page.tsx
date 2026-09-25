@@ -38,7 +38,7 @@ async function applicationsByYear() {
 }
 
 export default async function SingerStatsPage({ searchParams }: PageProps<"/admin/singers/stats">) {
-  await requireAdmin();
+  await requireAdmin("singers");
   const cls = (await searchParams).class;
   const className = (CLASS_NAMES as readonly string[]).includes(String(cls)) ? (cls as ClassName) : "";
   const [{ singers, error }, { years: apps, bySource: appSources }] = await Promise.all([listSingers(), applicationsByYear()]);

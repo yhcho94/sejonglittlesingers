@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/auth";
 import { PressForm } from "../PressForm";
 
 export default async function NewPressPage() {
-  await requireAdmin();
+  await requireAdmin("press");
   return (
     <>
       <h1 className="mb-6 text-2xl font-bold text-navy">새 기사 등록</h1>

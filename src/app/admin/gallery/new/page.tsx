@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { AlbumForm } from "../AlbumForm";
 
 export default async function NewAlbumPage() {
-  await requireAdmin();
+  await requireAdmin("gallery");
   return (
     <>
       <Link href="/admin/gallery" className="text-sm text-ink-soft hover:underline">

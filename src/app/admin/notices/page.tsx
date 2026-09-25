@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Notice } from "@/lib/types";
 
 export default async function AdminNoticesPage() {
-  await requireAdmin();
+  await requireAdmin("notices");
   const supabase = await createClient();
   const { data: notices } = await supabase
     .from("notices")

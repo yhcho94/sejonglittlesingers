@@ -4,7 +4,7 @@ import { AuditionSongsForm } from "./AuditionSongsForm";
 import { RecruitmentForm } from "./RecruitmentForm";
 
 export default async function AdminRecruitmentPage() {
-  await requireAdmin();
+  await requireAdmin("recruitment");
   const [data, songs] = await Promise.all([getRecruitment(), listAuditionSongs()]);
   return (
     <>

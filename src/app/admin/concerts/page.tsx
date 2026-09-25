@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Concert } from "@/lib/types";
 
 export default async function AdminConcertsPage() {
-  await requireAdmin();
+  await requireAdmin("concerts");
   const supabase = await createClient();
   const { data: concerts } = await supabase
     .from("concerts")

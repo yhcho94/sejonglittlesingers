@@ -3,22 +3,24 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/lib/auth";
+import { adminFor } from "@/lib/auth";
+import type { AdminGate } from "@/lib/admin-perms";
 import { fromKstInputValue } from "@/lib/format";
-import type { ApplicationStatus, FormState, UserRole } from "@/lib/types";
+import type { ApplicationStatus, FormState } from "@/lib/types";
 
 // 서버 액션은 외부에서 직접 호출될 수 있으므로 매번 관리자 여부를 확인합니다. (DB 의 RLS 가 한 번 더 막습니다)
-async function adminClient() {
-  const current = await getCurrentUser();
-  if (current?.profile?.role !== "admin") return null;
+// 메뉴 권한이 있는 관리자만 (DB 규칙에서도 한 번 더 막힘)
+async function adminClient(gate: AdminGate) {
+  const current = await adminFor(gate);
+  if (!current) return null;
   return { supabase: await createClient(), userId: current.user.id };
 }
 
-const DENIED = { error: "관리자 권한이 필요합니다." };
+const DENIED = { error: "이 메뉴의 관리자 권한이 필요합니다." };
 
 // ── 공지사항 ─────────────────────────────────────
 export async function saveNotice(_prev: FormState, formData: FormData): Promise<FormState> {
-  const admin = await adminClient();
+  const admin = await adminClient("notices");
   if (!admin) return DENIED;
 
   const idRaw = formData.get("id");
@@ -47,7 +49,7 @@ export async function saveNotice(_prev: FormState, formData: FormData): Promise<
 }
 
 export async function deleteNotice(formData: FormData) {
-  const admin = await adminClient();
+  const admin = await adminClient("notices");
   if (!admin) return;
   const id = Number(formData.get("id"));
   if (!Number.isSafeInteger(id)) return;
@@ -60,7 +62,7 @@ export async function deleteNotice(formData: FormData) {
 const STATUSES: ApplicationStatus[] = ["pending", "approved", "rejected"];
 
 export async function reviewApplication(_prev: FormState, formData: FormData): Promise<FormState> {
-  const admin = await adminClient();
+  const admin = await adminClient("applications");
   if (!admin) return DENIED;
 
   const id = Number(formData.get("id"));
@@ -103,7 +105,7 @@ export async function reviewApplication(_prev: FormState, formData: FormData): P
 }
 
 export async function deleteApplication(formData: FormData) {
-  const admin = await adminClient();
+  const admin = await adminClient("applications");
   if (!admin) return;
   const id = Number(formData.get("id"));
   if (!Number.isSafeInteger(id)) return;
@@ -121,19 +123,6 @@ export async function deleteApplication(formData: FormData) {
   redirect("/admin/applications");
 }
 
-// ── 회원 권한 ────────────────────────────────────
-export async function setMemberRole(formData: FormData) {
-  const admin = await adminClient();
-  if (!admin) return;
-  const targetId = String(formData.get("id") ?? "");
-  const role = formData.get("role") as UserRole;
-  if (!targetId || (role !== "admin" && role !== "member") || targetId === admin.userId) return;
-
-  // DB 함수가 관리자 여부와 본인 변경 금지를 다시 확인합니다.
-  await admin.supabase.rpc("set_member_role", { target_id: targetId, new_role: role });
-  revalidatePath("/admin/members");
-}
-
 // ── 입단 안내 ────────────────────────────────────
 function optionalText(formData: FormData, key: string, max: number) {
   const value = String(formData.get(key) ?? "").trim();
@@ -141,7 +130,7 @@ function optionalText(formData: FormData, key: string, max: number) {
 }
 
 export async function saveRecruitment(_prev: FormState, formData: FormData): Promise<FormState> {
-  const admin = await adminClient();
+  const admin = await adminClient("recruitment");
   if (!admin) return DENIED;
 
   const { error } = await admin.supabase
@@ -166,7 +155,7 @@ export async function saveRecruitment(_prev: FormState, formData: FormData): Pro
 
 // ── FAQ ─────────────────────────────────────────
 export async function saveFaq(_prev: FormState, formData: FormData): Promise<FormState> {
-  const admin = await adminClient();
+  const admin = await adminClient("recruitment");
   if (!admin) return DENIED;
 
   const id = formData.get("id") ? Number(formData.get("id")) : null;
@@ -194,7 +183,7 @@ export async function saveFaq(_prev: FormState, formData: FormData): Promise<For
 }
 
 export async function deleteFaq(formData: FormData) {
-  const admin = await adminClient();
+  const admin = await adminClient("recruitment");
   if (!admin) return;
   const id = Number(formData.get("id"));
   if (!Number.isSafeInteger(id)) return;
@@ -217,7 +206,7 @@ function httpsUrl(formData: FormData, key: string) {
 }
 
 export async function saveConcert(_prev: FormState, formData: FormData): Promise<FormState> {
-  const admin = await adminClient();
+  const admin = await adminClient("concerts");
   if (!admin) return DENIED;
 
   const id = formData.get("id") ? Number(formData.get("id")) : null;
@@ -256,7 +245,7 @@ export async function saveConcert(_prev: FormState, formData: FormData): Promise
 }
 
 export async function deleteConcert(formData: FormData) {
-  const admin = await adminClient();
+  const admin = await adminClient("concerts");
   if (!admin) return;
   const id = Number(formData.get("id"));
   if (!Number.isSafeInteger(id)) return;
@@ -267,7 +256,7 @@ export async function deleteConcert(formData: FormData) {
 
 // ── 보도자료 ────────────────────────────────────
 export async function savePress(_prev: FormState, formData: FormData): Promise<FormState> {
-  const admin = await adminClient();
+  const admin = await adminClient("press");
   if (!admin) return DENIED;
 
   const id = formData.get("id") ? Number(formData.get("id")) : null;
@@ -304,7 +293,7 @@ export async function savePress(_prev: FormState, formData: FormData): Promise<F
 }
 
 export async function deletePress(formData: FormData) {
-  const admin = await adminClient();
+  const admin = await adminClient("press");
   if (!admin) return;
   const id = Number(formData.get("id"));
   if (!Number.isSafeInteger(id)) return;
