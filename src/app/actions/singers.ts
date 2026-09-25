@@ -9,6 +9,7 @@ import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
 import { JOIN_SOURCES, JOIN_SOURCE_OTHER } from "@/lib/join-source";
 import { parseImportRow } from "@/lib/singers-import";
 import { readSheet } from "@/lib/singers-xlsx";
+import { normalizePhone } from "@/lib/guardian-match";
 import type { FormState } from "@/lib/types";
 
 const PHOTO_BUCKET = "singer-photos";
@@ -224,4 +225,51 @@ export async function importSingers(_prev: ImportState, formData: FormData): Pro
     skipped,
     warnings,
   };
+}
+
+// 보호자 연결 후보 승인: 값 "단원id:회원id". 서버에서 연락처가 같은지·아직 연결 전인지 다시 확인합니다.
+export async function linkGuardians(formData: FormData) {
+  const supabase = await adminClient();
+  if (!supabase) redirect("/admin?denied=1");
+  const pairs = [...new Set(formData.getAll("pair").map(String))]
+    .slice(0, 500)
+    .map((v) => v.split(":"))
+    .filter(([sid, pid]) => /^\d+$/.test(sid ?? "") && UUID_RE.test(pid ?? ""))
+    .map(([sid, pid]) => ({ singerId: Number(sid), profileId: pid! }));
+  if (!pairs.length) redirect("/admin/singers/link?linked=0");
+
+  const [{ data: singers }, { data: profiles }] = await Promise.all([
+    supabase
+      .from("singers")
+      .select("id, guardian_id, guardian_phone")
+      .in("id", pairs.map((p) => p.singerId))
+      .returns<{ id: number; guardian_id: string | null; guardian_phone: string | null }[]>(),
+    supabase
+      .from("profiles")
+      .select("id, phone")
+      .in("id", [...new Set(pairs.map((p) => p.profileId))])
+      .returns<{ id: string; phone: string }[]>(),
+  ]);
+  const singerMap = new Map((singers ?? []).map((s) => [s.id, s]));
+  const phoneOf = new Map((profiles ?? []).map((p) => [p.id, normalizePhone(p.phone)]));
+
+  let linked = 0;
+  const done = new Set<number>();
+  for (const { singerId, profileId } of pairs) {
+    const s = singerMap.get(singerId);
+    const phone = normalizePhone(s?.guardian_phone);
+    if (!s || s.guardian_id || done.has(singerId) || !phone || phone !== phoneOf.get(profileId)) continue;
+    const { data } = await supabase
+      .from("singers")
+      .update({ guardian_id: profileId })
+      .eq("id", singerId)
+      .is("guardian_id", null)
+      .select("id");
+    if (data?.length) {
+      linked++;
+      done.add(singerId);
+    }
+  }
+  revalidatePath("/admin/singers", "layout");
+  redirect(`/admin/singers/link?linked=${linked}`);
 }

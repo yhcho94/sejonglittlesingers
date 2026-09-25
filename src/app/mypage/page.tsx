@@ -187,7 +187,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
           </ul>
           {singers.length === 0 ? (
             <p className="mt-6 rounded-sm bg-cream px-4 py-3 text-sm text-ink-soft">
-              이 계정과 연결된 단원이 없습니다. 자녀가 단원인데 보이지 않으면 합창단에 계정 연결을 요청해 주세요.
+              이 계정과 연결된 단원이 없습니다. 자녀가 단원인데 보이지 않으면 합창단에 계정 연결을 요청해 주세요. 회원 정보의 연락처가 합창단에 알려 주신 보호자 연락처와 같으면 더 빨리 연결됩니다.
             </p>
           ) : (
             <div className="mt-6 space-y-6">

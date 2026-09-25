@@ -6,7 +6,7 @@ import { CountUp } from "@/components/CountUp";
 import { NoticeList } from "@/components/NoticeList";
 import { VisitorCounter } from "@/components/VisitorCounter";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
-import { getActiveSingerCount, getRecruitment, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
+import { getActiveSingerCount, getRecruitment, getStaffCount, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
 import { EVENT_ALBUMS } from "@/lib/event-albums";
 import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
@@ -44,10 +44,11 @@ const {
 } = getImageProps({ ...heroCommon, src: heroImage, sizes: "65vw" });
 const { props: heroImg } = getImageProps({ ...heroCommon, src: heroMobileImage, sizes: "100vw" });
 
-// 합창단이 제공한 소개 글의 수치 (단원 수는 DB 의 현재 활동 단원 수로 바꿔 표시)
+// 합창단이 제공한 소개 글의 수치 (단원 수는 DB 의 현재 활동 단원 수, 강사진·운영진 수는 조직도 자동 표시 후 승인된 운영진 수로 바꿔 표시)
 const STATS: { value: string; unit?: string; label: string; count?: boolean }[] = [
   { value: "2023", label: "창단" },
   { value: "150", unit: "명", label: "활동 단원", count: true },
+  { value: "11", unit: "명", label: "강사진·운영진", count: true },
   { value: "20", unit: "회", label: "연간 공연 (내외)", count: true },
   { value: "4", unit: "회", label: "연간 주최 음악회", count: true },
 ];
@@ -93,15 +94,22 @@ function SectionTitle({
 }
 
 export default async function HomePage() {
-  const [notices, concerts, recruitment, press, RECENT_STAGES, singerCount] = await Promise.all([
+  const [notices, concerts, recruitment, press, RECENT_STAGES, singerCount, staffCount] = await Promise.all([
     listPublishedNotices(4),
     listConcerts("upcoming", 3),
     getRecruitment(),
     listPublishedPress(),
     recentStages(),
     getActiveSingerCount(),
+    getStaffCount(),
   ]);
-  const stats = STATS.map((s) => (s.label === "활동 단원" && singerCount ? { ...s, value: String(singerCount) } : s));
+  const stats = STATS.map((s) =>
+    s.label === "활동 단원" && singerCount
+      ? { ...s, value: String(singerCount) }
+      : s.label === "강사진·운영진" && staffCount
+        ? { ...s, value: String(staffCount) }
+        : s,
+  );
 
   return (
     <>
@@ -272,13 +280,16 @@ export default async function HomePage() {
         </div>
 
         <div className="container-page mt-9 md:mt-12">
-          <dl data-reveal className="grid grid-cols-2 border-t border-navy md:grid-cols-4">
+          <dl data-reveal className="grid grid-cols-2 border-t border-navy md:grid-cols-5">
             {stats.map((s, i) => (
               <div
                 key={s.label}
                 className={`flex flex-col-reverse items-start border-b border-line py-5 pl-1 md:border-b-0 md:py-6 ${
                   i % 2 === 1 ? "pl-5 md:pl-6" : ""
-                } ${i >= 1 ? "md:border-l md:pl-6" : ""}`}
+                } ${i >= 1 ? "md:border-l md:pl-6" : ""} ${
+                  // 홀수 개일 때 휴대폰 화면의 마지막 칸은 한 줄 전체
+                  i === stats.length - 1 && stats.length % 2 === 1 ? "col-span-2 md:col-span-1" : ""
+                }`}
               >
                 <dt className="mt-1 text-xs tracking-wide text-ink-soft md:text-sm">{s.label}</dt>
                 <dd className="font-[family-name:var(--font-display)] text-4xl font-semibold text-navy md:text-5xl">

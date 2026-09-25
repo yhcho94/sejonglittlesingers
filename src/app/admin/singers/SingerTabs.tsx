@@ -5,6 +5,7 @@ const TABS = [
   { key: "photos", href: "/admin/singers/photos", label: "사진 명부" },
   { key: "stats", href: "/admin/singers/stats", label: "통계" },
   { key: "import", href: "/admin/singers/import", label: "엑셀 일괄 등록" },
+  { key: "link", href: "/admin/singers/link", label: "보호자 연결" },
 ] as const;
 
 // 단원 관리 하위 메뉴
