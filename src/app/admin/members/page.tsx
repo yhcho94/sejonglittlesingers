@@ -5,6 +5,7 @@ import { SubmitButton } from "@/components/form";
 import { ADMIN_AREAS, areaLabels } from "@/lib/admin-perms";
 import { requireAdmin } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
+import { memberTypeLabel } from "@/lib/member-types";
 import { createClient } from "@/lib/supabase/server";
 import type { ApplicationStatus, Profile } from "@/lib/types";
 
@@ -45,19 +46,38 @@ function AccessForm({ member, submitLabel }: { member: Row; submitLabel: string 
   );
 }
 
+function TypeBadge({ member }: { member: Row }) {
+  if (!member.member_type) return null;
+  const tone =
+    member.member_type === "teacher"
+      ? "bg-sky-50 text-sky-800"
+      : member.member_type === "staff"
+        ? "bg-amber-50 text-amber-900"
+        : "bg-cream text-ink-soft";
+  return (
+    <span className={`rounded-sm px-1.5 py-0.5 text-xs font-medium ${tone}`}>{memberTypeLabel(member.member_type)}</span>
+  );
+}
+
 export default async function AdminMembersPage() {
   const { user } = await requireAdmin("members");
   const supabase = await createClient();
-  const full = await supabase
-    .from("profiles")
-    .select(`${BASE}, is_super, admin_perms, admin_requested_at, admin_request_note`)
-    .order("created_at", { ascending: false })
-    .returns<Row[]>();
-  // 0020 실행 전: 권한 칸 없이 목록만
-  const ready = !full.error;
-  const members = ready
-    ? full.data
-    : (await supabase.from("profiles").select(BASE).order("created_at", { ascending: false }).returns<Row[]>()).data;
+  // 마이그레이션 실행 전이어도 동작하도록 새 칸부터 차례로 시도 (0021 → 0020 → 기본)
+  const admin = "is_super, admin_perms, admin_requested_at, admin_request_note";
+  let members: Row[] | null = null;
+  let ready = false;
+  for (const columns of [`${BASE}, ${admin}, member_type, affiliation`, `${BASE}, ${admin}`, BASE]) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select(columns)
+      .order("created_at", { ascending: false })
+      .returns<Row[]>();
+    if (!error) {
+      members = data;
+      ready = columns !== BASE;
+      break;
+    }
+  }
   const all = members ?? [];
   const requests = all.filter((m) => m.role !== "admin" && m.admin_requested_at);
   const admins = all.filter((m) => m.role === "admin");
@@ -81,11 +101,12 @@ export default async function AdminMembersPage() {
               {requests.map((m) => (
                 <div key={m.id} className="card">
                   <p className="font-medium">
-                    {m.guardian_name}{" "}
+                    <TypeBadge member={m} /> {m.guardian_name}{" "}
                     <span className="text-sm text-ink-soft">
                       {m.email} · {m.phone} · 신청일 {formatDate(m.admin_requested_at!)}
                     </span>
                   </p>
+                  {m.affiliation && <p className="mt-1 text-sm">{m.member_type === "teacher" ? "담당" : "소속·역할"}: {m.affiliation}</p>}
                   {m.admin_request_note && (
                     <p className="mt-1 whitespace-pre-line text-sm">사유: {m.admin_request_note}</p>
                   )}
@@ -112,8 +133,11 @@ export default async function AdminMembersPage() {
             {admins.map((m) => (
               <div key={m.id} className="card">
                 <p className="font-medium">
-                  {m.guardian_name}{" "}
-                  <span className="text-sm text-ink-soft">{m.email}</span>{" "}
+                  <TypeBadge member={m} /> {m.guardian_name}{" "}
+                  <span className="text-sm text-ink-soft">
+                    {m.email}
+                    {m.affiliation ? ` · ${m.affiliation}` : ""}
+                  </span>{" "}
                   <span className="text-sm font-bold text-navy">
                     {m.is_super ? "최상위 관리자" : `메뉴: ${areaLabels(m.admin_perms).join(", ") || "없음"}`}
                   </span>
@@ -148,7 +172,7 @@ export default async function AdminMembersPage() {
         <table className="w-full min-w-[760px] text-left text-sm">
           <thead className="border-b border-line bg-cream text-ink-soft">
             <tr>
-              <th className="px-4 py-3 font-medium">보호자</th>
+              <th className="px-4 py-3 font-medium">이름 (구분)</th>
               <th className="px-4 py-3 font-medium">연락처 / 이메일</th>
               <th className="px-4 py-3 font-medium">승인된 단원</th>
               <th className="px-4 py-3 font-medium">가입일</th>
@@ -161,7 +185,12 @@ export default async function AdminMembersPage() {
               const isSelf = m.id === user.id;
               return (
                 <tr key={m.id} className="align-top">
-                  <td className="px-4 py-3 font-medium">{m.guardian_name}</td>
+                  <td className="px-4 py-3 font-medium">
+                    {m.guardian_name}
+                    <br />
+                    <TypeBadge member={m} />
+                    {m.affiliation && <span className="ml-1 text-xs font-normal text-ink-soft">{m.affiliation}</span>}
+                  </td>
                   <td className="px-4 py-3">
                     {m.phone}
                     <br />

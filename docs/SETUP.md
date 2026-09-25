@@ -27,6 +27,7 @@
    - `0018_audition_songs.sql`: 입단 오디션 지정곡(최대 5곡)과 반주 음원 저장소(audition-songs, 공개)
    - `0019_site_visits.sql`: 방문자 수 (날짜별 방문 수만 저장, 개인정보 없음)
    - `0020_admin_permissions.sql`: 관리자 신청·승인과 메뉴별 권한 (실행 시점의 기존 관리자는 최상위 관리자가 됨)
+   - `0021_member_types.sql`: 회원 구분(학부모·선생님·홈페이지 관리자). 선생님·관리자로 가입하면 관리자 권한 신청이 함께 접수됨
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.

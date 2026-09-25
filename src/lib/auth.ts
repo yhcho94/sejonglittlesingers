@@ -17,14 +17,18 @@ export async function getCurrentUser() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
+  // 마이그레이션 실행 전이어도 동작하도록 새 칸부터 차례로 시도 (0021 → 0020 → 기본)
   const base = "id, guardian_name, phone, email, role, created_at";
-  const first = await supabase
-    .from("profiles")
-    .select(`${base}, is_super, admin_perms, admin_requested_at, admin_request_note`)
-    .eq("id", user.id)
-    .single<Profile>();
-  let profile = first.data;
-  if (first.error && !profile) {
+  const admin = "is_super, admin_perms, admin_requested_at, admin_request_note";
+  let profile: Profile | null = null;
+  for (const columns of [`${base}, ${admin}, member_type, affiliation`, `${base}, ${admin}`]) {
+    const { data, error } = await supabase.from("profiles").select(columns).eq("id", user.id).single<Profile>();
+    if (!error || data) {
+      profile = data;
+      break;
+    }
+  }
+  if (!profile) {
     // 0020 실행 전: 관리자 칸이 없으면 예전처럼 관리자 = 모든 권한
     const { data } = await supabase.from("profiles").select(base).eq("id", user.id).single<Profile>();
     profile = data ? { ...data, is_super: data.role === "admin", admin_perms: [] } : null;

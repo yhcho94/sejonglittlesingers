@@ -14,7 +14,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         <p className="text-ink-soft">{profile.email}</p>
       </div>
       <div>
-        <label htmlFor="guardian_name" className="label">보호자 이름</label>
+        <label htmlFor="guardian_name" className="label">{profile.member_type && profile.member_type !== "parent" ? "이름" : "보호자 이름"}</label>
         <input id="guardian_name" name="guardian_name" defaultValue={profile.guardian_name} required maxLength={50} className="input" />
       </div>
       <div>

@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { areaLabels, isSuperAdmin } from "@/lib/admin-perms";
 import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
+import { memberTypeLabel } from "@/lib/member-types";
 import { createClient } from "@/lib/supabase/server";
 import type { Application } from "@/lib/types";
 import { MEDIA_NOTICE, consentExpiresOn } from "@/lib/media-consent";
@@ -125,7 +126,15 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
         </section>
 
         <section className="card">
-          <h2 className="mb-4 text-lg font-semibold text-navy">회원 정보</h2>
+          <h2 className="mb-4 text-lg font-semibold text-navy">
+            회원 정보
+            {profile?.member_type && (
+              <span className="ml-2 align-middle text-xs font-medium text-ink-soft">
+                {memberTypeLabel(profile.member_type)}
+                {profile.affiliation ? ` · ${profile.affiliation}` : ""}
+              </span>
+            )}
+          </h2>
           {profile ? <ProfileForm profile={profile} /> : <p>회원 정보를 불러오지 못했습니다.</p>}
           <div className="mt-6 border-t border-line pt-4">
             <h3 className="mb-2 text-sm font-semibold text-navy">관리자 권한</h3>

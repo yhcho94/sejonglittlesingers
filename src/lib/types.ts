@@ -13,7 +13,12 @@ export type Profile = {
   admin_perms?: string[];
   admin_requested_at?: string | null;
   admin_request_note?: string | null;
+  // 0021: 회원 구분 (parent 학부모 · teacher 선생님 · staff 홈페이지 관리자)
+  member_type?: MemberType;
+  affiliation?: string | null;
 };
+
+export type MemberType = "parent" | "teacher" | "staff";
 
 export type Notice = {
   id: number;
