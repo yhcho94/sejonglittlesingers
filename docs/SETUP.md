@@ -55,6 +55,18 @@ Supabase 기본 메일 발송은 **테스트용**입니다. 발송량이 적게 
 메일 문구는 `docs/email-templates/README.md` 를 보고 한국어로 바꿉니다.
 (정확한 제한 사항은 Supabase 문서에서 최신 내용을 확인하세요.)
 
+### 비밀번호 규칙
+
+홈페이지는 **영문과 숫자를 섞어 10자 이상, 특수문자도 넣으면 8자 이상**을 요구합니다 (`src/lib/password.ts`).
+Supabase **Authentication → Sign In / Providers → Email** 의 비밀번호 설정은 이보다 느슨하거나 같게 둡니다.
+
+| 항목 | 값 |
+|---|---|
+| Minimum password length | `8` |
+| Password Requirements | `Letters and digits` |
+
+Supabase 쪽이 더 엄격하면(예: 대문자·특수문자 필수) 홈페이지 규칙을 지킨 비밀번호도 가입이 거절됩니다.
+
 ## 4. Vercel: 환경변수
 
 Supabase **Project Settings → API Keys** 에서 값을 복사해
