@@ -1,5 +1,5 @@
-// 무지개 색 (바깥쪽부터)
-export const RAINBOW = ["#eab2b6", "#eccb7f", "#abc8a6", "#a9c1e0"] as const;
+// 무지개 색 (바깥쪽부터): 봄 무지개 — 로즈 핑크 · 버터 옐로 · 스카이 블루 (+ SLS 없을 때 안쪽 라일락)
+export const RAINBOW = ["#f29cb0", "#f6cd68", "#84bee8", "#b9a7e0"] as const;
 
 // 로고 표식: 파스텔 무지개 + 샴페인 골드 음표 (앱 아이콘 src/app/icon.svg 와 같은 모양)
 // sls: 약칭 SLS 넣는 방식. inside = 가장 안쪽 무지개 선을 빼고 빈 공간에, overlay = 네 줄 위에 겹쳐서(halo 는 글자 테두리 색)

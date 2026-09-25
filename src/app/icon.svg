@@ -3,9 +3,9 @@
   <rect width="512" height="512" rx="112" fill="#faf8f4"/>
   <g transform="translate(256 262) scale(8.4) translate(-26 -27)">
     <g fill="none" stroke-linecap="round" stroke-width="2.4">
-      <path d="M10 35 A18 18 0 0 1 46 35" stroke="#eab2b6"/>
-      <path d="M14 35 A14 14 0 0 1 42 35" stroke="#eccb7f"/>
-      <path d="M18 35 A10 10 0 0 1 38 35" stroke="#abc8a6"/>
+      <path d="M10 35 A18 18 0 0 1 46 35" stroke="#f29cb0"/>
+      <path d="M14 35 A14 14 0 0 1 42 35" stroke="#f6cd68"/>
+      <path d="M18 35 A10 10 0 0 1 38 35" stroke="#84bee8"/>
     </g>
     <g fill="#b08d4f">
       <ellipse cx="11.5" cy="38.5" rx="4.6" ry="3.4" transform="rotate(-22 11.5 38.5)"/>
