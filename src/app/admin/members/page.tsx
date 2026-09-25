@@ -1,11 +1,13 @@
 import { adminDeleteMember } from "@/app/actions/account";
-import { rejectAdminRequest, revokeAdmin, setAdminAccess } from "@/app/actions/admin-roles";
+import { rejectAdminRequest, revokeAdmin, setAdminAccess, setParentRep } from "@/app/actions/admin-roles";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { SubmitButton } from "@/components/form";
 import { ADMIN_AREAS, areaLabels } from "@/lib/admin-perms";
 import { requireAdmin } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
-import { memberTypeLabel } from "@/lib/member-types";
+import Link from "next/link";
+import { CLASS_OPTIONS } from "@/lib/application-fields";
+import { memberRoleLabel } from "@/lib/member-types";
 import { createClient } from "@/lib/supabase/server";
 import type { ApplicationStatus, Profile } from "@/lib/types";
 
@@ -55,18 +57,36 @@ function TypeBadge({ member }: { member: Row }) {
         ? "bg-amber-50 text-amber-900"
         : "bg-cream text-ink-soft";
   return (
-    <span className={`rounded-sm px-1.5 py-0.5 text-xs font-medium ${tone}`}>{memberTypeLabel(member.member_type)}</span>
+    <>
+      <span className={`rounded-sm px-1.5 py-0.5 text-xs font-medium ${tone}`}>{memberRoleLabel(member)}</span>
+      {member.parent_rep_class && (
+        <span className="ml-1 rounded-sm bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-800">
+          {member.parent_rep_class} 대표
+        </span>
+      )}
+    </>
   );
 }
 
-export default async function AdminMembersPage() {
+const FILTERS = [
+  { key: "all", label: "전체" },
+  { key: "parent", label: "학부모" },
+  { key: "staff", label: "운영진" },
+] as const;
+
+const isStaff = (m: Row) => m.member_type === "teacher" || m.member_type === "staff";
+
+export default async function AdminMembersPage({ searchParams }: PageProps<"/admin/members">) {
+  const { type } = await searchParams;
+  const filter = FILTERS.find((f) => f.key === type)?.key ?? "all";
   const { user } = await requireAdmin("members");
   const supabase = await createClient();
-  // 마이그레이션 실행 전이어도 동작하도록 새 칸부터 차례로 시도 (0021 → 0020 → 기본)
+  // 마이그레이션 실행 전이어도 동작하도록 새 칸부터 차례로 시도 (0022 → 0021 → 0020 → 기본)
   const admin = "is_super, admin_perms, admin_requested_at, admin_request_note";
   let members: Row[] | null = null;
   let ready = false;
-  for (const columns of [`${BASE}, ${admin}, member_type, affiliation`, `${BASE}, ${admin}`, BASE]) {
+  const types = `${BASE}, ${admin}, member_type, affiliation`;
+  for (const columns of [`${types}, staff_role, parent_rep_class`, types, `${BASE}, ${admin}`, BASE]) {
     const { data, error } = await supabase
       .from("profiles")
       .select(columns)
@@ -81,6 +101,11 @@ export default async function AdminMembersPage() {
   const all = members ?? [];
   const requests = all.filter((m) => m.role !== "admin" && m.admin_requested_at);
   const admins = all.filter((m) => m.role === "admin");
+  const hasTypes = all.some((m) => m.member_type !== undefined);
+  const hasReps = all.some((m) => m.parent_rep_class !== undefined);
+  const shown = all.filter((m) =>
+    filter === "all" ? true : filter === "staff" ? isStaff(m) : !isStaff(m),
+  );
 
   return (
     <>
@@ -106,7 +131,7 @@ export default async function AdminMembersPage() {
                       {m.email} · {m.phone} · 신청일 {formatDate(m.admin_requested_at!)}
                     </span>
                   </p>
-                  {m.affiliation && <p className="mt-1 text-sm">{m.member_type === "teacher" ? "담당" : "소속·역할"}: {m.affiliation}</p>}
+                  {m.affiliation && <p className="mt-1 text-sm">세부 담당: {m.affiliation}</p>}
                   {m.admin_request_note && (
                     <p className="mt-1 whitespace-pre-line text-sm">사유: {m.admin_request_note}</p>
                   )}
@@ -167,20 +192,60 @@ export default async function AdminMembersPage() {
         </section>
       )}
 
-      <h2 className="mb-3 text-lg font-semibold text-navy">전체 회원 ({all.length})</h2>
+      {hasReps && (
+        <section className="mb-8">
+          <h2 className="mb-3 text-lg font-semibold text-navy">반별 학부모 대표</h2>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {CLASS_OPTIONS.map((c) => {
+              const reps = all.filter((m) => m.parent_rep_class === c.name);
+              return (
+                <div key={c.name} className="card py-3">
+                  <p className="text-sm font-bold text-navy">
+                    {c.name} <span className="font-normal text-ink-soft">({c.day})</span>
+                  </p>
+                  <p className="mt-1 text-sm">
+                    {reps.length ? reps.map((r) => `${r.guardian_name} (${r.phone})`).join(", ") : "지정 안 됨"}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-2 text-xs text-ink-soft">
+            아래 회원 목록에서 &lsquo;학부모&rsquo;를 골라 보고, 대표로 정할 보호자의 &lsquo;학부모 대표&rsquo; 칸에서 반을 선택해 저장하세요.
+          </p>
+        </section>
+      )}
+
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold text-navy">회원 명단 ({shown.length})</h2>
+        {hasTypes && (
+          <nav className="flex gap-1 text-sm" aria-label="회원 구분">
+            {FILTERS.map((f) => (
+              <Link
+                key={f.key}
+                href={f.key === "all" ? "/admin/members" : `/admin/members?type=${f.key}`}
+                className={`rounded-sm px-3 py-1 ${filter === f.key ? "bg-navy text-white" : "bg-cream text-ink-soft hover:text-navy"}`}
+              >
+                {f.label}
+              </Link>
+            ))}
+          </nav>
+        )}
+      </div>
       <div className="card overflow-x-auto p-0">
-        <table className="w-full min-w-[760px] text-left text-sm">
+        <table className="w-full min-w-[900px] text-left text-sm">
           <thead className="border-b border-line bg-cream text-ink-soft">
             <tr>
               <th className="px-4 py-3 font-medium">이름 (구분)</th>
               <th className="px-4 py-3 font-medium">연락처 / 이메일</th>
               <th className="px-4 py-3 font-medium">승인된 단원</th>
               <th className="px-4 py-3 font-medium">가입일</th>
+              {hasReps && <th className="px-4 py-3 font-medium">학부모 대표</th>}
               <th className="px-4 py-3 font-medium">권한</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
-            {all.map((m) => {
+            {shown.map((m) => {
               const children = m.applications.filter((a) => a.status === "approved").map((a) => a.child_name);
               const isSelf = m.id === user.id;
               return (
@@ -198,6 +263,29 @@ export default async function AdminMembersPage() {
                   </td>
                   <td className="px-4 py-3">{children.length ? children.join(", ") : "-"}</td>
                   <td className="px-4 py-3">{formatDate(m.created_at)}</td>
+                  {hasReps && (
+                    <td className="px-4 py-3">
+                      {isStaff(m) ? (
+                        <span className="text-ink-soft">-</span>
+                      ) : (
+                        <form action={setParentRep} className="flex items-center gap-1">
+                          <input type="hidden" name="id" value={m.id} />
+                          <select
+                            name="class_name"
+                            defaultValue={m.parent_rep_class ?? ""}
+                            aria-label={`${m.guardian_name} 학부모 대표 반`}
+                            className="rounded-sm border border-line bg-white px-2 py-1 text-xs"
+                          >
+                            <option value="">대표 아님</option>
+                            {CLASS_OPTIONS.map((c) => (
+                              <option key={c.name} value={c.name}>{c.name} 대표</option>
+                            ))}
+                          </select>
+                          <SubmitButton className="text-xs text-navy underline" pendingText="...">저장</SubmitButton>
+                        </form>
+                      )}
+                    </td>
+                  )}
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={m.role === "admin" ? "font-bold text-navy" : ""}>
