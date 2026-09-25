@@ -2,8 +2,9 @@
 -- SQL Editor 에서 이 파일 전체를 실행합니다. 여러 번 실행해도 안전합니다. (0022 다음에 실행)
 --
 -- 1) 운영진: 부지휘자·반주자·보컬트레이너·이론선생님은 담당 반(staff_class)을 고릅니다.
---    최상위 관리자가 '조직도 게시'를 켜야 합창단 소개 조직도에 이름이 나옵니다. (반 역할은 그 반 칸, 나머지는 전체 칸)
---    본인이 역할이나 반을 바꾸면 게시가 꺼져 다시 확인받습니다. 최상위 관리자는 역할·반·담당·게시를 모두 고칠 수 있습니다.
+--    가입 후 역할·반·세부 담당은 최상위 관리자만 고칠 수 있습니다. (본인은 마이페이지에서 보기만)
+--    최상위 관리자가 역할·반을 승인(org_visible)하면 합창단 소개 조직도에 이름이 나옵니다. (반 역할은 그 반 칸, 나머지는 전체 칸)
+-- 1-1) 최상위 관리자 지정은 최상위 관리자만, 운영진 회원에게만 할 수 있습니다.
 -- 2) 학부모 대표: 반 + 대표/부대표
 -- 3) 최상위 관리자가 회원 구분(보호자 ↔ 운영진)을 바꿀 수 있음
 -- 4) 공개 조직도에는 이름과 역할만 나갑니다. (연락처·이메일 제외)
@@ -27,6 +28,11 @@ begin
   end if;
 end;
 $$;
+
+-- 최상위 관리자는 운영진 회원 (지금 보호자로 되어 있는 최상위 관리자를 운영진으로 옮김, 학부모 대표 지정은 해제)
+update public.profiles
+set member_type = 'staff', parent_rep_class = null, parent_rep_title = null
+where role = 'admin' and is_super and member_type = 'parent';
 
 -- 0022 에서 지정한 대표는 '대표'
 update public.profiles set parent_rep_title = '대표' where parent_rep_class is not null and parent_rep_title is null;
@@ -112,6 +118,9 @@ begin
   if not public.is_admin() then
     raise exception 'not_super_admin';
   end if;
+  if new_type = 'parent' and exists (select 1 from public.profiles where id = target_id and role = 'admin' and is_super) then
+    raise exception 'super_must_be_staff';
+  end if;
   if new_type = 'parent' then
     update public.profiles
     set member_type = 'parent', staff_role = null, affiliation = null, staff_class = null, org_visible = false
@@ -132,35 +141,38 @@ begin
 end;
 $$;
 
--- 본인 역할·반·담당 수정: 역할이나 반이 바뀌면 조직도 게시를 꺼서 최상위 관리자가 다시 확인
+-- 운영진 본인 역할·반·담당 수정 기능은 없앱니다. (0022 의 함수 삭제, 최상위 관리자만 admin_update_staff 로 수정)
 drop function if exists public.update_my_staff_info(text, text);
-create or replace function public.update_my_staff_info(new_role text, new_affiliation text, new_class text default null)
+drop function if exists public.update_my_staff_info(text, text, text);
+
+-- 관리자 승인·권한 변경: 최상위 관리자 지정은 운영진 회원에게만 (0020 함수 교체)
+create or replace function public.set_admin_access(target_id uuid, perms text[], make_super boolean default false)
 returns void
 language plpgsql
 security definer
 set search_path = ''
 as $$
-declare
-  role_name text := nullif(left(trim(coalesce(new_role, '')), 30), '');
-  c text;
 begin
-  if auth.uid() is null then
-    raise exception 'not_signed_in';
+  if not public.is_admin() then
+    raise exception 'not_super_admin';
   end if;
-  if role_name is null then
-    raise exception 'role_required';
+  if target_id = auth.uid() then
+    raise exception 'self';
   end if;
-  c := case when public.is_class_role(role_name) then nullif(left(trim(coalesce(new_class, '')), 20), '') end;
+  if coalesce(make_super, false)
+     and not exists (select 1 from public.profiles where id = target_id and member_type in ('teacher', 'staff')) then
+    raise exception 'super_requires_staff';
+  end if;
   update public.profiles
-  set org_visible = case
-        when staff_role is distinct from role_name or staff_class is distinct from c then false
-        else org_visible
-      end,
-      staff_role = role_name,
-      staff_class = c,
-      member_type = public.staff_kind(role_name),
-      affiliation = nullif(left(trim(coalesce(new_affiliation, '')), 100), '')
-  where id = auth.uid() and member_type in ('teacher', 'staff');
+  set role = 'admin',
+      is_super = coalesce(make_super, false),
+      admin_perms = public.clean_admin_perms(perms),
+      admin_requested_at = null,
+      admin_request_note = null
+  where id = target_id;
+  if not found then
+    raise exception 'not_found';
+  end if;
 end;
 $$;
 
@@ -239,10 +251,8 @@ grant insert, update on public.site_settings to authenticated;
 
 revoke execute on function public.set_parent_rep(uuid, text, text) from public, anon;
 revoke execute on function public.admin_update_staff(uuid, text, text, text, boolean) from public, anon;
-revoke execute on function public.update_my_staff_info(text, text, text) from public, anon;
 revoke execute on function public.set_member_type(uuid, text, text) from public, anon;
 grant execute on function public.set_parent_rep(uuid, text, text) to authenticated;
 grant execute on function public.admin_update_staff(uuid, text, text, text, boolean) to authenticated;
-grant execute on function public.update_my_staff_info(text, text, text) to authenticated;
 grant execute on function public.set_member_type(uuid, text, text) to authenticated;
 grant execute on function public.org_chart() to anon, authenticated;

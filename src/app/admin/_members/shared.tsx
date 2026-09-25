@@ -53,6 +53,9 @@ export function TypeBadge({ member }: { member: Profile }) {
   return (
     <>
       <span className={`rounded-sm px-1.5 py-0.5 text-xs font-medium ${tone}`}>{memberRoleLabel(member)}</span>
+      {member.role === "admin" && member.is_super && (
+        <span className="ml-1 rounded-sm bg-navy px-1.5 py-0.5 text-xs font-medium text-white">최상위 관리자</span>
+      )}
       {member.parent_rep_class && (
         <span className="ml-1 rounded-sm bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-800">
           {member.parent_rep_class} {member.parent_rep_title ?? "대표"}
@@ -79,13 +82,17 @@ export function AccessForm({ member, submitLabel }: { member: Profile; submitLab
           ))}
         </div>
       </fieldset>
-      <label className="flex items-center gap-1.5 text-sm">
-        <input type="checkbox" name="super" defaultChecked={member.is_super === true} />
-        <span>
-          <strong className="text-navy">최상위 관리자</strong>
-          <span className="text-ink-soft"> — 모든 메뉴 + 회원 관리(관리자 승인·권한 부여)</span>
-        </span>
-      </label>
+      {isStaffMember(member) ? (
+        <label className="flex items-center gap-1.5 text-sm">
+          <input type="checkbox" name="super" defaultChecked={member.is_super === true} />
+          <span>
+            <strong className="text-navy">최상위 관리자</strong>
+            <span className="text-ink-soft"> — 모든 메뉴 + 회원 관리(관리자 승인·권한 부여)</span>
+          </span>
+        </label>
+      ) : (
+        <p className="text-xs text-ink-soft">최상위 관리자는 운영진 회원만 지정할 수 있습니다.</p>
+      )}
       <SubmitButton className="btn-primary px-3 py-1.5 text-sm" pendingText="저장 중...">
         {submitLabel}
       </SubmitButton>

@@ -136,8 +136,8 @@ export default async function StaffMembersPage() {
               </div>
             </details>
             <p className="text-xs text-ink-soft">
-              운영진이 모두 가입하고 아래 명단에서 &lsquo;조직도에 게시&rsquo;를 켠 뒤, 학부모 대표를 지정하고 미리보기를 확인한
-              다음 &lsquo;회원 정보로 자동 표시&rsquo;로 바꿔 주세요.
+              운영진이 모두 가입하면 아래 명단에서 역할·반을 확인해 &lsquo;승인&rsquo;하고, 보호자 회원에서 학부모 대표를 지정한 뒤
+              미리보기를 확인하고 &lsquo;회원 정보로 자동 표시&rsquo;로 바꿔 주세요.
             </p>
           </div>
         </section>
@@ -157,7 +157,7 @@ export default async function StaffMembersPage() {
                 <th className="px-4 py-3 font-medium">이름 / 역할</th>
                 <th className="px-4 py-3 font-medium">연락처 / 이메일</th>
                 <th className="px-4 py-3 font-medium">가입일</th>
-                {canOrg && <th className="px-4 py-3 font-medium">조직도 · 정보 수정</th>}
+                {canOrg && <th className="px-4 py-3 font-medium">승인 · 정보 수정</th>}
                 <th className="px-4 py-3 font-medium">관리자 권한 · 관리</th>
               </tr>
             </thead>
@@ -181,10 +181,10 @@ export default async function StaffMembersPage() {
                     {canOrg && (
                       <td className="px-4 py-3">
                         <span className={m.org_visible ? "font-medium text-green-800" : "text-ink-soft"}>
-                          {m.org_visible ? "조직도 게시 중" : "조직도 미게시"}
+                          {m.org_visible ? "승인됨 (조직도 게시)" : "승인 대기"}
                         </span>
                         <details className="mt-1">
-                          <summary className="cursor-pointer text-xs text-navy underline">역할 · 반 · 게시 수정</summary>
+                          <summary className="cursor-pointer text-xs text-navy underline">역할 · 반 · 승인 수정</summary>
                           <div className="mt-2 min-w-[340px]">
                             <StaffEditForm member={m} />
                           </div>
@@ -196,16 +196,18 @@ export default async function StaffMembersPage() {
                         <span className={m.role === "admin" ? "font-bold text-navy" : "text-ink-soft"}>
                           {m.role === "admin" ? adminLabel(m, level) : m.admin_requested_at ? "권한 신청 중" : "권한 없음"}
                         </span>
-                        <form action={setMemberType}>
-                          <input type="hidden" name="id" value={m.id} />
-                          <input type="hidden" name="type" value="parent" />
-                          <ConfirmButton
-                            message={`${m.guardian_name} 님을 보호자 회원으로 옮길까요? 운영진 역할과 조직도 표시가 해제됩니다. (관리자 권한은 그대로)`}
-                            className="text-xs text-navy underline"
-                          >
-                            보호자로 변경
-                          </ConfirmButton>
-                        </form>
+                        {!(m.role === "admin" && m.is_super) && (
+                          <form action={setMemberType}>
+                            <input type="hidden" name="id" value={m.id} />
+                            <input type="hidden" name="type" value="parent" />
+                            <ConfirmButton
+                              message={`${m.guardian_name} 님을 보호자 회원으로 옮길까요? 운영진 역할과 조직도 표시가 해제됩니다. (관리자 권한은 그대로)`}
+                              className="text-xs text-navy underline"
+                            >
+                              보호자로 변경
+                            </ConfirmButton>
+                          </form>
+                        )}
                         {!isSelf && <DeleteMemberButton member={m} />}
                       </div>
                       {ready && !isSelf && m.role !== "admin" && !m.admin_requested_at && (
@@ -225,9 +227,10 @@ export default async function StaffMembersPage() {
         </div>
       )}
       <p className="mt-4 text-xs text-ink-soft">
-        &lsquo;조직도에 게시&rsquo;를 켠 운영진만 합창단 소개 조직도에 이름·역할이 나옵니다(연락처 제외). 부지휘자·반주자·
-        보컬트레이너·이론선생님은 담당 반 칸에, 나머지는 전체 칸에 표시됩니다. 본인이 마이페이지에서 역할이나 반을 바꾸면
-        게시가 꺼지니 다시 확인해 주세요. 일반 관리자는 체크한 메뉴만 보고 고칠 수 있습니다.
+        운영진의 역할·반·세부 담당은 최상위 관리자만 고칠 수 있습니다(본인은 마이페이지에서 보기만). &lsquo;역할·반 승인&rsquo;을
+        한 운영진만 합창단 소개 조직도에 이름·역할이 나옵니다(연락처 제외). 부지휘자·반주자·보컬트레이너·이론선생님은 담당
+        반 칸에, 나머지는 전체 칸에 표시됩니다. 최상위 관리자는 운영진 회원만 지정할 수 있습니다. 일반 관리자는 체크한 메뉴만
+        보고 고칠 수 있습니다.
       </p>
     </>
   );
