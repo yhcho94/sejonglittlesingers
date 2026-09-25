@@ -8,7 +8,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { areaLabels, isSuperAdmin } from "@/lib/admin-perms";
 import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
-import { memberTypeLabel } from "@/lib/member-types";
+import { memberRoleLabel } from "@/lib/member-types";
 import { createClient } from "@/lib/supabase/server";
 import type { Application } from "@/lib/types";
 import { MEDIA_NOTICE, consentExpiresOn } from "@/lib/media-consent";
@@ -130,8 +130,8 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             회원 정보
             {profile?.member_type && (
               <span className="ml-2 align-middle text-xs font-medium text-ink-soft">
-                {memberTypeLabel(profile.member_type)}
-                {profile.affiliation ? ` · ${profile.affiliation}` : ""}
+                {memberRoleLabel(profile)}
+                {profile.parent_rep_class ? ` · ${profile.parent_rep_class} 학부모 대표` : ""}
               </span>
             )}
           </h2>

@@ -17,11 +17,12 @@ export async function getCurrentUser() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  // 마이그레이션 실행 전이어도 동작하도록 새 칸부터 차례로 시도 (0021 → 0020 → 기본)
+  // 마이그레이션 실행 전이어도 동작하도록 새 칸부터 차례로 시도 (0022 → 0021 → 0020 → 기본)
   const base = "id, guardian_name, phone, email, role, created_at";
   const admin = "is_super, admin_perms, admin_requested_at, admin_request_note";
   let profile: Profile | null = null;
-  for (const columns of [`${base}, ${admin}, member_type, affiliation`, `${base}, ${admin}`]) {
+  const types = `${base}, ${admin}, member_type, affiliation`;
+  for (const columns of [`${types}, staff_role, parent_rep_class`, types, `${base}, ${admin}`]) {
     const { data, error } = await supabase.from("profiles").select(columns).eq("id", user.id).single<Profile>();
     if (!error || data) {
       profile = data;

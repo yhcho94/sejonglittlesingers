@@ -8,7 +8,7 @@ import { isSupabaseConfigured, missingSupabaseEnv } from "@/lib/supabase/env";
 import { safeNext } from "@/lib/auth";
 import type { FormState } from "@/lib/types";
 import { PASSWORD_HINT, passwordProblem } from "@/lib/password";
-import { isMemberType } from "@/lib/member-types";
+import { staffRoleFromForm } from "@/lib/member-types";
 
 // 어떤 배포에서 설정이 빠졌는지 알 수 있도록 Vercel 이 제공하는 공개 정보(환경, 커밋)를 함께 표시합니다.
 const DEPLOY_INFO = [process.env.VERCEL_ENV, process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7)]
@@ -61,10 +61,8 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   const passwordConfirm = formData.get("password_confirm");
   const guardianName = text(formData, "guardian_name");
   const phone = text(formData, "phone");
-  const rawType = formData.get("member_type") ?? "parent";
-  if (!isMemberType(rawType)) return { error: "가입 구분을 선택해 주세요." };
-  const memberType = rawType;
-  const parent = memberType === "parent";
+  const parent = formData.get("member_type") !== "staff";
+  const staffRole = parent ? null : staffRoleFromForm(text(formData, "staff_role"), text(formData, "staff_role_custom"));
   const affiliation = parent ? "" : text(formData, "affiliation").slice(0, 100);
   const requestNote = parent ? "" : text(formData, "request_note").slice(0, 300);
 
@@ -81,9 +79,7 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   if (parent && formData.get("agree_guardian") !== "on") {
     return { error: "만 14세 이상 보호자 본인임을 확인해 주세요." };
   }
-  if (!parent && !affiliation) {
-    return { error: memberType === "teacher" ? "담당을 입력해 주세요." : "소속·역할을 입력해 주세요." };
-  }
+  if (!parent && !staffRole) return { error: "운영진 역할을 골라 주세요. (기타는 30자 이내로 입력)" };
   if (!parent && formData.get("agree_adult") !== "on") {
     return { error: "만 14세 이상 본인임을 확인해 주세요." };
   }
@@ -94,8 +90,8 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
     password,
     options: {
       data: parent
-        ? { guardian_name: guardianName, phone, member_type: memberType }
-        : { guardian_name: guardianName, phone, member_type: memberType, affiliation, request_note: requestNote },
+        ? { guardian_name: guardianName, phone, member_type: "parent" }
+        : { guardian_name: guardianName, phone, member_type: "staff", staff_role: staffRole, affiliation, request_note: requestNote },
       emailRedirectTo: `${await siteOrigin()}/auth/callback?next=/mypage`,
     },
   });

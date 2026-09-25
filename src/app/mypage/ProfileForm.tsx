@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { updateProfile } from "@/app/actions/profile";
 import { FormMessage, SubmitButton } from "@/components/form";
+import { StaffRoleFields } from "@/components/StaffRoleFields";
 import type { Profile } from "@/lib/types";
 
 export function ProfileForm({ profile }: { profile: Profile }) {
@@ -21,6 +22,9 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         <label htmlFor="phone" className="label">연락처</label>
         <input id="phone" name="phone" type="tel" defaultValue={profile.phone} required pattern="[0-9\-]{9,20}" className="input" />
       </div>
+      {(profile.member_type === "teacher" || profile.member_type === "staff") && (
+        <StaffRoleFields role={profile.staff_role} affiliation={profile.affiliation} />
+      )}
       <FormMessage state={state} />
       <SubmitButton className="btn-outline" pendingText="저장 중...">정보 저장</SubmitButton>
     </form>

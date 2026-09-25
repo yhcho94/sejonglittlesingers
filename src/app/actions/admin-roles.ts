@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { ADMIN_AREAS } from "@/lib/admin-perms";
+import { CLASS_OPTIONS } from "@/lib/application-fields";
 import { adminFor, getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/lib/types";
@@ -65,5 +66,17 @@ export async function rejectAdminRequest(formData: FormData) {
   if (!current || !UUID_RE.test(targetId)) return;
   const supabase = await createClient();
   await supabase.rpc("reject_admin_request", { target_id: targetId });
+  refresh();
+}
+
+// 학부모 대표 지정(반) · 해제(빈 값). 최상위 관리자만, 학부모 회원만
+export async function setParentRep(formData: FormData) {
+  const current = await adminFor("members");
+  const targetId = String(formData.get("id") ?? "");
+  const className = String(formData.get("class_name") ?? "");
+  if (!current || !UUID_RE.test(targetId)) return;
+  if (className && !CLASS_OPTIONS.some((c) => c.name === className)) return;
+  const supabase = await createClient();
+  await supabase.rpc("set_parent_rep", { target_id: targetId, class_name: className || null });
   refresh();
 }

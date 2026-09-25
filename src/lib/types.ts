@@ -16,6 +16,9 @@ export type Profile = {
   // 0021: 회원 구분 (parent 학부모 · teacher 선생님 · staff 홈페이지 관리자)
   member_type?: MemberType;
   affiliation?: string | null;
+  // 0022: 운영진 역할, 학부모 대표(반)
+  staff_role?: string | null;
+  parent_rep_class?: string | null;
 };
 
 export type MemberType = "parent" | "teacher" | "staff";

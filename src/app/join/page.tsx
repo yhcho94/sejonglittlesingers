@@ -135,6 +135,7 @@ export default async function JoinPage() {
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link href="/apply" className="btn-primary px-6">입단 신청하기</Link>
             <Link href="/signup" className="btn-outline px-6">보호자 회원가입</Link>
+            <Link href="/signup?type=staff" className="btn-outline px-6">운영진 회원가입</Link>
           </div>
         </section>
       </div>
