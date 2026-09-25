@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { getPublicSingers } from "@/lib/content";
 import { site } from "@/lib/site";
-import { organization } from "@/lib/staff";
+import { classTeachers, organization } from "@/lib/staff";
 
 export const metadata: Metadata = {
   title: "단원 소개",
@@ -48,7 +48,7 @@ export default async function SingersPage() {
             {organization.classes.map((c) => {
               const inClass = counts.find((r) => r.class_name === c.name)?.singers ?? 0;
               const names = (data?.names ?? []).filter((n) => n.class_name === c.name);
-              const teachers = c.members.filter((m) => TEACHER_ROLES.includes(m.role));
+              const teachers = classTeachers(c.name).filter((m) => TEACHER_ROLES.includes(m.role));
               return (
                 <article key={c.name} className="flex flex-col border border-line bg-white">
                   <div className="h-1" style={{ background: c.color }} />

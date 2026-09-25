@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
-import { staffRoleFromForm } from "@/lib/member-types";
+import { CLASS_OPTIONS } from "@/lib/application-fields";
+import { staffClassFromForm, staffRoleFromForm } from "@/lib/member-types";
 import type { FormState } from "@/lib/types";
 
 export async function updateProfile(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -20,6 +21,8 @@ export async function updateProfile(_prev: FormState, formData: FormData): Promi
     ? staffRoleFromForm(String(formData.get("staff_role") ?? ""), String(formData.get("staff_role_custom") ?? ""))
     : null;
   if (staff && !staffRole) return { error: "운영진 역할을 골라 주세요. (기타는 30자 이내로 입력)" };
+  const staffClass = staffClassFromForm(staffRole, String(formData.get("staff_class") ?? ""), CLASS_OPTIONS.map((c) => c.name));
+  if (staff && !staffClass.ok) return { error: "담당 반을 골라 주세요." };
 
   const supabase = await createClient();
   const { error } = await supabase
@@ -31,6 +34,7 @@ export async function updateProfile(_prev: FormState, formData: FormData): Promi
     const { error: staffError } = await supabase.rpc("update_my_staff_info", {
       new_role: staffRole,
       new_affiliation: String(formData.get("affiliation") ?? "").trim().slice(0, 100),
+      new_class: staffClass.value,
     });
     if (staffError) return { error: "운영진 정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   }

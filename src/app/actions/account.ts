@@ -65,7 +65,7 @@ export async function adminDeleteMember(formData: FormData) {
   // DB 함수가 관리자 여부와 본인 삭제 금지를 다시 확인합니다.
   const { error } = await supabase.rpc("admin_delete_member", { target_id: targetId });
   if (!error) await processStorageCleanup(supabase);
-  revalidatePath("/admin/members");
+  revalidatePath("/admin", "layout");
   revalidatePath("/admin/singers", "layout");
 }
 

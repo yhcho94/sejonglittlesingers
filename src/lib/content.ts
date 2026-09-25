@@ -132,3 +132,28 @@ export async function getPublicSingers() {
     names: (names.data ?? []) as { name: string; class_name: string | null }[],
   };
 }
+
+// 합창단 소개 조직도: 최상위 관리자가 정한 운영진 위치 + 학부모 대표 (이름·역할만). 읽지 못하면 빈 목록
+export type OrgEntry = { section: string; role: string; name: string };
+export async function getOrgChart(): Promise<OrgEntry[]> {
+  await connection();
+  if (!isSupabaseConfigured) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("org_chart");
+  if (error) return [];
+  return (data ?? []) as OrgEntry[];
+}
+
+// 조직도 표시 방식: auto(회원 정보로 자동) · legacy(예전 고정 조직도, 기본값·읽지 못할 때)
+export type OrgChartSource = "auto" | "legacy";
+export async function getOrgChartSource(): Promise<OrgChartSource> {
+  await connection();
+  if (!isSupabaseConfigured) return "legacy";
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "org_chart_source")
+    .maybeSingle<{ value: string }>();
+  return !error && data?.value === "auto" ? "auto" : "legacy";
+}
