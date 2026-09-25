@@ -1,3 +1,6 @@
+// 무지개 색 (바깥쪽부터): 봄 무지개 — 로즈 핑크 · 버터 옐로 · 스카이 블루 (+ SLS 없을 때 안쪽 라일락)
+export const RAINBOW = ["#f29cb0", "#f6cd68", "#84bee8", "#b9a7e0"] as const;
+
 // 로고 표식: 파스텔 무지개 + 샴페인 골드 음표 (앱 아이콘 src/app/icon.svg 와 같은 모양)
 // sls: 약칭 SLS 넣는 방식. inside = 가장 안쪽 무지개 선을 빼고 빈 공간에, overlay = 네 줄 위에 겹쳐서(halo 는 글자 테두리 색)
 export function LogoMark({
@@ -5,19 +8,21 @@ export function LogoMark({
   sls = "none",
   textColor = "#121a3a",
   halo = "#faf8f4",
+  arcs = RAINBOW,
 }: {
   className?: string;
   sls?: "none" | "inside" | "overlay";
   textColor?: string;
   halo?: string;
+  arcs?: readonly string[];
 }) {
   return (
     <svg viewBox="5 11 42 32" className={className} aria-hidden>
       <g fill="none" strokeLinecap="round" strokeWidth="2.4">
-        <path d="M10 35 A18 18 0 0 1 46 35" stroke="#eab2b6" />
-        <path d="M14 35 A14 14 0 0 1 42 35" stroke="#eccb7f" />
-        <path d="M18 35 A10 10 0 0 1 38 35" stroke="#abc8a6" />
-        {sls !== "inside" && <path d="M22 35 A6 6 0 0 1 34 35" stroke="#a9c1e0" />}
+        <path d="M10 35 A18 18 0 0 1 46 35" stroke={arcs[0]} />
+        <path d="M14 35 A14 14 0 0 1 42 35" stroke={arcs[1]} />
+        <path d="M18 35 A10 10 0 0 1 38 35" stroke={arcs[2]} />
+        {sls !== "inside" && <path d="M22 35 A6 6 0 0 1 34 35" stroke={arcs[3] ?? "#a9c1e0"} />}
       </g>
       <g fill="#b08d4f">
         <ellipse cx="11.5" cy="38.5" rx="4.6" ry="3.4" transform="rotate(-22 11.5 38.5)" />
