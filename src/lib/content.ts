@@ -157,3 +157,12 @@ export async function getOrgChartSource(): Promise<OrgChartSource> {
     .maybeSingle<{ value: string }>();
   return !error && data?.value === "auto" ? "auto" : "legacy";
 }
+
+// 강사진·운영진 수: 조직도를 '회원 정보로 자동 표시'로 바꾼 뒤에는 승인된 운영진 수 (학부모 대표 제외).
+// 그 전이거나 읽지 못하면 null (소개 글의 수치를 사용)
+export async function getStaffCount() {
+  if ((await getOrgChartSource()) !== "auto") return null;
+  const entries = await getOrgChart();
+  const staff = new Set(entries.filter((e) => e.role !== "학부모대표" && e.role !== "부대표").map((e) => e.name));
+  return staff.size > 0 ? staff.size : null;
+}
