@@ -69,7 +69,7 @@ export function SignupForm({ initialKind = "parent" }: { initialKind?: SignupKin
               className="input"
             />
             <p className="mt-1 text-xs text-ink-soft">
-              가입 후 최상위 관리자가 확인하고 맡을 메뉴를 정해 승인합니다. 승인 전에는 일반 회원과 같습니다.
+              가입 후 최상위 관리자가 역할·반을 확인해 승인하고 맡을 메뉴를 정합니다. 가입 뒤 역할·반·담당은 최상위 관리자만 고칠 수 있습니다.
             </p>
           </div>
         </>

@@ -3,9 +3,9 @@ import Link from "next/link";
 import { OrgChart } from "@/components/OrgChart";
 import { PageHeader } from "@/components/PageHeader";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
-import { getActiveSingerCount } from "@/lib/content";
+import { getActiveSingerCount, getOrgChart, getOrgChartSource } from "@/lib/content";
 import { EVENT_ALBUMS } from "@/lib/event-albums";
-import { organization } from "@/lib/staff";
+import { LEGACY_ORG_ENTRIES, organization } from "@/lib/staff";
 
 export const metadata: Metadata = {
   title: "합창단 소개",
@@ -39,7 +39,10 @@ function Heading({ eyebrow, title }: { eyebrow: string; title: string }) {
 
 export default async function AboutPage() {
   // 단원 수는 DB 의 현재 활동 단원 수 (읽지 못하면 소개 글의 수치)
-  const singerCount = await getActiveSingerCount();
+  const [singerCount, orgSource] = await Promise.all([getActiveSingerCount(), getOrgChartSource()]);
+  // 조직도: 최상위 관리자가 '회원 정보로 자동'으로 바꾸기 전까지는 예전 조직도
+  const orgAuto = orgSource === "auto";
+  const orgEntries = orgAuto ? await getOrgChart() : LEGACY_ORG_ENTRIES;
   const stats = STATS.map((s) => (s.label.startsWith("활동 단원") && singerCount ? { ...s, value: String(singerCount) } : s));
   return (
     <>
@@ -178,7 +181,7 @@ export default async function AboutPage() {
       <section className="section-y">
         <div className="container-page">
           <Heading eyebrow="Organization" title={`${organization.year} 조직도`} />
-          <OrgChart />
+          <OrgChart entries={orgEntries} showBlanks={orgAuto} />
           <Link href="/faculty" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-navy">
             지휘자 · 강사진 소개 보기 <span aria-hidden>→</span>
           </Link>

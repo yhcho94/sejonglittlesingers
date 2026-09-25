@@ -12,6 +12,18 @@ async function count(table: "applications" | "profiles" | "notices", status?: st
   return count ?? 0;
 }
 
+// 회원 구분별 수 (0021 실행 전이면 전체 회원을 보호자로)
+async function countMembers() {
+  const supabase = await createClient();
+  const staff = await supabase
+    .from("profiles")
+    .select("id", { count: "exact", head: true })
+    .in("member_type", ["teacher", "staff"]);
+  const all = await count("profiles");
+  const staffCount = staff.error ? 0 : (staff.count ?? 0);
+  return { parents: all - staffCount, staff: staffCount };
+}
+
 export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
   const { profile } = await requireAdmin();
   const { denied } = await searchParams;
@@ -24,7 +36,7 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
   const [pending, approved, members, notices] = await Promise.all([
     count("applications", "pending"),
     count("applications", "approved"),
-    count("profiles"),
+    countMembers(),
     count("notices"),
   ]);
 
@@ -32,7 +44,8 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
   const stats = [
     { label: "심사 대기 신청", value: pending, href: "/admin/applications?status=pending", gate: "applications" as const },
     { label: "승인된 단원", value: approved, href: "/admin/applications?status=approved", gate: "applications" as const },
-    { label: "보호자 회원", value: members, href: "/admin/members", gate: "members" as const },
+    { label: "보호자 회원", value: members.parents, href: "/admin/members", gate: "members" as const },
+    { label: "운영진 회원", value: members.staff, href: "/admin/staff", gate: "members" as const },
     { label: "공지사항", value: notices, href: "/admin/notices", gate: "notices" as const },
   ].filter((s) => canAccess(profile, s.gate));
 
@@ -49,7 +62,7 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
           해당 메뉴의 권한이 없습니다. 필요하면 최상위 관리자에게 권한을 요청해 주세요.
         </p>
       )}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {stats.map((s) => (
           <Link key={s.label} href={s.href} className="card hover:border-navy">
             <p className="text-sm text-ink-soft">{s.label}</p>

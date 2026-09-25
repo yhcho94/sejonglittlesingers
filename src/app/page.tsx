@@ -11,7 +11,7 @@ import { EVENT_ALBUMS } from "@/lib/event-albums";
 import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
 import { site, smsHref } from "@/lib/site";
-import { organization } from "@/lib/staff";
+import { classTeachers, organization } from "@/lib/staff";
 import heroMobileImage from "../../public/images/hero-mobile.jpg";
 import heroImage from "../../public/images/hero.jpg";
 
@@ -317,7 +317,7 @@ export default async function HomePage() {
                 <p className="mt-2 text-xs text-ink-soft sm:text-sm md:mt-3">
                   <span className="hidden sm:inline">부지휘자 </span>
                   <span className="font-medium text-ink sm:ml-1">
-                    {c.members.find((m) => m.role === "부지휘자")?.name}
+                    {classTeachers(c.name).find((m) => m.role === "부지휘자")?.name}
                   </span>
                 </p>
               </div>

@@ -19,6 +19,10 @@ export type Profile = {
   // 0022: 운영진 역할, 학부모 대표(반)
   staff_role?: string | null;
   parent_rep_class?: string | null;
+  // 0023: 학부모 대표/부대표, 운영진 담당 반·조직도 게시
+  parent_rep_title?: string | null;
+  staff_class?: string | null;
+  org_visible?: boolean;
 };
 
 export type MemberType = "parent" | "teacher" | "staff";

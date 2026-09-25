@@ -130,8 +130,8 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             회원 정보
             {profile?.member_type && (
               <span className="ml-2 align-middle text-xs font-medium text-ink-soft">
-                {memberRoleLabel(profile)}
-                {profile.parent_rep_class ? ` · ${profile.parent_rep_class} 학부모 대표` : ""}
+                {profile.role === "admin" && profile.is_super && !profile.staff_role ? "최상위 관리자" : memberRoleLabel(profile)}
+                {profile.parent_rep_class ? ` · ${profile.parent_rep_class} 학부모 ${profile.parent_rep_title ?? "대표"}` : ""}
               </span>
             )}
           </h2>

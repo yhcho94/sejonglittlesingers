@@ -276,42 +276,46 @@ export const staffGroups = [
   { title: "사무국", members: officeStaff },
 ];
 
+// 조직도 틀: 이름은 회원 관리에서 지정한 운영진·학부모 대표가 DB 에서 자동 반영됩니다. (지정 안 되면 공란)
+export const ORG_TOP_SECTION = "전체";
 export const organization = {
   year: 2026,
-  director: { role: "단장", name: "지정윤" },
-  office: { role: "사무국장", name: "박성희" },
+  // 합창단 전체 칸 (항상 표시). 그 밖에 '전체'로 지정된 역할은 아래에 추가로 표시
+  top: ["단장", "사무국장"],
+  // 반별 칸 (항상 표시). 그 밖에 반으로 지정된 역할은 아래에 추가로 표시
+  classRoles: ["부지휘자", "학부모대표", "부대표", "반주자", "이론선생님"],
   classes: [
-    {
-      name: "울림반",
-      color: "#4a6f9c",
-      members: [
-        { role: "부지휘자", name: "오승하" },
-        { role: "학부모대표", name: "국지은" },
-        { role: "부대표", name: "안가영" },
-        { role: "반주자", name: "정연수" },
-        { role: "이론선생님", name: "최오늘" },
-      ],
-    },
-    {
-      name: "화음반",
-      color: "#a45a66",
-      members: [
-        { role: "부지휘자", name: "김연주" },
-        { role: "학부모대표", name: "박지윤" },
-        { role: "반주자", name: "박선희" },
-        { role: "이론선생님", name: "전하영" },
-      ],
-    },
-    {
-      name: "선율반",
-      color: "#557a5c",
-      members: [
-        { role: "부지휘자", name: "서지선" },
-        { role: "학부모대표", name: "김소영" },
-        { role: "부대표", name: "이은희" },
-        { role: "반주자", name: "배성희" },
-        { role: "이론선생님", name: "조애린" },
-      ],
-    },
+    { name: "울림반", color: "#4a6f9c" },
+    { name: "화음반", color: "#a45a66" },
+    { name: "선율반", color: "#557a5c" },
   ],
 };
+
+// 예전(고정) 조직도: 운영진 회원가입이 끝나 '회원 정보로 자동 표시'로 바꾸기 전까지 홈페이지에 표시
+// 행 순서는 예전 조직도 그대로
+export const LEGACY_ORG_ENTRIES: { section: string; role: string; name: string }[] = [
+  { section: ORG_TOP_SECTION, role: "단장", name: "지정윤" },
+  { section: ORG_TOP_SECTION, role: "사무국장", name: "박성희" },
+  { section: "울림반", role: "부지휘자", name: "오승하" },
+  { section: "울림반", role: "학부모대표", name: "국지은" },
+  { section: "울림반", role: "부대표", name: "안가영" },
+  { section: "울림반", role: "반주자", name: "정연수" },
+  { section: "울림반", role: "이론선생님", name: "최오늘" },
+  { section: "화음반", role: "부지휘자", name: "김연주" },
+  { section: "화음반", role: "학부모대표", name: "박지윤" },
+  { section: "화음반", role: "반주자", name: "박선희" },
+  { section: "화음반", role: "이론선생님", name: "전하영" },
+  { section: "선율반", role: "부지휘자", name: "서지선" },
+  { section: "선율반", role: "학부모대표", name: "김소영" },
+  { section: "선율반", role: "부대표", name: "이은희" },
+  { section: "선율반", role: "반주자", name: "배성희" },
+  { section: "선율반", role: "이론선생님", name: "조애린" },
+];
+
+// 반별 강사진 (강사진 소개 자료 기준): 홈·단원 소개 화면용
+export function classTeachers(className: string) {
+  return staffGroups
+    .flatMap((g) => g.members)
+    .filter((m) => m.className === className)
+    .map((m) => ({ role: m.role, name: m.name }));
+}
