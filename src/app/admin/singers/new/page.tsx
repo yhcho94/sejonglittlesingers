@@ -18,7 +18,7 @@ type AppPrefill = Pick<Application, "id" | "guardian_id" | "child_name" | "child
 };
 
 export default async function NewSingerPage({ searchParams }: PageProps<"/admin/singers/new">) {
-  await requireAdmin();
+  await requireAdmin("singers");
   const appId = Number((await searchParams).application);
   const supabase = await createClient();
 

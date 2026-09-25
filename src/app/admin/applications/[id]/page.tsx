@@ -17,7 +17,7 @@ type Detail = Application & {
 export default async function AdminApplicationDetail({
   params,
 }: PageProps<"/admin/applications/[id]">) {
-  await requireAdmin();
+  await requireAdmin("applications");
   const id = Number((await params).id);
   if (!Number.isSafeInteger(id)) notFound();
 

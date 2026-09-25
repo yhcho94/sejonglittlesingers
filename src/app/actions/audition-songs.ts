@@ -1,14 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "@/lib/auth";
+import { adminFor } from "@/lib/auth";
 import { AUDITION_FILE_RE, AUDITION_SONG_BUCKET, AUDITION_SONG_SLOTS } from "@/lib/audition-songs";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/lib/types";
 
+// recruitment 메뉴 권한이 있는 관리자만 (DB 규칙에서도 한 번 더 막힘)
 async function adminClient() {
-  const current = await getCurrentUser();
-  if (current?.profile?.role !== "admin") return null;
+  if (!(await adminFor("recruitment"))) return null;
   return await createClient();
 }
 

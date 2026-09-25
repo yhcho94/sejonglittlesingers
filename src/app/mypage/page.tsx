@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cancelAdminRequest } from "@/app/actions/admin-roles";
 import { cancelApplication } from "@/app/actions/applications";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
+import { areaLabels, isSuperAdmin } from "@/lib/admin-perms";
 import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
+import { memberTypeLabel } from "@/lib/member-types";
 import { createClient } from "@/lib/supabase/server";
 import type { Application } from "@/lib/types";
 import { MEDIA_NOTICE, consentExpiresOn } from "@/lib/media-consent";
 import { AUDITION_EMAIL, auditionMailto } from "@/lib/application-fields";
+import { AdminRequestForm } from "./AdminRequestForm";
 import { MediaConsentForm } from "./MediaConsentForm";
 import { ProfileForm } from "./ProfileForm";
 
@@ -122,8 +126,47 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
         </section>
 
         <section className="card">
-          <h2 className="mb-4 text-lg font-semibold text-navy">회원 정보</h2>
+          <h2 className="mb-4 text-lg font-semibold text-navy">
+            회원 정보
+            {profile?.member_type && (
+              <span className="ml-2 align-middle text-xs font-medium text-ink-soft">
+                {memberTypeLabel(profile.member_type)}
+                {profile.affiliation ? ` · ${profile.affiliation}` : ""}
+              </span>
+            )}
+          </h2>
           {profile ? <ProfileForm profile={profile} /> : <p>회원 정보를 불러오지 못했습니다.</p>}
+          <div className="mt-6 border-t border-line pt-4">
+            <h3 className="mb-2 text-sm font-semibold text-navy">관리자 권한</h3>
+            {profile?.role === "admin" ? (
+              <div className="space-y-2 text-sm">
+                <p>
+                  {isSuperAdmin(profile)
+                    ? "최상위 관리자입니다."
+                    : `허락된 메뉴: ${areaLabels(profile.admin_perms).join(", ") || "아직 없음"}`}
+                </p>
+                <Link href="/admin" className="btn-primary inline-block px-3 py-1.5 text-sm">관리자 화면</Link>
+              </div>
+            ) : profile?.admin_requested_at ? (
+              <div className="space-y-2 text-sm">
+                <p className="text-ink-soft">
+                  {formatDate(profile.admin_requested_at)}에 신청했습니다. 최상위 관리자가 승인하면 관리자 메뉴가 열립니다.
+                </p>
+                <form action={cancelAdminRequest}>
+                  <ConfirmButton message="관리자 권한 신청을 취소할까요?" className="text-xs text-red-700 hover:underline">
+                    신청 취소
+                  </ConfirmButton>
+                </form>
+              </div>
+            ) : (
+              <>
+                <p className="mb-3 text-xs text-ink-soft">
+                  합창단 운영을 돕는 분은 신청해 주세요. 최상위 관리자가 승인하면서 맡을 메뉴를 정해 드립니다.
+                </p>
+                <AdminRequestForm />
+              </>
+            )}
+          </div>
           <div className="mt-6 border-t border-line pt-4 text-xs text-ink-soft">
             <Link href="/mypage/withdraw" className="underline hover:text-red-700">
               회원 탈퇴

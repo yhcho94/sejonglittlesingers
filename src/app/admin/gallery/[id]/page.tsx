@@ -9,7 +9,7 @@ import { ConsentReminder } from "../ConsentReminder";
 import { PhotoUploader } from "../PhotoUploader";
 
 export default async function AdminAlbumPage({ params }: PageProps<"/admin/gallery/[id]">) {
-  await requireAdmin();
+  await requireAdmin("gallery");
   const data = await getAlbum(Number((await params).id));
   if (!data) notFound();
   const { album, photos } = data;

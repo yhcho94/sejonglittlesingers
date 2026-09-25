@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/auth";
 import { ConcertForm } from "../ConcertForm";
 
 export default async function NewConcertPage() {
-  await requireAdmin();
+  await requireAdmin("concerts");
   return (
     <>
       <h1 className="mb-6 text-2xl font-bold text-navy">새 공연 등록</h1>

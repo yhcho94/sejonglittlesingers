@@ -9,7 +9,7 @@ import { MigrationNotice, SingerTabs } from "../SingerTabs";
 const PHOTO_VIEWS: View[] = ["all", "class", "grade"];
 
 export default async function SingerPhotoRoster({ searchParams }: PageProps<"/admin/singers/photos">) {
-  await requireAdmin();
+  await requireAdmin("singers");
   const params = await searchParams;
   const parsed = parseFilter(params);
   const filter = { ...parsed, view: PHOTO_VIEWS.includes(parsed.view) ? parsed.view : "all" };

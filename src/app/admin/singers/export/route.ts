@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { canAccess } from "@/lib/admin-perms";
 import { getCurrentUser } from "@/lib/auth";
 import { applyFilter, groupSingers, parseFilter, rosterRow, todayKst, VIEWS } from "@/lib/singers";
 import { guardianMap, listSingers } from "@/lib/singers-data";
@@ -7,7 +8,7 @@ import { rosterWorkbook } from "@/lib/singers-xlsx";
 // 단원 명부 엑셀 다운로드 (명부 화면과 같은 조건·보기)
 export async function GET(request: NextRequest) {
   const current = await getCurrentUser();
-  if (current?.profile?.role !== "admin") return new Response("관리자만 내려받을 수 있습니다.", { status: 403 });
+  if (!canAccess(current?.profile, "singers")) return new Response("단원 관리 권한이 있는 관리자만 내려받을 수 있습니다.", { status: 403 });
 
   const filter = parseFilter(Object.fromEntries(request.nextUrl.searchParams));
   const { singers, error } = await listSingers();

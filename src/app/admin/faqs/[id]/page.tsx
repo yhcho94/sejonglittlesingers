@@ -7,7 +7,7 @@ import type { Faq } from "@/lib/types";
 import { FaqForm } from "../FaqForm";
 
 export default async function EditFaqPage({ params }: PageProps<"/admin/faqs/[id]">) {
-  await requireAdmin();
+  await requireAdmin("recruitment");
   const id = Number((await params).id);
   if (!Number.isSafeInteger(id)) notFound();
 

@@ -18,7 +18,7 @@ import {
 import { guardianMap, listSingers } from "@/lib/singers-data";
 
 export default async function AdminSingersPage({ searchParams }: PageProps<"/admin/singers">) {
-  await requireAdmin();
+  await requireAdmin("singers");
   const filter = parseFilter(await searchParams);
   const { singers, error } = await listSingers();
   const filtered = applyFilter(singers, filter);

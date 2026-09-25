@@ -4,7 +4,7 @@ import { listAlbums } from "@/lib/gallery";
 import { ConsentReminder } from "./ConsentReminder";
 
 export default async function AdminGalleryPage() {
-  await requireAdmin();
+  await requireAdmin("gallery");
   const albums = await listAlbums();
   return (
     <>

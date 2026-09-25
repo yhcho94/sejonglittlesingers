@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "@/lib/auth";
+import { adminFor } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CLASS_NAMES } from "@/lib/singers";
 import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
@@ -16,9 +16,9 @@ const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const PHOTO_RE = /^singers\/[0-9a-f-]{36}\.(jpg|png|webp)$/;
 
+// singers 메뉴 권한이 있는 관리자만 (DB 규칙에서도 한 번 더 막힘)
 async function adminClient() {
-  const current = await getCurrentUser();
-  if (current?.profile?.role !== "admin") return null;
+  if (!(await adminFor("singers"))) return null;
   return await createClient();
 }
 

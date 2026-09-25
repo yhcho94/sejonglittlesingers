@@ -14,7 +14,7 @@ const FILTERS: (ApplicationStatus | "all")[] = ["all", "pending", "approved", "r
 export default async function AdminApplicationsPage({
   searchParams,
 }: PageProps<"/admin/applications">) {
-  await requireAdmin();
+  await requireAdmin("applications");
   const { status } = await searchParams;
   const filter = FILTERS.includes(status as ApplicationStatus) ? (status as ApplicationStatus) : "all";
 

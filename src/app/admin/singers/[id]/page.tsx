@@ -15,7 +15,7 @@ import { ConsentPill } from "../ConsentPill";
 import { StatusPill } from "../StatusPill";
 
 export default async function AdminSingerDetail({ params }: PageProps<"/admin/singers/[id]">) {
-  await requireAdmin();
+  await requireAdmin("singers");
   const singer = await getSinger(Number((await params).id));
   if (!singer) notFound();
 
