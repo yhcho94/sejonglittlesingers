@@ -11,7 +11,7 @@ import { EVENT_ALBUMS } from "@/lib/event-albums";
 import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
 import { site, smsHref } from "@/lib/site";
-import { classTeachers, organization } from "@/lib/staff";
+import { classTeachers, conductor, organization } from "@/lib/staff";
 import heroMobileImage from "../../public/images/hero-mobile.jpg";
 import heroImage from "../../public/images/hero.jpg";
 
@@ -310,6 +310,12 @@ export default async function HomePage() {
       <section className="section-y bg-cream">
         <div className="container-page">
           <SectionTitle eyebrow="Classes" title="세 개의 반, 하나의 하모니" href="/faculty" linkLabel="강사진" />
+          {/* 세 반 전체를 이끄는 단장·상임지휘자 */}
+          <p data-reveal className="mb-5 flex flex-wrap items-baseline gap-x-2 text-sm text-ink-soft md:mb-7 md:text-base">
+            {conductor.role}
+            <span className="font-[family-name:var(--font-serif)] text-lg font-semibold text-navy md:text-xl">{conductor.name}</span>
+            <span className="text-xs md:text-sm">· 세 반 전체 지도</span>
+          </p>
           <div className="grid grid-cols-3 gap-3 md:gap-6">
             {organization.classes.map((c, i) => (
               <div
