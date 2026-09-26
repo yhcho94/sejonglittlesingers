@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { areaLabels, canAccess, isSuperAdmin } from "@/lib/admin-perms";
 import { requireAdmin } from "@/lib/auth";
+import { loadPurgeSchedule } from "@/lib/purge-schedule";
 import { runRetention } from "@/lib/storage-cleanup";
 import { createClient } from "@/lib/supabase/server";
 
@@ -34,6 +35,8 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
   // (예약 작업이 설정되지 않았거나 실패한 경우에도 파기가 늦어지지 않도록)
   const supabase = await createClient();
   await runRetention(supabase).catch(() => null);
+  // 한 달 안에 자동 삭제될 입단 신청 (입단 신청 권한이 있을 때만 조회됨)
+  const purgeSoon = canAccess(profile, "applications") ? (await loadPurgeSchedule(supabase)).size : 0;
   const { count: pendingFiles } = await supabase.from("storage_cleanup").select("id", { count: "exact", head: true });
   const [pending, approved, members, notices] = await Promise.all([
     count("applications", "pending"),
@@ -72,6 +75,12 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
           </Link>
         ))}
       </div>
+      {purgeSoon > 0 && (
+        <p className="mt-6 rounded-sm border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          한 달 안에 자동 삭제될 입단 신청이 <strong>{purgeSoon}건</strong> 있습니다. (심사 대기 6개월·승인 후 명부 미등록 3개월){" "}
+          <Link href="/admin/applications" className="font-medium underline">입단 신청에서 확인</Link>
+        </p>
+      )}
       {superAdmin && (pendingFiles ?? 0) > 0 && (
         <p className="mt-6 rounded-sm bg-amber-50 px-4 py-3 text-sm text-amber-900">
           삭제 대기 중인 사진 파일이 {pendingFiles}건 있습니다. 매일 새벽 예약 작업에서 삭제됩니다. 계속 남아 있으면 Vercel

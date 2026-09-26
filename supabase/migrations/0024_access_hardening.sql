@@ -240,3 +240,30 @@ grant execute on function public.set_member_name(uuid, text) to authenticated;
 alter table public.applications
   add column if not exists consent_name_listing boolean;
 grant insert (consent_name_listing) on public.applications to authenticated;
+
+-- ─────────────────────────────────────────────
+-- 8) 자동 삭제 예정 안내: 한 달 안에 파기될 입단 신청 (입단 신청 권한 관리자에게만)
+--    pending: 신청일 + 6개월, approved(명부 미등록): 승인일 + 3개월 → 그 뒤 첫 새벽 예약 작업에서 삭제
+-- ─────────────────────────────────────────────
+create or replace function public.application_purge_schedule()
+returns table (id bigint, reason text, purge_after timestamptz)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select * from (
+    select a.id, 'pending'::text, a.created_at + interval '6 months'
+    from public.applications a
+    where a.status = 'pending'
+    union all
+    select a.id, 'unregistered'::text, coalesce(a.reviewed_at, a.created_at) + interval '3 months'
+    from public.applications a
+    where a.status = 'approved'
+      and not exists (select 1 from public.singers s where s.application_id = a.id)
+  ) t (id, reason, purge_after)
+  where public.has_admin_perm('applications')
+    and t.purge_after < now() + interval '1 month';
+$$;
+revoke execute on function public.application_purge_schedule() from public, anon;
+grant execute on function public.application_purge_schedule() to authenticated;
