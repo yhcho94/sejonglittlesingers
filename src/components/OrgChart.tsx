@@ -22,7 +22,7 @@ function rolesIn(entries: OrgEntry[], section: string) {
 // showBlanks: 기본 칸을 항상 보여 주고 지정이 없으면 공란 (회원 정보로 자동 표시할 때)
 //             false 이면 이름이 있는 칸만 순서대로 (예전 고정 조직도)
 export function OrgChart({ entries, showBlanks = true }: { entries: OrgEntry[]; showBlanks?: boolean }) {
-  const { top, classRoles, classes } = organization;
+  const { top, headLabel, classRoles, classes } = organization;
   const [head, ...restTop] = top;
   const topRoles = showBlanks
     ? [...restTop, ...extraRoles(entries, ORG_TOP_SECTION, top)]
@@ -30,7 +30,7 @@ export function OrgChart({ entries, showBlanks = true }: { entries: OrgEntry[]; 
   return (
     <div className="flex flex-col items-center">
       <div className="min-w-40 rounded-sm border-2 border-navy bg-white px-8 py-3 text-center">
-        <p className="text-xs text-ink-soft">{head}</p>
+        <p className="text-xs text-ink-soft">{headLabel}</p>
         <p className="min-h-7 text-lg font-bold text-navy">{namesOf(entries, ORG_TOP_SECTION, head)}</p>
       </div>
       <div className="h-4 w-px bg-line" />
