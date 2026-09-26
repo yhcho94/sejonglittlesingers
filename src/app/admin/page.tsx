@@ -13,15 +13,17 @@ async function count(table: "applications" | "profiles" | "notices", status?: st
 }
 
 // 회원 구분별 수 (0021 실행 전이면 전체 회원을 보호자로)
+// 학부모 대표·부대표는 보호자이면서 운영진이므로 양쪽에 모두 셉니다.
 async function countMembers() {
   const supabase = await createClient();
-  const staff = await supabase
-    .from("profiles")
-    .select("id", { count: "exact", head: true })
-    .in("member_type", ["teacher", "staff"]);
-  const all = await count("profiles");
+  const [staff, reps, all] = await Promise.all([
+    supabase.from("profiles").select("id", { count: "exact", head: true }).in("member_type", ["teacher", "staff"]),
+    supabase.from("profiles").select("id", { count: "exact", head: true }).not("parent_rep_class", "is", null),
+    count("profiles"),
+  ]);
   const staffCount = staff.error ? 0 : (staff.count ?? 0);
-  return { parents: all - staffCount, staff: staffCount };
+  const repCount = reps.error ? 0 : (reps.count ?? 0);
+  return { parents: all - staffCount, staff: staffCount + repCount };
 }
 
 export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
