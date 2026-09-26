@@ -10,9 +10,21 @@ import type { Profile } from "@/lib/types";
 export function StaffEditForm({ member }: { member: Profile }) {
   const [state, action] = useActionState(adminUpdateStaff, undefined);
   return (
-    <form action={action} className="space-y-3">
+    // autoComplete off: 새로고침·뒤로 가기 때 브라우저가 예전 선택값을 되살리지 않도록
+    <form action={action} autoComplete="off" className="space-y-3">
+      <p className="rounded-sm bg-cream px-3 py-2 text-sm">
+        저장된 정보: <strong>{member.staff_role ?? "역할 미지정"}</strong>
+        {member.staff_class && <> · {member.staff_class}</>}
+        {member.affiliation && <> · {member.affiliation}</>}
+        {" · "}
+        <span className={member.org_visible ? "text-green-800" : "text-amber-800"}>
+          {member.org_visible ? "승인됨" : "승인 대기"}
+        </span>
+      </p>
       <input type="hidden" name="id" value={member.id} />
+      {/* 저장된 값이 바뀌면 새 값으로 다시 그림 */}
       <StaffRoleFields
+        key={`${member.staff_role}|${member.staff_class}|${member.affiliation}`}
         idPrefix={`${member.id}-`}
         role={member.staff_role}
         staffClass={member.staff_class}

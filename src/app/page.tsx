@@ -11,7 +11,7 @@ import { EVENT_ALBUMS } from "@/lib/event-albums";
 import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
 import { site, smsHref } from "@/lib/site";
-import { classTeachers, organization } from "@/lib/staff";
+import { classTeachers, conductor, organization } from "@/lib/staff";
 import heroMobileImage from "../../public/images/hero-mobile.jpg";
 import heroImage from "../../public/images/hero.jpg";
 
@@ -26,7 +26,7 @@ const JSON_LD = [
     alternateName: [site.nameEn, "세종 리틀싱어즈"],
     url: site.url,
     logo: `${site.url}/icons/icon-512.png`,
-    image: `${site.url}/images/og.jpg`,
+    image: `${site.url}/images/og-clover.jpg`,
     description: site.description,
     foundingDate: "2023",
     genre: "어린이 합창",
@@ -44,11 +44,11 @@ const {
 } = getImageProps({ ...heroCommon, src: heroImage, sizes: "65vw" });
 const { props: heroImg } = getImageProps({ ...heroCommon, src: heroMobileImage, sizes: "100vw" });
 
-// 합창단이 제공한 소개 글의 수치 (단원 수는 DB 의 현재 활동 단원 수, 강사진·운영진 수는 조직도 자동 표시 후 승인된 운영진 수로 바꿔 표시)
+// 합창단이 제공한 소개 글의 수치 (단원 수는 DB 의 현재 활동 단원 수, 강사진·운영진 수는 조직도 인원(학부모 대표 포함)으로 바꿔 표시)
 const STATS: { value: string; unit?: string; label: string; count?: boolean }[] = [
   { value: "2023", label: "창단" },
   { value: "150", unit: "명", label: "활동 단원", count: true },
-  { value: "11", unit: "명", label: "강사진·운영진", count: true },
+  { value: "16", unit: "명", label: "강사진·운영진", count: true },
   { value: "20", unit: "회", label: "연간 공연 (내외)", count: true },
   { value: "4", unit: "회", label: "연간 주최 음악회", count: true },
 ];
@@ -310,6 +310,12 @@ export default async function HomePage() {
       <section className="section-y bg-cream">
         <div className="container-page">
           <SectionTitle eyebrow="Classes" title="세 개의 반, 하나의 하모니" href="/faculty" linkLabel="강사진" />
+          {/* 세 반 전체를 이끄는 단장·상임지휘자 */}
+          <p data-reveal className="mb-5 flex flex-wrap items-baseline gap-x-2 text-sm text-ink-soft md:mb-7 md:text-base">
+            {conductor.role}
+            <span className="font-[family-name:var(--font-serif)] text-lg font-semibold text-navy md:text-xl">{conductor.name}</span>
+            <span className="text-xs md:text-sm">· 세 반 전체 지도</span>
+          </p>
           <div className="grid grid-cols-3 gap-3 md:gap-6">
             {organization.classes.map((c, i) => (
               <div

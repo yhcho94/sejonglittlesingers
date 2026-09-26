@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
 import { STAFF_ROLE_MAX, STAFF_ROLE_OTHER, STAFF_ROLES, isClassRole } from "@/lib/member-types";
 
@@ -17,8 +17,21 @@ export function StaffRoleFields({
   idPrefix?: string;
 }) {
   const listed = !role || STAFF_ROLES.some((r) => r.name === role);
-  const [selected, setSelected] = useState(listed ? (role ?? "") : STAFF_ROLE_OTHER);
+  const initial = listed ? (role ?? "") : STAFF_ROLE_OTHER;
+  const [selected, setSelected] = useState(initial);
+  const selectRef = useRef<HTMLSelectElement>(null);
   const id = (name: string) => `${idPrefix}${name}`;
+
+  // 저장 후 폼이 초기화되면(React 폼 액션) 목록은 저장된 값(defaultValue)으로 돌아가므로 화면 상태도 맞춥니다.
+  useEffect(() => {
+    const form = selectRef.current?.form;
+    if (!form) return;
+    const sync = () => setTimeout(() => setSelected(selectRef.current?.value ?? ""));
+    // 브라우저가 새로고침·뒤로 가기 때 예전 입력값을 되살린 경우에도 화면 상태를 맞춤
+    sync();
+    form.addEventListener("reset", sync);
+    return () => form.removeEventListener("reset", sync);
+  }, []);
 
   return (
     <>
@@ -29,7 +42,8 @@ export function StaffRoleFields({
             id={id("staff_role")}
             name="staff_role"
             required
-            value={selected}
+            ref={selectRef}
+            defaultValue={initial}
             onChange={(e) => setSelected(e.target.value)}
             className="input"
           >
