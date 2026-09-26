@@ -19,7 +19,7 @@ const STATS = [
   { value: "2023", label: "창단" },
   { value: "150", unit: "명", label: "활동 단원 (2026년 4기)" },
   { value: "3", unit: "개 반", label: "울림반 · 화음반 · 선율반" },
-  { value: "11", unit: "명", label: "전문 강사진 · 운영진" },
+  { value: "16", unit: "명", label: "강사진 · 운영진" },
   { value: "20", unit: "회", label: "연간 공연 (내외)" },
 ];
 
@@ -43,7 +43,15 @@ export default async function AboutPage() {
   // 조직도: 최상위 관리자가 '회원 정보로 자동'으로 바꾸기 전까지는 예전 조직도
   const orgAuto = orgSource === "auto";
   const orgEntries = orgAuto ? await getOrgChart() : LEGACY_ORG_ENTRIES;
-  const stats = STATS.map((s) => (s.label.startsWith("활동 단원") && singerCount ? { ...s, value: String(singerCount) } : s));
+  // 강사진·운영진 수: 아래 조직도에 나오는 인원 (학부모 대표·부대표 포함, 홈 화면과 같은 기준)
+  const orgPeople = new Set(orgEntries.map((e) => e.name)).size;
+  const stats = STATS.map((s) =>
+    s.label.startsWith("활동 단원") && singerCount
+      ? { ...s, value: String(singerCount) }
+      : s.label === "강사진 · 운영진" && orgPeople
+        ? { ...s, value: String(orgPeople) }
+        : s,
+  );
   return (
     <>
       <PageHeader
