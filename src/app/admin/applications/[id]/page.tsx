@@ -101,6 +101,11 @@ export default async function AdminApplicationDetail({
             초상권(선택): ① 공식 채널 {app.consent_media_channels ? "O" : "X"} · ② 언론·홍보물{" "}
             {app.consent_media_press ? "O" : "X"} · ③ 이름 표시 {app.consent_media_name ? "O" : "X"}
           </p>
+          {app.consent_name_listing !== undefined && app.consent_name_listing !== null && (
+            <p className="text-sm text-ink-soft">
+              단원 소개 이름·반 게시(선택): {app.consent_name_listing ? "O" : "X (명부 등록 시 게시 중단으로 설정)"}
+            </p>
+          )}
         </section>
 
         <div className="space-y-6">

@@ -22,6 +22,18 @@ export function StaffEditForm({ member }: { member: Profile }) {
         </span>
       </p>
       <input type="hidden" name="id" value={member.id} />
+      <input type="hidden" name="current_name" value={member.guardian_name} />
+      <div>
+        <label htmlFor={`${member.id}-guardian_name`} className="label">이름 *</label>
+        <input
+          id={`${member.id}-guardian_name`}
+          name="guardian_name"
+          required
+          maxLength={50}
+          defaultValue={member.guardian_name}
+          className="input"
+        />
+      </div>
       {/* 저장된 값이 바뀌면 새 값으로 다시 그림 */}
       <StaffRoleFields
         key={`${member.staff_role}|${member.staff_class}|${member.affiliation}`}

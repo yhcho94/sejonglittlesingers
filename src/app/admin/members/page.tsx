@@ -1,4 +1,4 @@
-import { setMemberType, setParentRep } from "@/app/actions/admin-roles";
+import { setMemberName, setMemberType, setParentRep } from "@/app/actions/admin-roles";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { SubmitButton } from "@/components/form";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
@@ -81,6 +81,22 @@ export default async function ParentMembersPage() {
                       <>
                         <br />
                         <TypeBadge member={m} />
+                        {/* 조직도에 게시된 학부모 대표의 이름은 최상위 관리자만 수정 */}
+                        <details className="mt-1 font-normal">
+                          <summary className="cursor-pointer text-xs text-ink-soft underline">이름 수정</summary>
+                          <form action={setMemberName} className="mt-1 flex items-center gap-1">
+                            <input type="hidden" name="id" value={m.id} />
+                            <input
+                              name="guardian_name"
+                              required
+                              maxLength={50}
+                              defaultValue={m.guardian_name}
+                              aria-label={`${m.guardian_name} 이름`}
+                              className="w-28 rounded-sm border border-line bg-white px-2 py-1 text-xs"
+                            />
+                            <SubmitButton className="text-xs text-navy underline" pendingText="...">저장</SubmitButton>
+                          </form>
+                        </details>
                       </>
                     )}
                   </td>

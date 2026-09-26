@@ -11,6 +11,7 @@ type AppPrefill = Pick<Application, "id" | "guardian_id" | "child_name" | "child
   consent_media_channels?: boolean;
   consent_media_press?: boolean;
   consent_media_name?: boolean;
+  consent_name_listing?: boolean | null;
   join_source?: string | null;
   join_source_detail?: string | null;
   gender?: string | null;
@@ -27,11 +28,17 @@ export default async function NewSingerPage({ searchParams }: PageProps<"/admin/
   if (Number.isSafeInteger(appId) && appId > 0) {
     const { data: existing } = await supabase.from("singers").select("id").eq("application_id", appId).maybeSingle();
     if (existing) redirect(`/admin/singers/${existing.id}`);
-    const { data } = await supabase
+    const columns =
+      "id, guardian_id, child_name, child_birthdate, school, status, consent_media_channels, consent_media_press, consent_media_name, join_source, join_source_detail, gender, desired_class";
+    // 0024 의 이름 게시 동의 칸이 없으면 빼고 다시 조회
+    const full = await supabase
       .from("applications")
-      .select("id, guardian_id, child_name, child_birthdate, school, status, consent_media_channels, consent_media_press, consent_media_name, join_source, join_source_detail, gender, desired_class")
+      .select(`${columns}, consent_name_listing`)
       .eq("id", appId)
       .maybeSingle<AppPrefill>();
+    const data = full.error
+      ? (await supabase.from("applications").select(columns).eq("id", appId).maybeSingle<AppPrefill>()).data
+      : full.data;
     app = data?.status === "approved" ? data : null;
   }
 
@@ -63,6 +70,8 @@ export default async function NewSingerPage({ searchParams }: PageProps<"/admin/
                   consent_media_channels: app.consent_media_channels ?? false,
                   consent_media_press: app.consent_media_press ?? false,
                   name_public: app.consent_media_name ?? false,
+                  // 단원 소개 이름 게시: 신청서에서 동의하지 않았으면 게시 중단으로 (항목이 생기기 전 신청은 예전처럼 게시)
+                  name_hidden: app.consent_name_listing === false,
                   join_source: app.join_source ?? null,
                   join_source_detail: app.join_source_detail ?? null,
                   gender: app.gender === "여" || app.gender === "남" ? app.gender : null,

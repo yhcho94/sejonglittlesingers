@@ -71,7 +71,13 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
     join_source: joinSource,
     join_source_detail: joinSource === "기타" ? text(formData, "join_source_detail", 100) : null,
   };
-  let { error } = await supabase.from("applications").insert({ ...base, ...extra });
+  // 0024: 단원 소개 이름·반 게시 동의 (선택)
+  const consentNameListing = formData.get("consent_name_listing") === "on";
+  let { error } = await supabase.from("applications").insert({ ...base, ...extra, consent_name_listing: consentNameListing });
+  if (error?.code === "PGRST204") {
+    // 0024 실행 전: 이름 게시 동의 칸 없이 저장
+    ({ error } = await supabase.from("applications").insert({ ...base, ...extra }));
+  }
   if (error?.code === "PGRST204") {
     console.error("입단 신청: 새 항목 칸이 없어 기본 항목만 저장 (0008·0011·0017 실행 필요)");
     const fallback = [base.school, `성별 ${gender}`, `원하는 반 ${desiredClass}`, `사는 동 ${neighborhood}`].join(" / ");

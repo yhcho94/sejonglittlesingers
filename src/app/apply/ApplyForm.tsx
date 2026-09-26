@@ -135,10 +135,6 @@ export function ApplyForm({ defaults }: { defaults?: { childName: string; childB
             / 오디션 동영상 (이메일로 제출)
           </li>
           <li>이용 목적: 입단 신청 접수·오디션 심사 및 결과 안내, 합창단 운영</li>
-          <li>
-            입단이 승인되면 홈페이지 &lsquo;단원 소개&rsquo;에 단원의 이름과 반이 게시됩니다. 원하지 않으면 마이페이지에서 언제든
-            게시를 중단할 수 있습니다.
-          </li>
           <li>보유 기간: 개인정보처리방침에 따름 (오디션 동영상은 심사 결과를 정한 날부터 30일 이내 삭제)</li>
         </ul>
         <p className="text-ink-soft">
@@ -152,6 +148,18 @@ export function ApplyForm({ defaults }: { defaults?: { childName: string; childB
         <label className="flex items-start gap-2">
           <input type="checkbox" name="consent_guardian" required className="mt-1" />
           <span>(필수) 본인은 신청 아동의 법정대리인으로서, 아동의 개인정보 처리에 동의합니다.</span>
+        </label>
+      </fieldset>
+
+      <fieldset className="space-y-2 rounded-sm border border-line p-4 text-sm">
+        <legend className="px-1 font-medium">단원 소개 이름 게시 동의 (선택)</legend>
+        <p className="text-ink-soft">
+          입단이 승인되면 홈페이지 &lsquo;단원 소개&rsquo;에 단원의 이름과 반을 게시합니다. 동의하지 않아도 입단에는 영향이
+          없으며, 동의한 뒤에도 마이페이지에서 언제든 게시를 중단할 수 있습니다.
+        </p>
+        <label className="flex items-start gap-2">
+          <input type="checkbox" name="consent_name_listing" className="mt-1" />
+          <span>(선택) 단원 소개에 단원의 이름과 반을 게시하는 데 동의합니다.</span>
         </label>
       </fieldset>
 
