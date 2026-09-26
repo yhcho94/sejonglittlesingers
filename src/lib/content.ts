@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { LEGACY_ORG_ENTRIES } from "@/lib/staff";
 import type { AuditionSong } from "@/lib/audition-songs";
 import type { Concert, Faq, Press, Recruitment } from "@/lib/types";
 
@@ -158,11 +159,10 @@ export async function getOrgChartSource(): Promise<OrgChartSource> {
   return !error && data?.value === "auto" ? "auto" : "legacy";
 }
 
-// 강사진·운영진 수: 조직도를 '회원 정보로 자동 표시'로 바꾼 뒤에는 승인된 운영진 수 (학부모 대표 제외).
-// 그 전이거나 읽지 못하면 null (소개 글의 수치를 사용)
+// 강사진·운영진 수 (학부모 대표·부대표 포함): 합창단 소개 조직도에 표시되는 사람 수와 같게 셉니다.
+// '회원 정보로 자동 표시'면 승인된 운영진 + 학부모 대표·부대표, 아니면 예전(고정) 조직도 인원
 export async function getStaffCount() {
-  if ((await getOrgChartSource()) !== "auto") return null;
-  const entries = await getOrgChart();
-  const staff = new Set(entries.filter((e) => e.role !== "학부모대표" && e.role !== "부대표").map((e) => e.name));
-  return staff.size > 0 ? staff.size : null;
+  const entries = (await getOrgChartSource()) === "auto" ? await getOrgChart() : LEGACY_ORG_ENTRIES;
+  const people = new Set(entries.map((e) => e.name));
+  return people.size > 0 ? people.size : null;
 }

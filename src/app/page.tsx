@@ -44,11 +44,11 @@ const {
 } = getImageProps({ ...heroCommon, src: heroImage, sizes: "65vw" });
 const { props: heroImg } = getImageProps({ ...heroCommon, src: heroMobileImage, sizes: "100vw" });
 
-// 합창단이 제공한 소개 글의 수치 (단원 수는 DB 의 현재 활동 단원 수, 강사진·운영진 수는 조직도 자동 표시 후 승인된 운영진 수로 바꿔 표시)
+// 합창단이 제공한 소개 글의 수치 (단원 수는 DB 의 현재 활동 단원 수, 강사진·운영진 수는 조직도 인원(학부모 대표 포함)으로 바꿔 표시)
 const STATS: { value: string; unit?: string; label: string; count?: boolean }[] = [
   { value: "2023", label: "창단" },
   { value: "150", unit: "명", label: "활동 단원", count: true },
-  { value: "11", unit: "명", label: "강사진·운영진", count: true },
+  { value: "16", unit: "명", label: "강사진·운영진", count: true },
   { value: "20", unit: "회", label: "연간 공연 (내외)", count: true },
   { value: "4", unit: "회", label: "연간 주최 음악회", count: true },
 ];
