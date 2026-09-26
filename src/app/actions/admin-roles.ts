@@ -93,7 +93,13 @@ export async function adminUpdateStaff(_prev: FormState, formData: FormData): Pr
   if (!role) return { error: "운영진 역할을 골라 주세요. (기타는 30자 이내로 입력)" };
   const staffClass = staffClassFromForm(role, String(formData.get("staff_class") ?? ""), CLASS_OPTIONS.map((c) => c.name));
   if (!staffClass.ok) return { error: "담당 반을 골라 주세요." };
+  const name = String(formData.get("guardian_name") ?? "").trim().slice(0, 50);
   const supabase = await createClient();
+  // 이름 변경 (조직도에 게시된 이름은 본인이 못 바꾸므로 최상위 관리자가 수정)
+  if (name && name !== String(formData.get("current_name") ?? "")) {
+    const { error: nameError } = await supabase.rpc("set_member_name", { target_id: targetId, new_name: name });
+    if (nameError) return { error: "이름을 저장하지 못했습니다. (0024 SQL 실행 여부를 확인해 주세요)" };
+  }
   const { error } = await supabase.rpc("admin_update_staff", {
     target_id: targetId,
     role_name: role,
@@ -126,5 +132,16 @@ export async function setOrgChartSource(formData: FormData) {
   await supabase
     .from("site_settings")
     .upsert({ key: "org_chart_source", value, updated_at: new Date().toISOString() });
+  refresh();
+}
+
+// 최상위 관리자: 회원 이름 변경 (조직도에 게시된 학부모 대표 등)
+export async function setMemberName(formData: FormData) {
+  const current = await adminFor("members");
+  const targetId = String(formData.get("id") ?? "");
+  const name = String(formData.get("guardian_name") ?? "").trim().slice(0, 50);
+  if (!current || !UUID_RE.test(targetId) || !name) return;
+  const supabase = await createClient();
+  await supabase.rpc("set_member_name", { target_id: targetId, new_name: name });
   refresh();
 }

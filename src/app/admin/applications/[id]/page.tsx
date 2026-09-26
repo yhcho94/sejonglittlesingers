@@ -4,6 +4,7 @@ import { deleteApplication } from "@/app/actions/admin";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { StatusBadge } from "@/components/StatusBadge";
 import { requireAdmin } from "@/lib/auth";
+import { PURGE_REASON_TEXT, loadPurgeSchedule, purgeLabel } from "@/lib/purge-schedule";
 import { formatDateTime } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { Application, Profile } from "@/lib/types";
@@ -28,6 +29,7 @@ export default async function AdminApplicationDetail({
     .eq("id", id)
     .maybeSingle<Detail>();
   if (!app) notFound();
+  const purge = (await loadPurgeSchedule(supabase)).get(app.id);
 
   // 비공개 사진은 짧은 시간(5분)만 유효한 링크로 표시
   let photoUrl: string | null = null;
@@ -80,6 +82,13 @@ export default async function AdminApplicationDetail({
           </ConfirmButton>
         </form>
       </div>
+      {purge && (
+        <p className="mt-3 rounded-sm border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900">
+          <strong>{purgeLabel(purge)}</strong> — {PURGE_REASON_TEXT[purge.reason]}. 개인정보처리방침에 따라 자동 삭제되며
+          되살릴 수 없습니다. 계속 필요하면 기한 전에{" "}
+          {purge.reason === "pending" ? "심사(승인·반려)해" : "단원 명부에 등록해"} 주세요.
+        </p>
+      )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <section className="card lg:col-span-2">
@@ -101,6 +110,11 @@ export default async function AdminApplicationDetail({
             초상권(선택): ① 공식 채널 {app.consent_media_channels ? "O" : "X"} · ② 언론·홍보물{" "}
             {app.consent_media_press ? "O" : "X"} · ③ 이름 표시 {app.consent_media_name ? "O" : "X"}
           </p>
+          {app.consent_name_listing !== undefined && app.consent_name_listing !== null && (
+            <p className="text-sm text-ink-soft">
+              단원 소개 이름·반 게시(선택): {app.consent_name_listing ? "O" : "X (명부 등록 시 게시 중단으로 설정)"}
+            </p>
+          )}
         </section>
 
         <div className="space-y-6">

@@ -61,8 +61,16 @@ export async function adminFor(gate?: AdminGate) {
 }
 
 // 로그인 후 이동할 경로: 사이트 내부 경로만 허용 (외부 URL 로의 리다이렉트 방지)
+// 제어 문자·역슬래시가 들어가면 브라우저가 '//다른사이트' 로 해석할 수 있어 거부합니다.
 export function safeNext(next: unknown, fallback = "/") {
-  if (typeof next !== "string") return fallback;
-  if (!next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) return fallback;
-  return next;
+  if (typeof next !== "string" || next.length > 500) return fallback;
+  if (!next.startsWith("/") || next.startsWith("//")) return fallback;
+  if (/[\u0000-\u001f\u007f\\]/.test(next)) return fallback;
+  try {
+    const url = new URL(next, "https://example.invalid");
+    if (url.origin !== "https://example.invalid") return fallback;
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return fallback;
+  }
 }

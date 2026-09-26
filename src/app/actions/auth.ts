@@ -1,11 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured, missingSupabaseEnv } from "@/lib/supabase/env";
 import { safeNext } from "@/lib/auth";
+import { site } from "@/lib/site";
 import type { FormState } from "@/lib/types";
 import { PASSWORD_HINT, passwordProblem } from "@/lib/password";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
@@ -23,13 +23,12 @@ function text(formData: FormData, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-async function siteOrigin() {
-  const h = await headers();
-  const origin = h.get("origin");
-  if (origin) return origin;
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "https";
-  return `${proto}://${host}`;
+// 인증 메일(가입·비밀번호 재설정) 링크의 사이트 주소: 요청 헤더가 아닌 고정 주소를 씁니다.
+// (헤더는 요청하는 쪽이 바꿀 수 있어, 남의 재설정 링크를 다른 사이트로 보내는 데 악용될 수 있음)
+// 개발·미리보기 환경에서만 SITE_URL 환경변수로 바꿀 수 있습니다.
+function siteOrigin() {
+  const override = (process.env.SITE_URL ?? "").trim().replace(/\/+$/, "");
+  return /^https?:\/\/[^/\s]+$/.test(override) ? override : site.url;
 }
 
 export async function signIn(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -95,7 +94,7 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
       data: parent
         ? { guardian_name: guardianName, phone, member_type: "parent" }
         : { guardian_name: guardianName, phone, member_type: "staff", staff_role: staffRole, staff_class: staffClass.value, affiliation, request_note: requestNote },
-      emailRedirectTo: `${await siteOrigin()}/auth/callback?next=/mypage`,
+      emailRedirectTo: `${siteOrigin()}/auth/callback?next=/mypage`,
     },
   });
 
@@ -132,7 +131,7 @@ export async function requestPasswordReset(
 
   const supabase = await createClient();
   await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${await siteOrigin()}/auth/callback?next=/reset-password`,
+    redirectTo: `${siteOrigin()}/auth/callback?next=/reset-password`,
   });
 
   // 가입 여부와 관계없이 같은 메시지를 보여줍니다.

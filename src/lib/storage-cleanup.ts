@@ -26,14 +26,17 @@ export async function processStorageCleanup(supabase: SupabaseClient, limit = 50
 
 // 기한이 지난 정보 파기 + 사진 파일 정리를 한 번에 실행
 export async function runRetention(supabase: SupabaseClient) {
-  const [rejected, left] = await Promise.all([
+  // 권한이 없는 관리자·0024 실행 전이면 해당 항목은 오류로 건너뜀 (예약 작업이 처리)
+  const [rejected, left, stale] = await Promise.all([
     supabase.rpc("purge_rejected_applications"),
     supabase.rpc("purge_left_singers"),
+    supabase.rpc("purge_stale_applications"),
   ]);
   const files = await processStorageCleanup(supabase);
   return {
     rejectedApplications: rejected.error ? null : (rejected.data as number),
     leftSingers: left.error ? null : (left.data as number),
+    staleApplications: stale.error ? null : (stale.data as number),
     ...files,
   };
 }

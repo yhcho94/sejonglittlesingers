@@ -7,6 +7,8 @@ import type { Profile } from "@/lib/types";
 
 export function ProfileForm({ profile }: { profile: Profile }) {
   const [state, action] = useActionState(updateProfile, undefined);
+  const nameLocked =
+    (profile.org_visible === true || !!profile.parent_rep_class) && !(profile.role === "admin" && profile.is_super);
   return (
     <form action={action} className="space-y-4">
       <div>
@@ -15,7 +17,16 @@ export function ProfileForm({ profile }: { profile: Profile }) {
       </div>
       <div>
         <label htmlFor="guardian_name" className="label">{profile.member_type && profile.member_type !== "parent" ? "이름" : "보호자 이름"}</label>
-        <input id="guardian_name" name="guardian_name" defaultValue={profile.guardian_name} required maxLength={50} className="input" />
+        {nameLocked ? (
+          <>
+            {/* 조직도에 게시된 이름은 최상위 관리자만 변경 */}
+            <input type="hidden" name="guardian_name" value={profile.guardian_name} />
+            <p id="guardian_name" className="rounded-sm bg-cream px-3 py-2">{profile.guardian_name}</p>
+            <p className="mt-1 text-xs text-ink-soft">조직도에 게시된 이름이라 최상위 관리자만 바꿀 수 있습니다.</p>
+          </>
+        ) : (
+          <input id="guardian_name" name="guardian_name" defaultValue={profile.guardian_name} required maxLength={50} className="input" />
+        )}
       </div>
       <div>
         <label htmlFor="phone" className="label">연락처</label>

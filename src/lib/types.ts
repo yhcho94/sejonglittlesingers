@@ -54,6 +54,8 @@ export type Application = {
   consent_media_channels?: boolean;
   consent_media_press?: boolean;
   consent_media_name?: boolean;
+  // 0024: 단원 소개 이름·반 게시 동의 (null: 항목이 생기기 전 신청)
+  consent_name_listing?: boolean | null;
   join_source?: string | null;
   join_source_detail?: string | null;
   gender?: string | null;
