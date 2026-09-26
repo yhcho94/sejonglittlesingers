@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { rejectAdminRequest, revokeAdmin, setMemberType, setOrgChartSource } from "@/app/actions/admin-roles";
 import { OrgChart } from "@/components/OrgChart";
 import { SubmitButton } from "@/components/form";
@@ -23,6 +24,10 @@ export default async function StaffMembersPage() {
   const { members, level } = await loadMembers();
   const ready = level >= MIGRATION_LEVELS.admin;
   const staff = members.filter(isStaffMember);
+  // 학부모 대표·부대표: 보호자 회원이면서 운영진 (보호자 회원 화면에서 지정·해제)
+  const reps = members
+    .filter((m) => !isStaffMember(m) && m.parent_rep_class)
+    .sort((a, b) => `${a.parent_rep_class}${a.parent_rep_title}`.localeCompare(`${b.parent_rep_class}${b.parent_rep_title}`));
   const requests = members.filter((m) => m.role !== "admin" && m.admin_requested_at);
   const admins = members.filter((m) => m.role === "admin");
   const canOrg = level >= MIGRATION_LEVELS.org;
@@ -143,7 +148,47 @@ export default async function StaffMembersPage() {
         </section>
       )}
 
-      <h2 className="mb-3 text-lg font-semibold text-navy">운영진 명단 ({staff.length})</h2>
+      <p className="mb-3 text-sm text-ink-soft">
+        운영진 총 <strong className="text-ink">{staff.length + reps.length}명</strong> = 운영진 회원 {staff.length}명 + 학부모
+        대표·부대표 {reps.length}명 (학부모 대표는 보호자 회원에도 함께 셉니다)
+      </p>
+
+      {reps.length > 0 && (
+        <section className="mb-8">
+          <h2 className="mb-3 text-lg font-semibold text-navy">학부모 대표·부대표 ({reps.length})</h2>
+          <div className="card overflow-x-auto p-0">
+            <table className="w-full min-w-[600px] text-left text-sm">
+              <thead className="border-b border-line bg-cream text-ink-soft">
+                <tr>
+                  <th className="px-4 py-3 font-medium">이름</th>
+                  <th className="px-4 py-3 font-medium">반 · 직함</th>
+                  <th className="px-4 py-3 font-medium">연락처 / 이메일</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-line">
+                {reps.map((m) => (
+                  <tr key={m.id}>
+                    <td className="px-4 py-3 font-medium">{m.guardian_name}</td>
+                    <td className="px-4 py-3">
+                      {m.parent_rep_class} {m.parent_rep_title ?? "대표"}
+                    </td>
+                    <td className="px-4 py-3">
+                      {m.phone}
+                      <br />
+                      <span className="text-ink-soft">{m.email}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-ink-soft">
+            지정·해제는 <Link href="/admin/members" className="underline">보호자 회원</Link> 화면의 &lsquo;학부모 대표&rsquo; 칸에서 합니다.
+          </p>
+        </section>
+      )}
+
+      <h2 className="mb-3 text-lg font-semibold text-navy">운영진 회원 명단 ({staff.length})</h2>
       {staff.length === 0 ? (
         <p className="text-sm text-ink-soft">
           운영진 회원이 없습니다. 운영진은 입단 안내의 &lsquo;운영진 회원가입&rsquo;으로 가입하거나, 보호자 회원 화면에서
