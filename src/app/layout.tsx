@@ -35,13 +35,14 @@ export const metadata: Metadata = {
     title: site.name,
     statusBarStyle: "default",
   },
+  // 공유 미리보기 이미지: 사진을 바꿀 때는 파일 이름도 바꿔야 카카오톡 등이 예전 이미지를 다시 쓰지 않습니다 (주소 기준으로 캐시)
   openGraph: {
     title: `${site.name} | 세종시 어린이 합창단`,
     description: site.description,
     siteName: site.name,
     locale: "ko_KR",
     type: "website",
-    images: [{ url: "/images/og.jpg", width: 1200, height: 630, alt: `${site.name} 공연 모습` }],
+    images: [{ url: "/images/og-clover.jpg", width: 1200, height: 630, alt: `${site.name} 공연 모습` }],
   },
   // 검색엔진 사이트 소유 확인 코드 (공개 값. Vercel 환경변수가 있으면 그 값을 우선)
   verification: {
