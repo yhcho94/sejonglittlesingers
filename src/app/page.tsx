@@ -6,8 +6,9 @@ import { CountUp } from "@/components/CountUp";
 import { NoticeList } from "@/components/NoticeList";
 import { VisitorCounter } from "@/components/VisitorCounter";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
-import { getActiveSingerCount, getRecruitment, getStaffCount, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
+import { getActiveSingerCount, getRecruitment, getSiteStats, getStaffCount, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
 import { EVENT_ALBUMS } from "@/lib/event-albums";
+import { SITE_STAT_FIELDS, isCountable, statValue } from "@/lib/site-stats";
 import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
 import { site, smsHref } from "@/lib/site";
@@ -44,14 +45,6 @@ const {
 } = getImageProps({ ...heroCommon, src: heroImage, sizes: "65vw" });
 const { props: heroImg } = getImageProps({ ...heroCommon, src: heroMobileImage, sizes: "100vw" });
 
-// 합창단이 제공한 소개 글의 수치 (단원 수는 DB 의 현재 활동 단원 수, 강사진·운영진 수는 조직도 인원(학부모 대표 포함)으로 바꿔 표시)
-const STATS: { value: string; unit?: string; label: string; count?: boolean }[] = [
-  { value: "2023", label: "창단" },
-  { value: "150", unit: "명", label: "활동 단원", count: true },
-  { value: "16", unit: "명", label: "강사진·운영진", count: true },
-  { value: "20", unit: "회", label: "연간 공연 (내외)", count: true },
-  { value: "4", unit: "회", label: "연간 주최 음악회", count: true },
-];
 
 // 사진첩 미리보기: 최근 행사의 단체사진 6장 (3:2 틀에 잘 맞는 가로 사진만)
 const MOMENTS = EVENT_ALBUMS.flatMap((a) => {
@@ -94,7 +87,7 @@ function SectionTitle({
 }
 
 export default async function HomePage() {
-  const [notices, concerts, recruitment, press, RECENT_STAGES, singerCount, staffCount] = await Promise.all([
+  const [notices, concerts, recruitment, press, RECENT_STAGES, singerCount, staffCount, siteStats] = await Promise.all([
     listPublishedNotices(4),
     listConcerts("upcoming", 3),
     getRecruitment(),
@@ -102,14 +95,14 @@ export default async function HomePage() {
     recentStages(),
     getActiveSingerCount(),
     getStaffCount(),
+    getSiteStats(),
   ]);
-  const stats = STATS.map((s) =>
-    s.label === "활동 단원" && singerCount
-      ? { ...s, value: String(singerCount) }
-      : s.label === "강사진·운영진" && staffCount
-        ? { ...s, value: String(staffCount) }
-        : s,
-  );
+  // 소개 수치: 최상위 관리자 입력값 > 자동값(명부 집계·조직도 인원) > 기본값
+  const autoValues: Partial<Record<string, number | null>> = { singers: singerCount, staff: staffCount };
+  const stats = SITE_STAT_FIELDS.map((f) => {
+    const value = statValue(f.key, siteStats, autoValues[f.key]);
+    return { value, unit: f.unit || undefined, label: f.label, count: f.key !== "founded" && isCountable(value) };
+  });
 
   return (
     <>

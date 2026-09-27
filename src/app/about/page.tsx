@@ -3,7 +3,8 @@ import Link from "next/link";
 import { OrgChart } from "@/components/OrgChart";
 import { PageHeader } from "@/components/PageHeader";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
-import { getActiveSingerCount, getOrgChart, getOrgChartSource } from "@/lib/content";
+import { getActiveSingerCount, getOrgChart, getOrgChartSource, getSiteStats } from "@/lib/content";
+import { statValue, type SiteStatKey } from "@/lib/site-stats";
 import { EVENT_ALBUMS } from "@/lib/event-albums";
 import { LEGACY_ORG_ENTRIES, organization } from "@/lib/staff";
 
@@ -15,12 +16,13 @@ export const metadata: Metadata = {
 };
 
 // 아래 수치와 문구는 합창단이 제공한 소개 글을 그대로 옮긴 것입니다.
-const STATS = [
-  { value: "2023", label: "창단" },
-  { value: "150", unit: "명", label: "활동 단원 (2026년 4기)" },
+// key 가 있는 칸은 관리자 → 소개 수치에서 입력한 값(없으면 자동값·기본값)으로 표시
+const STATS: { key?: SiteStatKey; value: string; unit?: string; label: string }[] = [
+  { key: "founded", value: "2023", label: "창단" },
+  { key: "singers", value: "150", unit: "명", label: "활동 단원 (2026년 4기)" },
   { value: "3", unit: "개 반", label: "울림반 · 화음반 · 선율반" },
-  { value: "16", unit: "명", label: "강사진 · 운영진" },
-  { value: "20", unit: "회", label: "연간 공연 (내외)" },
+  { key: "staff", value: "16", unit: "명", label: "강사진 · 운영진" },
+  { key: "concerts", value: "20", unit: "회", label: "연간 공연 (내외)" },
 ];
 
 // 합창단 전체가 나온 정기연주회 단체사진 (공연·행사 사진첩에서)
@@ -39,19 +41,14 @@ function Heading({ eyebrow, title }: { eyebrow: string; title: string }) {
 
 export default async function AboutPage() {
   // 단원 수는 DB 의 현재 활동 단원 수 (읽지 못하면 소개 글의 수치)
-  const [singerCount, orgSource] = await Promise.all([getActiveSingerCount(), getOrgChartSource()]);
+  const [singerCount, orgSource, siteStats] = await Promise.all([getActiveSingerCount(), getOrgChartSource(), getSiteStats()]);
   // 조직도: 최상위 관리자가 '회원 정보로 자동'으로 바꾸기 전까지는 예전 조직도
   const orgAuto = orgSource === "auto";
   const orgEntries = orgAuto ? await getOrgChart() : LEGACY_ORG_ENTRIES;
   // 강사진·운영진 수: 아래 조직도에 나오는 인원 (학부모 대표·부대표 포함, 홈 화면과 같은 기준)
   const orgPeople = new Set(orgEntries.map((e) => e.name)).size;
-  const stats = STATS.map((s) =>
-    s.label.startsWith("활동 단원") && singerCount
-      ? { ...s, value: String(singerCount) }
-      : s.label === "강사진 · 운영진" && orgPeople
-        ? { ...s, value: String(orgPeople) }
-        : s,
-  );
+  const autoValues: Partial<Record<SiteStatKey, number | null>> = { singers: singerCount, staff: orgPeople };
+  const stats = STATS.map((s) => (s.key ? { ...s, value: statValue(s.key, siteStats, autoValues[s.key]) } : s));
   return (
     <>
       <PageHeader

@@ -15,6 +15,7 @@ const NAV: { href: string; label: string; gate?: AdminGate }[] = [
   { href: "/admin/singers", label: "단원 관리", gate: "singers" },
   { href: "/admin/members", label: "보호자 회원", gate: "members" },
   { href: "/admin/staff", label: "운영진 회원", gate: "members" },
+  { href: "/admin/site-stats", label: "소개 수치", gate: "members" },
   { href: "/admin/recruitment", label: "입단 안내", gate: "recruitment" },
   { href: "/admin/faqs", label: "FAQ", gate: "recruitment" },
   { href: "/admin/concerts", label: "공연 일정", gate: "concerts" },

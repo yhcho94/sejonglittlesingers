@@ -2,6 +2,7 @@ import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { LEGACY_ORG_ENTRIES } from "@/lib/staff";
+import { parseSiteStats, type SiteStats } from "@/lib/site-stats";
 import type { AuditionSong } from "@/lib/audition-songs";
 import type { Concert, Faq, Press, Recruitment } from "@/lib/types";
 
@@ -165,4 +166,17 @@ export async function getStaffCount() {
   const entries = (await getOrgChartSource()) === "auto" ? await getOrgChart() : LEGACY_ORG_ENTRIES;
   const people = new Set(entries.map((e) => e.name));
   return people.size > 0 ? people.size : null;
+}
+
+// 홈·합창단 소개 수치 (최상위 관리자 입력값, 0026). 읽지 못하면 빈 값 → 자동값·기본값으로 표시
+export async function getSiteStats(): Promise<SiteStats> {
+  await connection();
+  if (!isSupabaseConfigured) return {};
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "site_stats")
+    .maybeSingle<{ value: string }>();
+  return error ? {} : parseSiteStats(data?.value);
 }
