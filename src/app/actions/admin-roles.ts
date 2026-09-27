@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { ADMIN_AREAS } from "@/lib/admin-perms";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
 import { staffClassFromForm, staffRoleFromForm } from "@/lib/member-types";
+import { SITE_STAT_FIELDS, SITE_STAT_MAX } from "@/lib/site-stats";
 import { adminFor, getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/lib/types";
@@ -144,4 +145,28 @@ export async function setMemberName(formData: FormData) {
   const supabase = await createClient();
   await supabase.rpc("set_member_name", { target_id: targetId, new_name: name });
   refresh();
+}
+
+// 최상위 관리자: 홈·합창단 소개 수치 입력 (비우면 자동값·기본값으로 표시)
+export async function saveSiteStats(_prev: FormState, formData: FormData): Promise<FormState> {
+  const current = await adminFor("members");
+  if (!current) return { error: "최상위 관리자만 수정할 수 있습니다." };
+  const values: Record<string, string> = {};
+  for (const f of SITE_STAT_FIELDS) {
+    const v = String(formData.get(f.key) ?? "").trim();
+    if (!v) continue;
+    if (v.length > SITE_STAT_MAX || /[\u0000-\u001f<>]/.test(v)) {
+      return { error: `${f.label}: ${SITE_STAT_MAX}자 이내로 입력해 주세요.` };
+    }
+    values[f.key] = v;
+  }
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("site_settings")
+    .upsert({ key: "site_stats", value: JSON.stringify(values), updated_at: new Date().toISOString() });
+  if (error) return { error: "저장하지 못했습니다. (0026 SQL 실행 여부를 확인해 주세요)" };
+  revalidatePath("/");
+  revalidatePath("/about");
+  revalidatePath("/admin/site-stats");
+  return { success: "저장했습니다. 첫 화면과 합창단 소개에 바로 반영됩니다." };
 }
