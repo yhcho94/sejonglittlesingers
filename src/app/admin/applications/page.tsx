@@ -6,7 +6,7 @@ import { PURGE_REASON_TEXT, loadPurgeSchedule, purgeLabel } from "@/lib/purge-sc
 import { createClient } from "@/lib/supabase/server";
 import { STATUS_LABEL, type Application, type ApplicationStatus } from "@/lib/types";
 
-type Row = Pick<Application, "id" | "child_name" | "child_birthdate" | "status" | "created_at"> & {
+type Row = Pick<Application, "id" | "child_name" | "child_birthdate" | "status" | "created_at" | "guardian_name" | "guardian_phone"> & {
   guardian: { guardian_name: string; phone: string } | null;
 };
 
@@ -22,12 +22,15 @@ export default async function AdminApplicationsPage({
   const supabase = await createClient();
   // 반려 후 5일이 지난 신청 기록 정리 (개인정보처리방침의 파기 기한)
   await supabase.rpc("purge_rejected_applications");
-  let query = supabase
-    .from("applications")
-    .select("id, child_name, child_birthdate, status, created_at, guardian:profiles!applications_guardian_id_fkey(guardian_name, phone)")
-    .order("created_at", { ascending: false });
-  if (filter !== "all") query = query.eq("status", filter);
-  const [{ data: rows }, purge] = await Promise.all([query.returns<Row[]>(), loadPurgeSchedule(supabase)]);
+  // 보호자: 신청서에 적은 정보(0025), 예전 신청은 회원 계정 정보. 0025 실행 전이면 계정 정보만
+  const base = "id, child_name, child_birthdate, status, created_at, guardian:profiles!applications_guardian_id_fkey(guardian_name, phone)";
+  const list = (columns: string) => {
+    let query = supabase.from("applications").select(columns).order("created_at", { ascending: false });
+    if (filter !== "all") query = query.eq("status", filter);
+    return query.returns<Row[]>();
+  };
+  const [first, purge] = await Promise.all([list(`${base}, guardian_name, guardian_phone`), loadPurgeSchedule(supabase)]);
+  const rows = first.error ? (await list(base)).data : first.data;
 
   return (
     <>
@@ -78,7 +81,8 @@ export default async function AdminApplicationsPage({
                 </td>
                 <td className="px-4 py-3">{r.child_birthdate}</td>
                 <td className="px-4 py-3">
-                  {r.guardian?.guardian_name} <span className="text-ink-soft">{r.guardian?.phone}</span>
+                  {r.guardian_name ?? r.guardian?.guardian_name}{" "}
+                  <span className="text-ink-soft">{r.guardian_phone ?? r.guardian?.phone}</span>
                 </td>
                 <td className="px-4 py-3">{formatDate(r.created_at)}</td>
                 <td className="px-4 py-3">

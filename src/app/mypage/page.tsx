@@ -60,10 +60,11 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
     <>
       <PageHeader eyebrow="My Page" title="마이페이지" />
       <div className="mx-auto grid max-w-5xl gap-6 px-4 py-7 md:grid-cols-3">
+        {/* 예전 보호자 회원의 입단 신청 내역 (보호자 회원가입이 없어져 신청 내역이 있을 때만) */}
+        {(applications?.length ?? 0) > 0 && (
         <section className="card md:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-navy">입단 신청 내역</h2>
-            <Link href="/apply" className="btn-primary px-3 py-1.5 text-sm">새 신청</Link>
           </div>
           {applied && (
             <p className="mb-4 rounded-sm bg-green-50 px-3 py-2 text-sm text-green-800">
@@ -124,6 +125,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             </ul>
           )}
         </section>
+        )}
 
         <section className="card">
           <h2 className="mb-4 text-lg font-semibold text-navy">
@@ -174,6 +176,8 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             <span className="ml-1">— 회원 정보와 입단 신청 내역·사진이 바로 삭제됩니다.</span>
           </div>
         </section>
+        {/* 예전 보호자 회원: 연결된 자녀가 있을 때만 */}
+        {singers.length > 0 && (
         <section className="card md:col-span-3">
           <h2 className="text-lg font-semibold text-navy">자녀 단원 초상권(사진·영상) 동의 · 이름 게시</h2>
           <p className="mt-1 text-sm text-ink-soft">
@@ -208,6 +212,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             </div>
           )}
         </section>
+        )}
       </div>
     </>
   );

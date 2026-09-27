@@ -12,6 +12,8 @@ type AppPrefill = Pick<Application, "id" | "guardian_id" | "child_name" | "child
   consent_media_press?: boolean;
   consent_media_name?: boolean;
   consent_name_listing?: boolean | null;
+  guardian_name?: string | null;
+  guardian_phone?: string | null;
   join_source?: string | null;
   join_source_detail?: string | null;
   gender?: string | null;
@@ -33,7 +35,7 @@ export default async function NewSingerPage({ searchParams }: PageProps<"/admin/
     // 0024 의 이름 게시 동의 칸이 없으면 빼고 다시 조회
     const full = await supabase
       .from("applications")
-      .select(`${columns}, consent_name_listing`)
+      .select(`${columns}, consent_name_listing, guardian_name, guardian_phone`)
       .eq("id", appId)
       .maybeSingle<AppPrefill>();
     const data = full.error
@@ -66,6 +68,9 @@ export default async function NewSingerPage({ searchParams }: PageProps<"/admin/
                   birthdate: app.child_birthdate,
                   school: app.school,
                   guardian_id: app.guardian_id,
+                  // 회원가입 없이 신청(0025): 신청서의 보호자 이름·연락처를 명부에 연결
+                  guardian_name: app.guardian_name ?? null,
+                  guardian_phone: app.guardian_phone ?? null,
                   application_id: app.id,
                   consent_media_channels: app.consent_media_channels ?? false,
                   consent_media_press: app.consent_media_press ?? false,

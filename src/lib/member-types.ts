@@ -17,11 +17,13 @@ export const STAFF_ROLES = [
   { name: "이론선생님", teacher: true },
   { name: "사무국장", teacher: false },
   { name: "운영위원", teacher: false },
+  { name: "학부모대표", teacher: false },
+  { name: "부대표", teacher: false },
   { name: "홈페이지 관리자", teacher: false },
 ] as const;
 
-// 담당 반을 고르는 역할 (DB 0023 is_class_role() 과 같아야 합니다)
-export const CLASS_ROLES: readonly string[] = ["부지휘자", "반주자", "보컬트레이너", "이론선생님"];
+// 담당 반을 고르는 역할 (DB 0025 is_class_role() 과 같아야 합니다)
+export const CLASS_ROLES: readonly string[] = ["부지휘자", "반주자", "보컬트레이너", "이론선생님", "학부모대표", "부대표"];
 export const isClassRole = (role: string | null | undefined) => !!role && CLASS_ROLES.includes(role);
 
 export const STAFF_ROLE_OTHER = "기타";

@@ -56,6 +56,10 @@ export type Application = {
   consent_media_name?: boolean;
   // 0024: 단원 소개 이름·반 게시 동의 (null: 항목이 생기기 전 신청)
   consent_name_listing?: boolean | null;
+  // 0025: 회원가입 없이 신청 — 보호자 인적사항 (예전 신청은 회원 계정의 정보)
+  guardian_name?: string | null;
+  guardian_relation?: string | null;
+  guardian_phone?: string | null;
   join_source?: string | null;
   join_source_detail?: string | null;
   gender?: string | null;

@@ -120,9 +120,12 @@ export default async function AdminApplicationDetail({
         <div className="space-y-6">
           <section className="card">
             <h2 className="mb-3 font-bold text-navy">보호자</h2>
-            <p>{app.guardian?.guardian_name}</p>
-            <p className="text-sm text-ink-soft">{app.guardian?.phone}</p>
-            <p className="text-sm text-ink-soft">{app.guardian?.email}</p>
+            <p>
+              {app.guardian_name ?? app.guardian?.guardian_name}
+              {app.guardian_relation && <span className="ml-1 text-sm text-ink-soft">({app.guardian_relation})</span>}
+            </p>
+            <p className="text-sm text-ink-soft">{app.guardian_phone ?? app.guardian?.phone}</p>
+            {app.guardian?.email && <p className="text-sm text-ink-soft">{app.guardian.email}</p>}
           </section>
           <section className="card">
             <h2 className="mb-2 font-bold text-navy">오디션 동영상</h2>

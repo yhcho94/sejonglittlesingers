@@ -5,21 +5,76 @@ import { useActionState, useState } from "react";
 import { submitApplication } from "@/app/actions/applications";
 import { FormMessage, SubmitButton } from "@/components/form";
 import { MediaConsentFields } from "@/components/MediaConsentFields";
-import { AUDITION_EMAIL, AUDITION_GUIDE, CLASS_OPTIONS, GENDERS } from "@/lib/application-fields";
+import { AUDITION_EMAIL, AUDITION_GUIDE, CLASS_OPTIONS, GENDERS, GUARDIAN_RELATIONS } from "@/lib/application-fields";
 import { JOIN_SOURCES } from "@/lib/join-source";
 
-export function ApplyForm({ defaults }: { defaults?: { childName: string; childBirthdate: string } }) {
+export function ApplyForm() {
   const [joinSource, setJoinSource] = useState("");
+  const [relation, setRelation] = useState("");
   const [state, action] = useActionState(submitApplication, undefined);
 
   return (
     <form action={action} className="space-y-7">
+      {/* 자동 입력(스팸) 방지용: 사람에게는 보이지 않는 칸 */}
+      <div aria-hidden="true" className="hidden">
+        <label htmlFor="website">웹사이트</label>
+        <input id="website" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
+
+      <fieldset className="space-y-4">
+        <legend className="mb-2 text-lg font-bold text-navy">보호자 정보</legend>
+        <p className="-mt-2 text-xs text-ink-soft">심사 결과는 이 연락처로 전화·문자·카카오톡으로 안내합니다.</p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="guardian_name" className="label">보호자 이름 *</label>
+            <input id="guardian_name" name="guardian_name" required maxLength={50} autoComplete="name" className="input" />
+          </div>
+          <div>
+            <label htmlFor="guardian_phone" className="label">보호자 연락처 *</label>
+            <input
+              id="guardian_phone"
+              name="guardian_phone"
+              type="tel"
+              required
+              pattern="[0-9\-]{9,20}"
+              placeholder="010-0000-0000"
+              autoComplete="tel"
+              className="input"
+            />
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label htmlFor="guardian_relation" className="label">단원과의 관계 *</label>
+            <select
+              id="guardian_relation"
+              name="guardian_relation"
+              required
+              value={relation}
+              onChange={(e) => setRelation(e.target.value)}
+              className="input"
+            >
+              <option value="">선택해 주세요</option>
+              {GUARDIAN_RELATIONS.map((r) => (
+                <option key={r}>{r}</option>
+              ))}
+            </select>
+          </div>
+          {relation === "기타" && (
+            <div>
+              <label htmlFor="guardian_relation_detail" className="label">관계 직접 입력 *</label>
+              <input id="guardian_relation_detail" name="guardian_relation_detail" required maxLength={20} placeholder="예: 이모" className="input" />
+            </div>
+          )}
+        </div>
+      </fieldset>
+
       <fieldset className="space-y-4">
         <legend className="mb-2 text-lg font-bold text-navy">단원(자녀) 정보</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="child_name" className="label">이름 *</label>
-            <input id="child_name" name="child_name" required maxLength={50} defaultValue={defaults?.childName} className="input" />
+            <input id="child_name" name="child_name" required maxLength={50} className="input" />
           </div>
           <div>
             <label htmlFor="child_birthdate" className="label">생년월일 *</label>
@@ -28,7 +83,6 @@ export function ApplyForm({ defaults }: { defaults?: { childName: string; childB
               name="child_birthdate"
               type="date"
               required
-              defaultValue={defaults?.childBirthdate}
               className="input"
             />
           </div>
@@ -131,10 +185,10 @@ export function ApplyForm({ defaults }: { defaults?: { childName: string; childB
         <p className="font-medium">개인정보 수집·이용 동의</p>
         <ul className="list-disc space-y-1 pl-5 text-ink-soft">
           <li>
-            수집 항목: 단원 이름, 생년월일, 성별, 소속 기관, 원하는 반, 사는 동, 가입경로 (필수) / 소개해 준 사람, 특이사항 (선택)
-            / 오디션 동영상 (이메일로 제출)
+            수집 항목: 보호자 이름·연락처·단원과의 관계, 단원 이름, 생년월일, 성별, 소속 기관, 원하는 반, 사는 동, 가입경로
+            (필수) / 소개해 준 사람, 특이사항 (선택) / 오디션 동영상 (이메일로 제출)
           </li>
-          <li>이용 목적: 입단 신청 접수·오디션 심사 및 결과 안내, 합창단 운영</li>
+          <li>이용 목적: 입단 신청 접수·오디션 심사 및 결과 안내(전화·문자·카카오톡), 합창단 운영</li>
           <li>보유 기간: 개인정보처리방침에 따름 (오디션 동영상은 심사 결과를 정한 날부터 30일 이내 삭제)</li>
         </ul>
         <p className="text-ink-soft">
@@ -155,7 +209,7 @@ export function ApplyForm({ defaults }: { defaults?: { childName: string; childB
         <legend className="px-1 font-medium">단원 소개 이름 게시 동의 (선택)</legend>
         <p className="text-ink-soft">
           입단이 승인되면 홈페이지 &lsquo;단원 소개&rsquo;에 단원의 이름과 반을 게시합니다. 동의하지 않아도 입단에는 영향이
-          없으며, 동의한 뒤에도 마이페이지에서 언제든 게시를 중단할 수 있습니다.
+          없으며, 동의한 뒤에도 합창단에 요청하면 언제든 게시를 중단합니다.
         </p>
         <label className="flex items-start gap-2">
           <input type="checkbox" name="consent_name_listing" className="mt-1" />
@@ -188,7 +242,7 @@ export function ApplyForm({ defaults }: { defaults?: { childName: string; childB
       </section>
 
       <FormMessage state={state} />
-      <SubmitButton pendingText="신청서 제출 중...">{defaults ? "입단 신청서 다시 제출" : "입단 신청서 제출"}</SubmitButton>
+      <SubmitButton pendingText="신청서 제출 중...">입단 신청서 제출</SubmitButton>
     </form>
   );
 }

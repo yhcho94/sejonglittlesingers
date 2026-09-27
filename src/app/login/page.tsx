@@ -24,7 +24,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       </div>
       <div className="mt-4 flex justify-between text-sm text-ink-soft">
         <Link href="/forgot-password" className="hover:underline">비밀번호 찾기</Link>
-        <Link href="/signup" className="hover:underline">회원가입</Link>
+        <Link href="/signup" className="hover:underline">운영진 회원가입</Link>
       </div>
     </div>
   );

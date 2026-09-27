@@ -15,11 +15,10 @@ export const metadata: Metadata = {
 
 // 이 사이트의 실제 신청·심사 흐름과 같습니다.
 const STEPS = [
-  { title: "보호자 회원가입", body: "보호자 명의로 가입하고 이메일 인증을 완료합니다." },
-  { title: "온라인 입단 신청", body: "자녀(단원) 정보를 입력해 신청서를 제출합니다." },
+  { title: "온라인 입단 신청", body: "회원가입 없이 보호자 정보와 자녀(단원) 정보를 입력해 신청서를 제출합니다." },
   { title: "오디션 동영상 제출", body: `지정곡 중 한 곡을 반주에 맞춰 1절 부른 영상을 ${AUDITION_EMAIL} 로 보냅니다.` },
   { title: "심사", body: "선생님들이 신청서와 동영상을 보고 심사합니다." },
-  { title: "결과 확인", body: "마이페이지에서 심사 결과와 안내 사항을 확인합니다." },
+  { title: "결과 안내", body: "심사 결과를 보호자 연락처로 전화·문자·카카오톡으로 알려 드립니다." },
 ];
 
 export default async function JoinPage() {
@@ -127,14 +126,13 @@ export default async function JoinPage() {
 
         <section className="rounded-sm border border-line bg-white p-6 text-center">
           <p className="text-lg font-bold text-navy">입단 신청은 온라인으로 받습니다</p>
-          <p className="mt-2 text-sm text-ink-soft">보호자 회원가입 후 신청할 수 있습니다.</p>
+          <p className="mt-2 text-sm text-ink-soft">회원가입 없이 보호자가 바로 신청할 수 있습니다.</p>
           <p className="mt-1 text-sm text-ink-soft">
             입단 문의: 단장{" "}
             <a href={smsHref} className="underline">{site.contact.phone}</a> (문자 메시지)
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link href="/apply" className="btn-primary px-6">입단 신청하기</Link>
-            <Link href="/signup" className="btn-outline px-6">보호자 회원가입</Link>
             <Link href="/signup?type=staff" className="btn-outline px-6">운영진 회원가입</Link>
           </div>
         </section>
