@@ -242,26 +242,28 @@ export function SingerForm({
 
       <fieldset className="grid gap-4 border-t border-line pt-6 sm:grid-cols-2">
         <legend className="mb-2 pt-6 font-bold text-navy">보호자</legend>
-        <div className="sm:col-span-2">
-          <label htmlFor="guardian_id" className="label">홈페이지 가입 회원과 연결</label>
-          <select id="guardian_id" name="guardian_id" defaultValue={initial.guardian_id ?? ""} className="input">
-            <option value="">연결 안 함</option>
-            {guardians.map((g) => (
-              <option key={g.id} value={g.id}>
-                {g.guardian_name} · {g.phone} · {g.email}
-              </option>
-            ))}
-          </select>
-          <p className="mt-1 text-xs text-ink-soft">연결하면 보호자 정보를 회원 정보에서 가져옵니다.</p>
-        </div>
         <div>
-          <label htmlFor="guardian_name" className="label">보호자 이름 (가입하지 않은 경우)</label>
+          <label htmlFor="guardian_name" className="label">보호자 이름</label>
           <input id="guardian_name" name="guardian_name" maxLength={50} defaultValue={initial.guardian_name ?? ""} className="input" />
         </div>
         <div>
-          <label htmlFor="guardian_phone" className="label">보호자 연락처 (가입하지 않은 경우)</label>
+          <label htmlFor="guardian_phone" className="label">보호자 연락처</label>
           <input id="guardian_phone" name="guardian_phone" type="tel" maxLength={20} defaultValue={initial.guardian_phone ?? ""} className="input" />
         </div>
+        {/* 예전 보호자 회원 계정이 있을 때만 (보호자 회원가입은 없어짐) */}
+        {(guardians.length > 0 || initial.guardian_id) && (
+          <div className="sm:col-span-2">
+            <label htmlFor="guardian_id" className="label">예전 보호자 회원 계정과 연결 (선택)</label>
+            <select id="guardian_id" name="guardian_id" defaultValue={initial.guardian_id ?? ""} className="input">
+              <option value="">연결 안 함</option>
+              {guardians.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.guardian_name} · {g.phone} · {g.email}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </fieldset>
 
       <div className="space-y-4 border-t border-line pt-6">

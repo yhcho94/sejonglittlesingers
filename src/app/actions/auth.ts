@@ -61,7 +61,9 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   const passwordConfirm = formData.get("password_confirm");
   const guardianName = text(formData, "guardian_name");
   const phone = text(formData, "phone");
-  const parent = formData.get("member_type") !== "staff";
+  // 회원가입은 운영진만 (보호자는 회원가입 없이 입단 신청)
+  if (formData.get("member_type") !== "staff") return { error: "보호자는 회원가입 없이 입단 신청서를 작성해 주세요." };
+  const parent = false;
   const staffRole = parent ? null : staffRoleFromForm(text(formData, "staff_role"), text(formData, "staff_role_custom"));
   const staffClass = staffClassFromForm(staffRole, text(formData, "staff_class"), CLASS_OPTIONS.map((c) => c.name));
   const affiliation = parent ? "" : text(formData, "affiliation").slice(0, 100);

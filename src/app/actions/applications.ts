@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/lib/auth";
 import type { FormState } from "@/lib/types";
 import { MEDIA_CONSENT_VERSION, readMediaConsent } from "@/lib/media-consent";
 import { JOIN_SOURCES } from "@/lib/join-source";
-import { CLASS_OPTIONS, GENDERS } from "@/lib/application-fields";
+import { CLASS_OPTIONS, GENDERS, GUARDIAN_RELATIONS } from "@/lib/application-fields";
 
 const PHOTO_BUCKET = "application-photos";
 
@@ -18,10 +18,10 @@ function text(formData: FormData, key: string, max: number) {
   return trimmed ? trimmed.slice(0, max) : null;
 }
 
+// 로그인 없이 입단 신청 (보호자 인적사항은 신청서에서 받음). 저장은 DB 함수가 값을 다시 검사하고 과다 제출을 막습니다.
 export async function submitApplication(_prev: FormState, formData: FormData): Promise<FormState> {
-  const current = await getCurrentUser();
-  if (!current) return { error: "로그인이 필요합니다." };
-  const userId = current.user.id;
+  // 자동 입력 방지: 사람에게는 보이지 않는 칸이 채워져 있으면 저장하지 않음
+  if (text(formData, "website", 200)) return { error: "신청을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
 
   const childName = text(formData, "child_name", 50);
   const birthdate = text(formData, "child_birthdate", 10);
@@ -31,6 +31,16 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
   if (!/^\d{4}-\d{2}-\d{2}$/.test(birthdate) || Number.isNaN(birth.getTime()) || birth > new Date()) {
     return { error: "생년월일을 올바르게 입력해 주세요." };
   }
+
+  const guardianName = text(formData, "guardian_name", 50);
+  const guardianRelation = String(formData.get("guardian_relation") ?? "");
+  const guardianRelationDetail = text(formData, "guardian_relation_detail", 20);
+  const guardianPhone = text(formData, "guardian_phone", 20);
+  if (!guardianName) return { error: "보호자 이름을 입력해 주세요." };
+  if (!(GUARDIAN_RELATIONS as readonly string[]).includes(guardianRelation)) return { error: "단원과의 관계를 선택해 주세요." };
+  const relation = guardianRelation === "기타" ? guardianRelationDetail : guardianRelation;
+  if (!relation) return { error: "단원과의 관계를 입력해 주세요." };
+  if (!guardianPhone || !/^[0-9-]{9,20}$/.test(guardianPhone)) return { error: "보호자 연락처는 숫자와 '-'만 사용해 입력해 주세요." };
 
   if (formData.get("consent_privacy") !== "on" || formData.get("consent_guardian") !== "on") {
     return { error: "필수 동의 항목에 동의해 주세요." };
@@ -48,49 +58,43 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
   const joinSource = String(formData.get("join_source") ?? "");
   if (!(JOIN_SOURCES as readonly string[]).includes(joinSource)) return { error: "가입경로를 선택해 주세요." };
   const media = readMediaConsent(formData);
+
   const supabase = await createClient();
-  const base = {
-    guardian_id: userId,
-    child_name: childName,
-    child_birthdate: birthdate,
-    school,
-    consent_privacy: true,
-    consent_guardian: true,
-  };
-  // 0008(초상권)·0011(가입경로)·0017(신청서 항목) 칸. DB 에 아직 칸이 없으면(PGRST204) 기본 항목만이라도 저장해 신청이 누락되지 않게 합니다.
-  const extra = {
-    gender,
-    desired_class: desiredClass,
-    neighborhood,
-    referrer: text(formData, "referrer", 100),
-    notes: text(formData, "notes", 2000),
-    consent_media_channels: media.channels,
-    consent_media_press: media.press,
-    consent_media_name: media.name,
-    consent_media_version: MEDIA_CONSENT_VERSION,
-    join_source: joinSource,
-    join_source_detail: joinSource === "기타" ? text(formData, "join_source_detail", 100) : null,
-  };
-  // 0024: 단원 소개 이름·반 게시 동의 (선택)
-  const consentNameListing = formData.get("consent_name_listing") === "on";
-  let { error } = await supabase.from("applications").insert({ ...base, ...extra, consent_name_listing: consentNameListing });
-  if (error?.code === "PGRST204") {
-    // 0024 실행 전: 이름 게시 동의 칸 없이 저장
-    ({ error } = await supabase.from("applications").insert({ ...base, ...extra }));
-  }
-  if (error?.code === "PGRST204") {
-    console.error("입단 신청: 새 항목 칸이 없어 기본 항목만 저장 (0008·0011·0017 실행 필요)");
-    const fallback = [base.school, `성별 ${gender}`, `원하는 반 ${desiredClass}`, `사는 동 ${neighborhood}`].join(" / ");
-    ({ error } = await supabase.from("applications").insert({ ...base, motivation: fallback }));
-  }
+  const { error } = await supabase.rpc("submit_application", {
+    p: {
+      child_name: childName,
+      child_birthdate: birthdate,
+      guardian_name: guardianName,
+      guardian_relation: relation,
+      guardian_phone: guardianPhone,
+      school,
+      gender,
+      desired_class: desiredClass,
+      neighborhood,
+      referrer: text(formData, "referrer", 100),
+      notes: text(formData, "notes", 2000),
+      join_source: joinSource,
+      join_source_detail: joinSource === "기타" ? text(formData, "join_source_detail", 100) : null,
+      consent_privacy: true,
+      consent_guardian: true,
+      consent_media_channels: media.channels,
+      consent_media_press: media.press,
+      consent_media_name: media.name,
+      consent_media_version: MEDIA_CONSENT_VERSION,
+      consent_name_listing: formData.get("consent_name_listing") === "on",
+    },
+  });
 
   if (error) {
+    if (error.message.includes("too_many")) {
+      return { error: "짧은 시간에 신청이 많아 잠시 받을 수 없습니다. 잠시 후 다시 시도하거나 합창단에 문의해 주세요." };
+    }
     console.error("입단 신청 저장 실패", error.message);
     return { error: "신청을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
   }
 
-  revalidatePath("/mypage");
-  redirect("/mypage?applied=1");
+  // 개인정보가 주소창·기록에 남지 않도록 완료 화면 주소에는 아무것도 붙이지 않음
+  redirect("/apply/done");
 }
 
 // 심사 대기 중인 본인 신청 취소 (RLS 가 본인·대기 상태만 허용)

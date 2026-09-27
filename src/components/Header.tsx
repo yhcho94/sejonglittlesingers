@@ -35,7 +35,7 @@ export async function Header() {
         로그인
       </Link>
       <Link href="/signup" className="text-ink-soft hover:text-navy">
-        회원가입
+        운영진 가입
       </Link>
     </>
   );

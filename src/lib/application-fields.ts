@@ -7,6 +7,9 @@ export const CLASS_OPTIONS = [
 
 export const GENDERS = ["남", "여"] as const;
 
+// 신청하는 보호자와 단원의 관계 (기타는 직접 입력)
+export const GUARDIAN_RELATIONS = ["모", "부", "조부모", "기타"] as const;
+
 // 오디션 동영상 제출 (홈페이지에 올리지 않고 합창단 이메일로 받음)
 export const AUDITION_EMAIL = "sejonglittlesingers@naver.com";
 

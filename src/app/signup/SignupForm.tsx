@@ -1,52 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { signUp } from "@/app/actions/auth";
 import { FormMessage, SubmitButton } from "@/components/form";
 import { StaffRoleFields } from "@/components/StaffRoleFields";
 import { PASSWORD_HINT, PASSWORD_MIN } from "@/lib/password";
 
-export type SignupKind = "parent" | "staff";
-
-const KINDS: { key: SignupKind; label: string; desc: string }[] = [
-  { key: "parent", label: "보호자(학부모)", desc: "자녀(단원)의 입단 신청·초상권 동의" },
-  { key: "staff", label: "합창단 운영진", desc: "단장·선생님·사무국·홈페이지 관리자 등 (승인 후 맡은 메뉴 사용)" },
-];
-
-export function SignupForm({ initialKind = "parent" }: { initialKind?: SignupKind }) {
+// 회원가입은 합창단 운영진만 (보호자는 회원가입 없이 입단 신청)
+export function SignupForm() {
   const [state, action] = useActionState(signUp, undefined);
-  const [kind, setKind] = useState<SignupKind>(initialKind);
-  const parent = kind === "parent";
+  const parent = false;
 
   if (state?.success) return <FormMessage state={state} />;
 
   return (
     <form action={action} className="space-y-4">
-      <div role="radiogroup" aria-labelledby="member-type-label">
-        <p id="member-type-label" className="label">가입 구분 *</p>
-        <div className="grid gap-2">
-          {KINDS.map((t) => (
-            <label
-              key={t.key}
-              className="flex cursor-pointer items-start gap-2 rounded-sm border border-line bg-white px-3 py-2.5 text-sm has-[:checked]:border-navy has-[:checked]:bg-cream"
-            >
-              <input
-                type="radio"
-                name="member_type"
-                value={t.key}
-                checked={kind === t.key}
-                onChange={() => setKind(t.key)}
-                className="mt-1"
-              />
-              <span>
-                <span className="font-medium">{t.label}</span>
-                <span className="block text-xs text-ink-soft">{t.desc}</span>
-              </span>
-            </label>
-          ))}
-        </div>
-      </div>
+      <input type="hidden" name="member_type" value="staff" />
       <div>
         <label htmlFor="guardian_name" className="label">{parent ? "보호자 이름" : "이름"} *</label>
         <input id="guardian_name" name="guardian_name" required maxLength={50} autoComplete="name" className="input" />
