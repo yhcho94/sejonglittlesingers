@@ -14,11 +14,12 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     background_color: "#faf8f4",
     theme_color: "#121a3a",
+    // 아이콘 파일을 바꿀 때는 이름도 바꿔야 이미 설치한 휴대폰이 새 아이콘을 받아 갑니다 (주소 기준으로 캐시)
     icons: [
-      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icons/icon-maskable-192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
-      { src: "/icons/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/icons/logo-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/logo-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/logo-maskable-192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
+      { src: "/icons/logo-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }

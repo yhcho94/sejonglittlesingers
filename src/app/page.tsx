@@ -3,6 +3,7 @@ import { getImageProps } from "next/image";
 import Link from "next/link";
 import { ConcertCard } from "@/components/ConcertCard";
 import { CountUp } from "@/components/CountUp";
+import { HeroSlideshow, type HeroSlide } from "@/components/HeroSlideshow";
 import { NoticeList } from "@/components/NoticeList";
 import { VisitorCounter } from "@/components/VisitorCounter";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
@@ -15,6 +16,10 @@ import { site, smsHref } from "@/lib/site";
 import { classTeachers, conductor, organization } from "@/lib/staff";
 import heroMobileImage from "../../public/images/hero-mobile.jpg";
 import heroImage from "../../public/images/hero.jpg";
+import heroEducationOffice from "../../public/images/hero/education-office.jpg";
+import heroRecital2026 from "../../public/images/hero/recital-2026.jpg";
+import heroRegularConcert3 from "../../public/images/hero/regular-concert-3.jpg";
+import heroSummerUniform from "../../public/images/hero/summer-uniform.jpg";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
@@ -26,7 +31,7 @@ const JSON_LD = [
     name: site.name,
     alternateName: [site.nameEn, "세종 리틀싱어즈"],
     url: site.url,
-    logo: `${site.url}/icons/icon-512.png`,
+    logo: `${site.url}/icons/logo-512.png`,
     image: `${site.url}/images/og-clover.jpg`,
     description: site.description,
     foundingDate: "2023",
@@ -44,6 +49,26 @@ const {
   props: { srcSet: heroDesktop },
 } = getImageProps({ ...heroCommon, src: heroImage, sizes: "65vw" });
 const { props: heroImg } = getImageProps({ ...heroCommon, src: heroMobileImage, sizes: "100vw" });
+
+// 대표 사진 다음에 이어지는 슬라이드 (첫 장만 먼저 불러오고 나머지는 나중에)
+const HERO_SLIDES: HeroSlide[] = [
+  {
+    alt: "세종리틀싱어즈 단원들이 무대에서 지휘에 맞춰 노래하는 모습",
+    img: heroImg,
+    desktopSrcSet: heroDesktop,
+    position: "object-center lg:object-[50%_62%]",
+  },
+  ...[
+    { src: heroRegularConcert3, alt: "제3회 세종리틀싱어즈 정기연주회 '우리들의 꿈' 무대", position: "object-[50%_35%]" },
+    { src: heroEducationOffice, alt: "세종특별자치시교육청 행사 무대에서 노래하는 단원들", position: "object-[50%_45%]" },
+    { src: heroRecital2026, alt: "2026 향상음악회를 마치고 인사하는 단원들", position: "object-center" },
+    { src: heroSummerUniform, alt: "하복을 입고 무대에 선 단원들", position: "object-center" },
+  ].map(({ src, alt, position }) => ({
+    alt,
+    position,
+    img: getImageProps({ src, alt, quality: 80, sizes: "(min-width: 1024px) 65vw, 100vw" }).props,
+  })),
+];
 
 
 // 사진첩 미리보기: 최근 행사의 단체사진 6장 (3:2 틀에 잘 맞는 가로 사진만)
@@ -111,15 +136,8 @@ export default async function HomePage() {
       {/* 휴대폰·태블릿: 사진 아래에 글자 / PC: 왼쪽 글자, 오른쪽 사진 (아이들을 가리지 않도록) */}
       <section className="bg-navy-dark text-white lg:grid lg:min-h-[min(calc(100svh-var(--header-h)-var(--util-h)),820px)] lg:grid-cols-[calc(max(2rem,(100vw-72rem)/2+2rem)+28rem)_1fr]">
         <div className="relative aspect-[16/9] overflow-hidden lg:order-2 lg:aspect-auto">
-          {/* 휴대폰·태블릿은 무대를 확대한 사진, PC 는 전체 사진 */}
-          <picture>
-            <source media="(min-width: 1024px)" srcSet={heroDesktop} sizes="65vw" />
-            <img
-              {...heroImg}
-              alt="세종리틀싱어즈 단원들이 무대에서 지휘에 맞춰 노래하는 모습"
-              className="animate-hero-zoom absolute inset-0 h-full w-full object-cover object-center lg:object-[50%_62%]"
-            />
-          </picture>
+          {/* 첫 장: 휴대폰·태블릿은 무대를 확대한 사진, PC 는 전체 사진. 이어서 공연 사진이 차례로 */}
+          <HeroSlideshow slides={HERO_SLIDES} />
           {/* 사진과 글자 영역이 자연스럽게 이어지도록 */}
           <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-navy-dark to-transparent lg:hidden" />
           <div className="absolute inset-y-0 left-0 hidden w-1/6 bg-gradient-to-r from-navy-dark to-transparent lg:block" />

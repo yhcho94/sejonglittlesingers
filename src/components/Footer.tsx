@@ -1,21 +1,19 @@
 import Link from "next/link";
 import { InstallButton } from "@/components/InstallButton";
-import { LogoBadge } from "@/components/LogoMark";
+import { SiteLogo } from "@/components/SiteLogo";
+import { getSiteLogo } from "@/lib/content";
 import { SocialLinks } from "@/components/SocialLinks";
 import { NAV } from "@/lib/nav";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
 
-export function Footer() {
+export async function Footer() {
+  const logo = await getSiteLogo();
   return (
     <footer data-print-hide className="bg-navy-dark text-white/75">
       <div className="container-page grid gap-8 py-9 md:grid-cols-12 md:py-10">
         <div className="md:col-span-5">
           <div className="flex items-center gap-3">
-            <LogoBadge
-              markClassName="h-auto w-[72px]"
-              sinceClassName="mt-1 text-[9px] text-white/60"
-              textColor="#e8d6b0"
-            />
+            <SiteLogo logo={logo} variant="footer" />
             <div>
               <p className="font-[family-name:var(--font-serif)] text-2xl font-bold text-white">{site.name}</p>
               <p className="eyebrow mt-1.5 text-[10px] text-gold">{site.nameEn}</p>

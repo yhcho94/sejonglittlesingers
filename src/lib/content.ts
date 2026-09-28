@@ -1,7 +1,9 @@
 import { connection } from "next/server";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { LEGACY_ORG_ENTRIES } from "@/lib/staff";
+import { DEFAULT_LOGO, parseSiteLogo, type SiteLogo } from "@/lib/site-logo";
 import { parseSiteStats, type SiteStats } from "@/lib/site-stats";
 import type { AuditionSong } from "@/lib/audition-songs";
 import type { Concert, Faq, Press, Recruitment } from "@/lib/types";
@@ -180,3 +182,17 @@ export async function getSiteStats(): Promise<SiteStats> {
     .maybeSingle<{ value: string }>();
   return error ? {} : parseSiteStats(data?.value);
 }
+
+// 머리글·바닥글 로고 (최상위 관리자 선택, 0027). 읽지 못하면 기본 원형 로고
+// 한 화면에서 머리글·바닥글이 함께 부르므로 요청마다 한 번만 읽음
+export const getSiteLogo = cache(async (): Promise<SiteLogo> => {
+  await connection();
+  if (!isSupabaseConfigured) return DEFAULT_LOGO;
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "site_logo")
+    .maybeSingle<{ value: string }>();
+  return error ? DEFAULT_LOGO : parseSiteLogo(data?.value);
+});
