@@ -33,7 +33,7 @@ const JSON_LD = [
     genre: "어린이 합창",
     keywords: "세종시 합창단, 세종 어린이 합창단, 세종시 어린이 합창단, 세종리틀싱어즈",
     address: { "@type": "PostalAddress", addressRegion: "세종특별자치시", addressCountry: "KR" },
-    sameAs: [site.links.youtube, site.links.blog, site.links.cafe],
+    sameAs: [site.links.kakao, site.links.youtube, site.links.blog, site.links.cafe],
   },
   { "@context": "https://schema.org", "@type": "WebSite", name: site.name, alternateName: site.nameEn, url: site.url },
 ];
