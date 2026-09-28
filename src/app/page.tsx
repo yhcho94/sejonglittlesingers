@@ -342,8 +342,8 @@ export default async function HomePage() {
                   {CLASS_OPTIONS.find((o) => o.name === c.name)?.day} 수업
                 </p>
                 <p className="mt-2 text-xs text-ink-soft sm:text-sm md:mt-3">
-                  <span className="hidden sm:inline">부지휘자 </span>
-                  <span className="font-medium text-ink sm:ml-1">
+                  부지휘자{" "}
+                  <span className="whitespace-nowrap font-medium text-ink sm:ml-1">
                     {classTeachers(c.name).find((m) => m.role === "부지휘자")?.name}
                   </span>
                 </p>
