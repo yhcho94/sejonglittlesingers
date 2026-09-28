@@ -31,7 +31,7 @@ const JSON_LD = [
     name: site.name,
     alternateName: [site.nameEn, "세종 리틀싱어즈"],
     url: site.url,
-    logo: `${site.url}/icons/icon-512.png`,
+    logo: `${site.url}/icons/logo-512.png`,
     image: `${site.url}/images/og-clover.jpg`,
     description: site.description,
     foundingDate: "2023",
