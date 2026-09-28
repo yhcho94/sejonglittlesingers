@@ -30,10 +30,10 @@ function NaverBadge({ letter, className }: { letter: string; className: string }
 const BlogIcon = ({ className }: { className: string }) => <NaverBadge letter="b" className={className} />;
 const CafeIcon = ({ className }: { className: string }) => <NaverBadge letter="C" className={className} />;
 
-const NARROW_HIDDEN = "[@media(max-width:439px)_and_(display-mode:browser)]:hidden max-[399px]:hidden";
+const NARROW_HIDDEN = "[@media(max-width:419px)_and_(display-mode:browser)]:hidden max-[374px]:hidden";
 
 export const CHANNELS = [
-  { href: site.links.kakao, label: "카카오 채널", short: "카카오 채널", Icon: KakaoIcon },
+  { href: site.links.kakao, label: "카카오 채널", short: "채널", Icon: KakaoIcon },
   { href: site.links.youtube, label: "유튜브", short: "유튜브", Icon: YoutubeIcon },
   { href: site.links.blog, label: "네이버 블로그", short: "블로그", Icon: BlogIcon, narrowHidden: true },
   { href: site.links.cafe, label: "네이버 카페", short: "카페", Icon: CafeIcon, narrowHidden: true },
@@ -48,9 +48,9 @@ export function SocialLinks({
   className?: string;
   itemClassName?: string;
   showLabel?: boolean;
-  // 휴대폰 머리글: 아이콘 아래에 짧은 이름(카카오 채널·유튜브·블로그·카페)
+  // 휴대폰 머리글: 아이콘 아래에 짧은 이름(채널·유튜브·블로그·카페)
   // 폭이 좁은 휴대폰에서는 블로그·카페를 빼고 메뉴 안에서만 보여 줌
-  // (브라우저 440px 미만. 설치한 앱으로 열면 앱 설치 버튼이 없어 자리가 남으므로 400px 미만)
+  // (브라우저 420px 미만. 설치한 앱으로 열면 앱 설치 버튼이 없어 자리가 남으므로 375px 미만)
   stacked?: boolean;
 }) {
   return (
