@@ -321,11 +321,10 @@ export default async function HomePage() {
       <section className="section-y bg-cream">
         <div className="container-page">
           <SectionTitle eyebrow="Classes" title="세 개의 반, 하나의 하모니" href="/faculty" linkLabel="강사진" />
-          {/* 세 반 전체를 이끄는 단장·상임지휘자 */}
+          {/* 단장·상임지휘자 */}
           <p data-reveal className="mb-5 flex flex-wrap items-baseline gap-x-2 text-sm text-ink-soft md:mb-7 md:text-base">
             {conductor.role}
             <span className="font-[family-name:var(--font-serif)] text-lg font-semibold text-navy md:text-xl">{conductor.name}</span>
-            <span className="text-xs md:text-sm">· 세 반 전체 지도</span>
           </p>
           <div className="grid grid-cols-3 gap-3 md:gap-6">
             {organization.classes.map((c, i) => (
@@ -343,8 +342,8 @@ export default async function HomePage() {
                   {CLASS_OPTIONS.find((o) => o.name === c.name)?.day} 수업
                 </p>
                 <p className="mt-2 text-xs text-ink-soft sm:text-sm md:mt-3">
-                  <span className="hidden sm:inline">부지휘자 </span>
-                  <span className="font-medium text-ink sm:ml-1">
+                  부지휘자{" "}
+                  <span className="whitespace-nowrap font-medium text-ink sm:ml-1">
                     {classTeachers(c.name).find((m) => m.role === "부지휘자")?.name}
                   </span>
                 </p>
