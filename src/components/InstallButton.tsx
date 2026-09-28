@@ -43,7 +43,7 @@ export function InstallButton({
     variant === "stacked" ? (
       <>
         <InstallIcon className="h-5 w-5 text-navy" />
-        <span className="text-[10px] leading-none font-medium">앱 설치</span>
+        <span className="text-[10px] leading-none font-medium whitespace-nowrap max-[359px]:whitespace-normal">앱 설치</span>
       </>
     ) : variant === "inline" ? (
       <>
