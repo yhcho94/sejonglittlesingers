@@ -1,16 +1,17 @@
 import Link from "next/link";
 import { signOut } from "@/app/actions/auth";
 import { getCurrentUser } from "@/lib/auth";
+import { getSiteLogo } from "@/lib/content";
 import { site } from "@/lib/site";
 import { CopyLinkButton } from "./CopyLinkButton";
 import { InstallButton } from "./InstallButton";
-import { LogoBadge } from "./LogoMark";
 import { MobileMenu } from "./MobileMenu";
+import { SiteLogo } from "./SiteLogo";
 import { DesktopNav } from "./NavLinks";
 import { SocialLinks } from "./SocialLinks";
 
 export async function Header() {
-  const current = await getCurrentUser();
+  const [current, logo] = await Promise.all([getCurrentUser(), getSiteLogo()]);
   const isAdmin = current?.profile?.role === "admin";
 
   const accountLinks = current ? (
@@ -60,10 +61,7 @@ export async function Header() {
       <header data-print-hide className="sticky top-0 z-30 h-[var(--header-h)] border-b border-line/80 bg-ivory/90 backdrop-blur-md">
         <div className="container-page flex h-full items-center justify-between gap-2 lg:gap-6">
           <Link href="/" className="flex shrink-0 items-center gap-1.5 max-[379px]:gap-1 lg:gap-2.5" aria-label={`${site.name} 홈`}>
-            <LogoBadge
-              markClassName="h-auto w-10 max-[379px]:w-8 lg:w-14"
-              sinceClassName="mt-0.5 text-[6.5px] text-ink-soft max-[379px]:text-[6px] max-[379px]:tracking-normal lg:text-[8px]"
-            />
+            <SiteLogo logo={logo} variant="header" priority />
             <span className="flex flex-col leading-none whitespace-nowrap">
               <span className="font-[family-name:var(--font-serif)] text-lg font-bold tracking-tight text-navy max-[379px]:text-base lg:text-xl">
                 {site.name}

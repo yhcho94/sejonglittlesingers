@@ -26,7 +26,7 @@ export function FloatingContact() {
       >
         <KakaoIcon className="h-9 w-9" bare />
       </a>
-      <a href={mailHref} aria-label={`이메일 문의 (${site.contact.email})`} title="이메일 문의" className={`${item} bg-navy text-white`}>
+      <a href={mailHref} aria-label={`이메일 문의 (${site.contact.email})`} title="이메일 문의" className={`${item} bg-navy text-white ring-white/30`}>
         <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
           <rect x="3" y="5.5" width="18" height="13" rx="2" />
           <path d="M3.5 7l8.5 6 8.5-6" strokeLinecap="round" strokeLinejoin="round" />
