@@ -1,10 +1,11 @@
 import { site } from "@/lib/site";
 
 // 공식 채널 아이콘: 한눈에 알아보도록 서비스 색(카카오 노랑, 유튜브 빨강, 네이버 초록)의 단순한 기호 사용
-function KakaoIcon({ className }: { className: string }) {
+// bare: 노란 바탕 없이 말풍선만 (둥근 노란 버튼 안에 넣을 때)
+export function KakaoIcon({ className, bare = false }: { className: string; bare?: boolean }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="5" fill="#FEE500" />
+      {!bare && <rect x="2" y="2" width="20" height="20" rx="5" fill="#FEE500" />}
       <path d="M12 6.2c-3.7 0-6.6 2.3-6.6 5.2 0 1.9 1.2 3.5 3.1 4.4l-.7 2.6c-.1.2.2.4.4.3l3-2c.3 0 .5.1.8.1 3.7 0 6.6-2.3 6.6-5.2S15.7 6.2 12 6.2z" fill="#191919" />
     </svg>
   );
