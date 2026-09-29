@@ -16,10 +16,10 @@ import { site, smsHref } from "@/lib/site";
 import { classTeachers, conductor, organization } from "@/lib/staff";
 import heroMobileImage from "../../public/images/hero-mobile.jpg";
 import heroImage from "../../public/images/hero.jpg";
+import heroConcertHall from "../../public/images/hero/concert-hall.jpg";
 import heroEducationOffice from "../../public/images/hero/education-office.jpg";
-import heroRecital2026 from "../../public/images/hero/recital-2026.jpg";
-import heroRegularConcert3 from "../../public/images/hero/regular-concert-3.jpg";
-import heroSummerUniform from "../../public/images/hero/summer-uniform.jpg";
+import heroHangulFestival from "../../public/images/hero/hangul-festival-2025.jpg";
+import heroSingingCloseup from "../../public/images/hero/singing-closeup.jpg";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
@@ -59,10 +59,10 @@ const HERO_SLIDES: HeroSlide[] = [
     position: "object-center lg:object-[50%_62%]",
   },
   ...[
-    { src: heroRegularConcert3, alt: "제3회 세종리틀싱어즈 정기연주회 '우리들의 꿈' 무대", position: "object-[50%_35%]" },
     { src: heroEducationOffice, alt: "세종특별자치시교육청 행사 무대에서 노래하는 단원들", position: "object-[50%_45%]" },
-    { src: heroRecital2026, alt: "2026 향상음악회를 마치고 인사하는 단원들", position: "object-center" },
-    { src: heroSummerUniform, alt: "하복을 입고 무대에 선 단원들", position: "object-center" },
+    { src: heroHangulFestival, alt: "2025 세종한글축제 무대에서 노래하는 단원들", position: "object-[50%_75%]" },
+    { src: heroSingingCloseup, alt: "무대에서 입을 모아 노래하는 단원들", position: "object-[50%_80%] lg:object-center" },
+    { src: heroConcertHall, alt: "공연장 무대에서 지휘에 맞춰 노래하는 단원들", position: "object-[50%_60%] lg:object-[75%_50%]" },
   ].map(({ src, alt, position }) => ({
     alt,
     position,
