@@ -23,13 +23,18 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
 });
 
+// 첫 화면 제목: '세종시 어린이 합창단'·'세종시 합창단' 검색어가 그대로 들어가도록
+const HOME_TITLE = `${site.name} | 세종시 어린이 합창단 · 세종시 합창단 단원 모집`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} | 세종시 어린이 합창단`,
+    default: HOME_TITLE,
     template: `%s | ${site.name}`,
   },
   description: site.description,
+  // 구글은 쓰지 않지만 일부 검색엔진이 참고
+  keywords: ["세종시 합창단", "세종시 어린이 합창단", "세종 어린이 합창단", "세종 합창단", "세종리틀싱어즈", "Sejong Little Singers"],
   // iOS 홈 화면에 추가했을 때의 이름과 상단바
   appleWebApp: {
     capable: true,
@@ -38,7 +43,7 @@ export const metadata: Metadata = {
   },
   // 공유 미리보기 이미지: 사진을 바꿀 때는 파일 이름도 바꿔야 카카오톡 등이 예전 이미지를 다시 쓰지 않습니다 (주소 기준으로 캐시)
   openGraph: {
-    title: `${site.name} | 세종시 어린이 합창단`,
+    title: HOME_TITLE,
     description: site.description,
     siteName: site.name,
     locale: "ko_KR",

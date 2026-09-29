@@ -20,7 +20,7 @@ export async function Footer() {
             </div>
           </div>
           <p className="mt-6 max-w-sm text-sm leading-relaxed">
-            음악을 통해 아이들의 감성과 협동심을 키우는 세종시 어린이 합창단
+            음악을 통해 아이들의 감성과 협동심을 키우는 세종시 대표 어린이 합창단
           </p>
           <SocialLinks
             showLabel
