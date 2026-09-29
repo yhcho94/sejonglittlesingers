@@ -6,10 +6,11 @@ export const site = {
   name: "세종리틀싱어즈",
   nameEn: "Sejong Little Singers",
   description:
-    "세종시 대표 어린이 합창단 세종리틀싱어즈 공식 홈페이지. 세종시 어린이 합창단·세종시 합창단 단원 모집(울림반·화음반·선율반)과 입단 오디션 안내, 공연 일정, 공연·행사 사진을 소개합니다.",
+    "세종시 대표 어린이 합창단 세종리틀싱어즈(세종시어린이합창단) 공식 홈페이지. 세종시 어린이 합창단·세종시 합창단 단원 모집(울림반·화음반·선율반)과 입단 오디션 안내, 공연 일정, 공연·행사 사진을 소개합니다.",
   // 공식 채널
   links: {
     kakao: "https://pf.kakao.com/_gxelGG",
+    instagram: "https://www.instagram.com/sejong_little_singers/",
     cafe: "https://cafe.naver.com/sejonglittlesingers",
     blog: "https://blog.naver.com/sejonglittlesingers",
     youtube: `https://www.youtube.com/${encodeURIComponent("@세종리틀싱어즈")}`,

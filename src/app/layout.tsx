@@ -23,8 +23,8 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
 });
 
-// 첫 화면 제목: '세종시 어린이 합창단'·'세종시 합창단' 검색어가 그대로 들어가도록
-const HOME_TITLE = `${site.name} | 세종시 어린이 합창단 · 세종시 합창단 단원 모집`;
+// 첫 화면 제목: 검색어 '세종시어린이합창단'(붙여 쓰기, 인스타그램 등에서 쓰는 이름)·'세종시 어린이 합창단'·'세종시 합창단'이 그대로 들어가도록
+const HOME_TITLE = `세종시어린이합창단 ${site.name} | 세종시 어린이 합창단 · 세종시 합창단`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   description: site.description,
   // 구글은 쓰지 않지만 일부 검색엔진이 참고
-  keywords: ["세종시 합창단", "세종시 어린이 합창단", "세종 어린이 합창단", "세종 합창단", "세종리틀싱어즈", "Sejong Little Singers"],
+  keywords: ["세종시 합창단", "세종시 어린이 합창단", "세종시어린이합창단", "세종합창단", "세종 어린이 합창단", "세종 합창단", "세종리틀싱어즈", "Sejong Little Singers"],
   // iOS 홈 화면에 추가했을 때의 이름과 상단바
   appleWebApp: {
     capable: true,

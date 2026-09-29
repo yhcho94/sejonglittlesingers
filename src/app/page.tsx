@@ -30,7 +30,7 @@ const JSON_LD = [
     "@context": "https://schema.org",
     "@type": "MusicGroup",
     name: site.name,
-    alternateName: [site.nameEn, "세종 리틀싱어즈", "세종시 어린이 합창단"],
+    alternateName: [site.nameEn, "세종 리틀싱어즈", "세종시어린이합창단", "세종시 어린이 합창단"],
     url: site.url,
     logo: `${site.url}/icons/logo-512.png`,
     image: `${site.url}/images/og-clover.jpg`,
@@ -41,7 +41,7 @@ const JSON_LD = [
     areaServed: { "@type": "City", name: "세종특별자치시" },
     keywords: "세종시 합창단, 세종 어린이 합창단, 세종시 어린이 합창단, 세종리틀싱어즈",
     address: { "@type": "PostalAddress", addressRegion: "세종특별자치시", addressLocality: "세종시", addressCountry: "KR" },
-    sameAs: [site.links.kakao, site.links.youtube, site.links.blog, site.links.cafe],
+    sameAs: [site.links.instagram, site.links.kakao, site.links.youtube, site.links.blog, site.links.cafe],
   },
   { "@context": "https://schema.org", "@type": "WebSite", name: site.name, alternateName: site.nameEn, url: site.url },
 ];
@@ -280,7 +280,7 @@ export default async function HomePage() {
           </div>
           <div data-reveal style={{ "--reveal-delay": "120ms" } as React.CSSProperties} className="md:col-span-7 md:pt-8">
             <p className="text-lg leading-relaxed text-ink md:text-xl md:leading-relaxed">
-              세종리틀싱어즈는 2023년 창단된 세종시 어린이 합창단으로, 음악을 통해 아이들의 감성과 협동심을 키우는 전문
+              세종리틀싱어즈(세종시어린이합창단)는 2023년 창단된 세종시 대표 어린이 합창단으로, 음악을 통해 아이들의 감성과 협동심을 키우는 전문
               합창 교육단체입니다.
             </p>
             <p className="mt-4 leading-relaxed text-ink-soft">
