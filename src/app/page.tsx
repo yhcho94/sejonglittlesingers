@@ -28,10 +28,12 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
 const JSON_LD = [
   {
     "@context": "https://schema.org",
-    "@type": "MusicGroup",
+    // Organization(단체) 이면서 MusicGroup(음악 단체)
+    "@type": ["Organization", "MusicGroup"],
+    "@id": `${site.url}/#organization`,
     name: site.name,
     alternateName: [site.nameEn, "세종 리틀싱어즈", "세종시어린이합창단", "세종시 어린이 합창단"],
-    url: site.url,
+    url: `${site.url}/`,
     logo: `${site.url}/icons/logo-512.png`,
     image: `${site.url}/images/og-clover.jpg`,
     description: site.description,
@@ -43,7 +45,17 @@ const JSON_LD = [
     address: { "@type": "PostalAddress", addressRegion: "세종특별자치시", addressLocality: "세종시", addressCountry: "KR" },
     sameAs: [site.links.instagram, site.links.kakao, site.links.youtube, site.links.blog, site.links.cafe],
   },
-  { "@context": "https://schema.org", "@type": "WebSite", name: site.name, alternateName: site.nameEn, url: site.url },
+  // 구글 검색 결과의 사이트 이름 표시용 (홈 주소는 끝에 / 까지)
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${site.url}/#website`,
+    name: site.name,
+    alternateName: [site.nameEn, "세종시 어린이 합창단"],
+    url: `${site.url}/`,
+    inLanguage: "ko-KR",
+    publisher: { "@id": `${site.url}/#organization` },
+  },
 ];
 
 // 대표 사진 (화면 크기별로 다른 사진: Next.js getImageProps 아트 디렉션)

@@ -23,8 +23,8 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
 });
 
-// 첫 화면 제목: 검색어 '세종시어린이합창단'(붙여 쓰기, 인스타그램 등에서 쓰는 이름)·'세종시 어린이 합창단'·'세종시 합창단'이 그대로 들어가도록
-const HOME_TITLE = `세종시어린이합창단 ${site.name} | 세종시 어린이 합창단 · 세종시 합창단`;
+// 첫 화면(기본) 제목: 합창단 이름 + '세종시 어린이 합창단 공식 홈페이지'
+const HOME_TITLE = `${site.name} | 세종시 어린이 합창단 공식 홈페이지`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
