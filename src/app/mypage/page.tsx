@@ -9,6 +9,7 @@ import { areaLabels, isSuperAdmin } from "@/lib/admin-perms";
 import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
 import { memberRoleLabel } from "@/lib/member-types";
+import { isFacultyRole } from "@/lib/staff-bio";
 import { createClient } from "@/lib/supabase/server";
 import type { Application } from "@/lib/types";
 import { MEDIA_NOTICE, consentExpiresOn } from "@/lib/media-consent";
@@ -138,6 +139,18 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             )}
           </h2>
           {profile ? <ProfileForm profile={profile} /> : <p>회원 정보를 불러오지 못했습니다.</p>}
+          {/* 강사진(지휘자·부지휘자·반주자 등) 운영진 회원: 강사진 소개에 나오는 본인 약력 */}
+          {profile && (profile.member_type === "teacher" || profile.member_type === "staff") && isFacultyRole(profile.staff_role) && (
+            <div className="mt-6 border-t border-line pt-4">
+              <h3 className="mb-2 text-sm font-semibold text-navy">강사 프로필</h3>
+              <p className="mb-3 text-xs text-ink-soft">
+                강사진 소개에 나오는 학력·경력 등을 직접 입력하고 고칠 수 있습니다. 비워 둔 항목은 표시되지 않습니다.
+              </p>
+              <Link href="/mypage/profile" className="btn-primary inline-block px-3 py-1.5 text-sm">
+                강사 프로필 수정
+              </Link>
+            </div>
+          )}
           <div className="mt-6 border-t border-line pt-4">
             <h3 className="mb-2 text-sm font-semibold text-navy">관리자 권한</h3>
             {profile?.role === "admin" ? (

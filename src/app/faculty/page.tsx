@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
-import { conductor, organization, staffGroups, type BioSection, type StaffMember } from "@/lib/staff";
+import { getFacultyBios } from "@/lib/content";
+import { buildFaculty } from "@/lib/faculty";
+import { organization, type BioSection, type StaffMember } from "@/lib/staff";
 
 export const metadata: Metadata = {
   title: "강사진 소개",
@@ -8,7 +10,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/faculty" },
 };
 
-export default function FacultyPage() {
+// 예전 약력 + 선생님이 마이페이지 → 강사 프로필에서 직접 입력한 내용 (비운 항목은 표시 안 함)
+export default async function FacultyPage() {
+  const { conductor, groups: staffGroups } = buildFaculty(await getFacultyBios());
   return (
     <>
       <PageHeader
@@ -38,6 +42,11 @@ export default function FacultyPage() {
                 </a>
               )}
             </div>
+            {conductor.intro && (
+              <p className="whitespace-pre-line border-b border-line px-4 py-4 text-sm leading-relaxed text-ink md:px-6">
+                {conductor.intro}
+              </p>
+            )}
             <div className="grid gap-x-8 gap-y-4 p-4 md:grid-cols-2 md:p-6">
               {conductor.sections.map((section) => (
                 <BioList key={section.title} section={section} />
@@ -55,6 +64,9 @@ export default function FacultyPage() {
                 {group.members.map((member) => (
                   <article key={member.name} className="border border-line bg-white p-4 md:p-5">
                     <StaffHeading member={member} />
+                    {member.intro && (
+                      <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink">{member.intro}</p>
+                    )}
                     <div className="mt-3 space-y-4">
                       {member.sections.map((section) => (
                         <BioList key={section.title} section={section} />
@@ -79,6 +91,16 @@ function StaffHeading({ member }: { member: StaffMember }) {
       <div>
         <p className="text-xs text-ink-soft">{member.role}</p>
         <h3 className="mt-1 font-[family-name:var(--font-serif)] text-xl font-bold">{member.name}</h3>
+        {member.website && (
+          <a
+            href={member.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1 inline-block text-xs text-navy underline"
+          >
+            개인 홈페이지 ↗
+          </a>
+        )}
       </div>
       {member.className && (
         <span className="border px-2.5 py-0.5 text-xs font-medium" style={{ color, borderColor: color }}>
@@ -94,8 +116,8 @@ function BioList({ section }: { section: BioSection }) {
     <div>
       <h4 className="border-b border-line pb-1.5 text-xs font-bold tracking-wider text-gold-deep">{section.title}</h4>
       <ul className="mt-2 space-y-1 text-sm leading-snug">
-        {section.items.map((item) => (
-          <li key={item} className="flex gap-2">
+        {section.items.map((item, i) => (
+          <li key={i} className="flex gap-2">
             <span className="text-gold" aria-hidden>
               ·
             </span>
