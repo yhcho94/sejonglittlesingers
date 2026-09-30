@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
-import { conductor, organization, staffGroups, type BioSection, type StaffMember } from "@/lib/staff";
+import { getFacultyRows } from "@/lib/content";
+import { buildFaculty } from "@/lib/faculty";
+import { organization, type BioSection, type StaffMember } from "@/lib/staff";
 
 export const metadata: Metadata = {
   title: "강사진 소개",
@@ -8,7 +10,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/faculty" },
 };
 
-export default function FacultyPage() {
+// 약력은 관리자 → 강사진 소개, 선생님 본인은 마이페이지 → 강사 프로필에서 수정 (비운 항목은 표시 안 함)
+export default async function FacultyPage() {
+  const { conductor, groups: staffGroups } = buildFaculty(await getFacultyRows());
   return (
     <>
       <PageHeader
@@ -19,31 +23,33 @@ export default function FacultyPage() {
 
       <section className="section-y bg-ivory">
         <div className="container-page">
-          <article className="border border-line bg-white">
-            <div className="flex flex-wrap items-end justify-between gap-4 bg-navy px-4 py-5 text-white md:px-6 md:py-6">
-              <div>
-                <p className="eyebrow text-gold">{conductor.role}</p>
-                <h2 className="mt-1 font-[family-name:var(--font-serif)] text-2xl font-semibold md:text-3xl">
-                  {conductor.name}
-                </h2>
+          {conductor && (
+            <article className="border border-line bg-white">
+              <div className="flex flex-wrap items-end justify-between gap-4 bg-navy px-4 py-5 text-white md:px-6 md:py-6">
+                <div>
+                  <p className="eyebrow text-gold">{conductor.role}</p>
+                  <h2 className="mt-1 font-[family-name:var(--font-serif)] text-2xl font-semibold md:text-3xl">
+                    {conductor.name}
+                  </h2>
+                </div>
+                {conductor.website && (
+                  <a
+                    href={conductor.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-ghost-light px-4 py-2 text-xs"
+                  >
+                    개인 홈페이지 ↗
+                  </a>
+                )}
               </div>
-              {conductor.website && (
-                <a
-                  href={conductor.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost-light px-4 py-2 text-xs"
-                >
-                  개인 홈페이지 ↗
-                </a>
-              )}
-            </div>
-            <div className="grid gap-x-8 gap-y-4 p-4 md:grid-cols-2 md:p-6">
-              {conductor.sections.map((section) => (
-                <BioList key={section.title} section={section} />
-              ))}
-            </div>
-          </article>
+              <div className="grid gap-x-8 gap-y-4 p-4 md:grid-cols-2 md:p-6">
+                {conductor.sections.map((section) => (
+                  <BioList key={section.title} section={section} />
+                ))}
+              </div>
+            </article>
+          )}
 
           {staffGroups.map((group) => (
             <div key={group.title} className="mt-7">
@@ -79,6 +85,16 @@ function StaffHeading({ member }: { member: StaffMember }) {
       <div>
         <p className="text-xs text-ink-soft">{member.role}</p>
         <h3 className="mt-1 font-[family-name:var(--font-serif)] text-xl font-bold">{member.name}</h3>
+        {member.website && (
+          <a
+            href={member.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1 inline-block text-xs text-navy underline"
+          >
+            개인 홈페이지 ↗
+          </a>
+        )}
       </div>
       {member.className && (
         <span className="border px-2.5 py-0.5 text-xs font-medium" style={{ color, borderColor: color }}>
@@ -94,8 +110,8 @@ function BioList({ section }: { section: BioSection }) {
     <div>
       <h4 className="border-b border-line pb-1.5 text-xs font-bold tracking-wider text-gold-deep">{section.title}</h4>
       <ul className="mt-2 space-y-1 text-sm leading-snug">
-        {section.items.map((item) => (
-          <li key={item} className="flex gap-2">
+        {section.items.map((item, i) => (
+          <li key={i} className="flex gap-2">
             <span className="text-gold" aria-hidden>
               ·
             </span>
