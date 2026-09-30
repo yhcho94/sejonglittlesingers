@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
 import { adminFor, getCurrentUser } from "@/lib/auth";
 import { canEditOwnFaculty, findOwnFacultyRow } from "@/lib/faculty-own";
-import { bioFromForm } from "@/lib/staff-bio";
+import { FACULTY_PHOTO_BUCKET, FACULTY_ROLE_OTHER, bioFromForm, isFacultyPhotoPath } from "@/lib/staff-bio";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/lib/types";
 
@@ -41,7 +41,9 @@ export async function adminSaveFaculty(_prev: FormState, formData: FormData): Pr
   if (!(await adminFor("members"))) return { error: "최상위 관리자만 수정할 수 있습니다." };
   const id = formData.get("id") ? Number(formData.get("id")) : null;
   const name = String(formData.get("name") ?? "").trim();
-  const role = String(formData.get("role") ?? "").trim();
+  // 역할: 목록에서 고른 값, '기타'면 직접 입력한 값
+  const picked = String(formData.get("role") ?? "").trim();
+  const role = (picked === FACULTY_ROLE_OTHER ? String(formData.get("role_custom") ?? "") : picked).trim();
   const className = String(formData.get("class_name") ?? "").trim();
   const sortOrder = Number(formData.get("sort_order") ?? 0);
   if (!name || name.length > 50) return { error: "이름을 50자 이내로 입력해 주세요." };
@@ -85,7 +87,48 @@ export async function adminDeleteFaculty(formData: FormData) {
   const id = Number(formData.get("id"));
   if (!Number.isSafeInteger(id)) return;
   const supabase = await createClient();
+  // 사진 파일도 함께 삭제 (0029 전이면 사진 칸이 없어 건너뜀)
+  const { data: row } = await supabase.from("faculty_bios").select("*").eq("id", id).maybeSingle();
+  if (row?.photo_path) await supabase.storage.from(FACULTY_PHOTO_BUCKET).remove([row.photo_path]);
   await supabase.from("faculty_bios").delete().eq("id", id);
   refresh();
   redirect("/admin/faculty");
+}
+
+// 사진: 브라우저에서 저장소에 올린 뒤 호출. 최상위 관리자 또는 그 줄의 선생님 본인 (DB·저장소 규칙 0029)
+async function canEditPhoto(id: number) {
+  if (await adminFor("members")) return true;
+  const p = (await getCurrentUser())?.profile;
+  if (!p || !canEditOwnFaculty(p)) return false;
+  const supabase = await createClient();
+  const { data } = await supabase.from("faculty_bios").select("name").eq("id", id).maybeSingle();
+  return data?.name === p.guardian_name;
+}
+
+export async function setFacultyPhoto(id: number, path: string): Promise<FormState> {
+  if (!Number.isSafeInteger(id) || typeof path !== "string" || !isFacultyPhotoPath(id, path)) {
+    return { error: "잘못된 요청입니다." };
+  }
+  if (!(await canEditPhoto(id))) return { error: "사진을 바꿀 권한이 없습니다." };
+  const supabase = await createClient();
+  const { data: before } = await supabase.from("faculty_bios").select("photo_path").eq("id", id).maybeSingle();
+  const { data, error } = await supabase.from("faculty_bios").update({ photo_path: path }).eq("id", id).select("id");
+  if (error || !data?.length) return { error: "사진을 저장하지 못했습니다. (0029 SQL 실행 여부를 확인해 주세요)" };
+  // 예전 사진 파일 삭제
+  const old = before?.photo_path;
+  if (old && old !== path) await supabase.storage.from(FACULTY_PHOTO_BUCKET).remove([old]);
+  refresh();
+  return { success: "사진을 저장했습니다." };
+}
+
+export async function removeFacultyPhoto(id: number): Promise<FormState> {
+  if (!Number.isSafeInteger(id)) return { error: "잘못된 요청입니다." };
+  if (!(await canEditPhoto(id))) return { error: "사진을 지울 권한이 없습니다." };
+  const supabase = await createClient();
+  const { data: before } = await supabase.from("faculty_bios").select("photo_path").eq("id", id).maybeSingle();
+  const { error } = await supabase.from("faculty_bios").update({ photo_path: null }).eq("id", id);
+  if (error) return { error: "사진을 지우지 못했습니다." };
+  if (before?.photo_path) await supabase.storage.from(FACULTY_PHOTO_BUCKET).remove([before.photo_path]);
+  refresh();
+  return { success: "사진을 지웠습니다." };
 }

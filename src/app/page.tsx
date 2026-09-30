@@ -7,13 +7,14 @@ import { HeroSlideshow, type HeroSlide } from "@/components/HeroSlideshow";
 import { NoticeList } from "@/components/NoticeList";
 import { VisitorCounter } from "@/components/VisitorCounter";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
-import { getActiveSingerCount, getRecruitment, getSiteStats, getStaffCount, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
+import { getActiveSingerCount, getFacultyRows, getRecruitment, getSiteStats, getStaffCount, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
 import { EVENT_ALBUMS } from "@/lib/event-albums";
 import { SITE_STAT_FIELDS, isCountable, statValue } from "@/lib/site-stats";
 import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
 import { site, smsHref } from "@/lib/site";
-import { classTeachers, conductor, organization } from "@/lib/staff";
+import { homeFaculty } from "@/lib/faculty";
+import { organization } from "@/lib/staff";
 import heroMobileImage from "../../public/images/hero-mobile.jpg";
 import heroImage from "../../public/images/hero.jpg";
 import heroConcertHall from "../../public/images/hero/concert-hall.jpg";
@@ -127,7 +128,7 @@ function SectionTitle({
 }
 
 export default async function HomePage() {
-  const [notices, concerts, recruitment, press, RECENT_STAGES, singerCount, staffCount, siteStats] = await Promise.all([
+  const [notices, concerts, recruitment, press, RECENT_STAGES, singerCount, staffCount, siteStats, facultyRows] = await Promise.all([
     listPublishedNotices(4),
     listConcerts("upcoming", 3),
     getRecruitment(),
@@ -136,7 +137,10 @@ export default async function HomePage() {
     getActiveSingerCount(),
     getStaffCount(),
     getSiteStats(),
+    getFacultyRows(),
   ]);
+  // 반 구성: 단장·반별 부지휘자 (강사진 소개 DB, 읽지 못하면 예전 약력)
+  const faculty = homeFaculty(facultyRows);
   // 소개 수치: 최상위 관리자 입력값 > 자동값(명부 집계·조직도 인원) > 기본값
   const autoValues: Partial<Record<string, number | null>> = { singers: singerCount, staff: staffCount };
   const stats = SITE_STAT_FIELDS.map((f) => {
@@ -337,10 +341,12 @@ export default async function HomePage() {
         <div className="container-page">
           <SectionTitle eyebrow="Classes" title="세 개의 반, 하나의 하모니" href="/faculty" linkLabel="강사진" />
           {/* 단장·상임지휘자 */}
-          <p data-reveal className="mb-5 flex flex-wrap items-baseline gap-x-2 text-sm text-ink-soft md:mb-7 md:text-base">
-            {conductor.role}
-            <span className="font-[family-name:var(--font-serif)] text-lg font-semibold text-navy md:text-xl">{conductor.name}</span>
-          </p>
+          {faculty.head && (
+            <p data-reveal className="mb-5 flex flex-wrap items-baseline gap-x-2 text-sm text-ink-soft md:mb-7 md:text-base">
+              {faculty.head.role}
+              <span className="font-[family-name:var(--font-serif)] text-lg font-semibold text-navy md:text-xl">{faculty.head.name}</span>
+            </p>
+          )}
           <div className="grid grid-cols-3 gap-3 md:gap-6">
             {organization.classes.map((c, i) => (
               <div
@@ -359,7 +365,7 @@ export default async function HomePage() {
                 <p className="mt-2 text-xs text-ink-soft sm:text-sm md:mt-3">
                   부지휘자{" "}
                   <span className="whitespace-nowrap font-medium text-ink sm:ml-1">
-                    {classTeachers(c.name).find((m) => m.role === "부지휘자")?.name}
+                    {faculty.assistant(c.name).join(", ")}
                   </span>
                 </p>
               </div>

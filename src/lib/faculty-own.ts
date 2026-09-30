@@ -12,7 +12,7 @@ export function canEditOwnFaculty(p: Profile | null | undefined): boolean {
 export async function findOwnFacultyRow(supabase: Awaited<ReturnType<typeof createClient>>, p: Profile) {
   const { data } = await supabase
     .from("faculty_bios")
-    .select("id, name, role, class_name, sections, website")
+    .select("*")
     .eq("name", p.guardian_name);
   const rows = data ?? [];
   return rows.find((r) => r.role === p.staff_role || (p.staff_role === "단장" && r.role.startsWith("단장"))) ?? rows[0] ?? null;

@@ -21,8 +21,16 @@ function rolesIn(entries: OrgEntry[], section: string) {
 
 // showBlanks: 기본 칸을 항상 보여 주고 지정이 없으면 공란 (회원 정보로 자동 표시할 때)
 //             false 이면 이름이 있는 칸만 순서대로 (예전 고정 조직도)
-export function OrgChart({ entries, showBlanks = true }: { entries: OrgEntry[]; showBlanks?: boolean }) {
-  const { top, headLabel, classRoles, classes } = organization;
+export function OrgChart({
+  entries,
+  showBlanks = true,
+  headLabel = organization.headLabel,
+}: {
+  entries: OrgEntry[];
+  showBlanks?: boolean;
+  headLabel?: string;
+}) {
+  const { top, classRoles, classes } = organization;
   const [head, ...restTop] = top;
   const topRoles = showBlanks
     ? [...restTop, ...extraRoles(entries, ORG_TOP_SECTION, top)]

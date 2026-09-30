@@ -1,4 +1,5 @@
 import type { BioSection, StaffMember } from "./staff";
+import { supabaseUrl } from "./supabase/env";
 
 // 강사진 소개 약력 (0028 faculty_bios). 최상위 관리자와, 조직도 게시가 승인된 선생님 본인이 고침
 // 비워 둔 항목은 강사진 소개에 표시하지 않음
@@ -6,6 +7,10 @@ import type { BioSection, StaffMember } from "./staff";
 export const FACULTY_ROLES = ["단장", "지휘자", "부지휘자", "반주자", "보컬트레이너", "이론선생님", "사무국장"] as const;
 export const isFacultyRole = (role: string | null | undefined) =>
   !!role && (FACULTY_ROLES as readonly string[]).includes(role);
+
+// 관리자 → 강사진 소개의 역할 목록 (단장은 상임지휘자 겸임 직함 포함). 그 밖은 '기타'로 직접 입력
+export const FACULTY_ROLE_OPTIONS = ["단장 · 상임지휘자", ...FACULTY_ROLES] as const;
+export const FACULTY_ROLE_OTHER = "기타";
 
 // 항목 (강사진 소개에 이 순서로 표시). 한 줄에 하나씩 입력
 export const BIO_FIELDS = [
@@ -93,3 +98,11 @@ export function bioFromForm(formData: FormData): { ok: true; bio: StaffBio } | {
   }
   return { ok: true, bio: { sections, website: website || null } };
 }
+
+// 강사 사진 (0029): 공개 저장소 faculty-photos, 경로 faculty/<강사 번호>/<uuid>.jpg
+export const FACULTY_PHOTO_BUCKET = "faculty-photos";
+export const facultyPhotoPath = (id: number, uuid: string) => `faculty/${id}/${uuid}.jpg`;
+export const isFacultyPhotoPath = (id: number, path: string) =>
+  new RegExp(`^faculty/${id}/[0-9a-f-]{36}\\.jpg$`).test(path);
+export const facultyPhotoUrl = (path: string | null | undefined) =>
+  path ? `${supabaseUrl}/storage/v1/object/public/${FACULTY_PHOTO_BUCKET}/${path}` : null;

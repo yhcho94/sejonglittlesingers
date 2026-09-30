@@ -1,5 +1,5 @@
-import { conductor as legacyConductor, organization, staffGroups as legacyGroups, type StaffMember } from "./staff";
-import { bioSections, normalizeBio } from "./staff-bio";
+import { ORG_TOP_SECTION, conductor as legacyConductor, organization, staffGroups as legacyGroups, type StaffMember } from "./staff";
+import { bioSections, facultyPhotoUrl, normalizeBio } from "./staff-bio";
 
 // 강사진 소개 = DB(0028 faculty_bios). 아직 SQL 을 실행하지 않았거나 읽지 못하면 예전(고정) 약력
 export type FacultyRow = {
@@ -10,6 +10,7 @@ export type FacultyRow = {
   sort_order: number;
   sections: unknown;
   website: string | null;
+  photo_path?: string | null; // 0029
 };
 
 // 역할 → 묶음 제목
@@ -44,6 +45,7 @@ function toMember(row: FacultyRow): StaffMember {
     role: row.role,
     className: row.class_name ?? undefined,
     website: bio.website ?? undefined,
+    photo: facultyPhotoUrl(row.photo_path) ?? undefined,
     sections: bioSections(bio),
   };
 }
@@ -61,5 +63,47 @@ export function buildFaculty(rows: FacultyRow[] | null): { conductor: StaffMembe
   return {
     conductor: headRow ? toMember(headRow) : null,
     groups: [...groups.entries()].map(([title, members]) => ({ title, members })),
+  };
+}
+
+// ── 조직도·첫 화면도 같은 강사진 소개 DB 로 ─────────────────────────
+export type OrgEntry = { section: string; role: string; name: string };
+
+// 조직도 칸 이름: '단장 · 상임지휘자' 같은 직함은 '단장' 칸
+export const orgRoleOf = (role: string) => (role.startsWith("단장") ? "단장" : role);
+
+// 조직도 순서: 전체 칸(단장 → 사무국장 → 그 밖) · 반 칸(부지휘자 → 학부모대표 → 부대표 → 반주자 → 이론선생님 → 그 밖)
+function roleRank(section: string, role: string) {
+  const order: readonly string[] = section === ORG_TOP_SECTION ? organization.top : organization.classRoles;
+  const i = order.indexOf(role);
+  return i < 0 ? order.length : i;
+}
+export function sortOrgEntries(entries: OrgEntry[]) {
+  const sectionRank = (s: string) => (s === ORG_TOP_SECTION ? -1 : classRank(s));
+  return entries
+    .map((e, i) => ({ e, i }))
+    .sort((a, b) => sectionRank(a.e.section) - sectionRank(b.e.section) || roleRank(a.e.section, a.e.role) - roleRank(b.e.section, b.e.role) || a.i - b.i)
+    .map(({ e }) => e);
+}
+
+// 강사진 소개 DB → 조직도 칸 (담당 반이 없으면 '전체')
+export function facultyOrgEntries(rows: FacultyRow[]): OrgEntry[] {
+  return sortFaculty(rows).map((r) => ({ section: r.class_name ?? ORG_TOP_SECTION, role: orgRoleOf(r.role), name: r.name }));
+}
+
+// 첫 화면 반 구성: 단장(직함·이름)과 반별 부지휘자
+export function homeFaculty(rows: FacultyRow[] | null) {
+  if (!rows?.length) {
+    return {
+      head: { role: legacyConductor.role, name: legacyConductor.name },
+      assistant: (className: string) =>
+        legacyGroups.flatMap((g) => g.members).filter((m) => m.className === className && m.role === "부지휘자").map((m) => m.name),
+    };
+  }
+  const sorted = sortFaculty(rows);
+  const headRow = sorted.find((r) => facultyGroupOf(r.role) === "단장");
+  return {
+    head: headRow ? { role: headRow.role, name: headRow.name } : null,
+    assistant: (className: string) => sorted.filter((r) => r.class_name === className && r.role === "부지휘자").map((r) => r.name),
   };
 }

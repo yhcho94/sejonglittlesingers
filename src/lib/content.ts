@@ -3,7 +3,8 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { LEGACY_ORG_ENTRIES } from "@/lib/staff";
-import type { FacultyRow } from "@/lib/faculty";
+import { facultyOrgEntries, sortOrgEntries, type FacultyRow, type OrgEntry } from "@/lib/faculty";
+import { isFacultyRole } from "@/lib/staff-bio";
 import { DEFAULT_LOGO, parseSiteLogo, type SiteLogo } from "@/lib/site-logo";
 import { parseSiteStats, type SiteStats } from "@/lib/site-stats";
 import type { AuditionSong } from "@/lib/audition-songs";
@@ -139,7 +140,7 @@ export async function getPublicSingers() {
 }
 
 // 합창단 소개 조직도: 최상위 관리자가 정한 운영진 위치 + 학부모 대표 (이름·역할만). 읽지 못하면 빈 목록
-export type OrgEntry = { section: string; role: string; name: string };
+export type { OrgEntry };
 export async function getOrgChart(): Promise<OrgEntry[]> {
   await connection();
   if (!isSupabaseConfigured) return [];
@@ -166,9 +167,27 @@ export async function getOrgChartSource(): Promise<OrgChartSource> {
 // 강사진·운영진 수 (학부모 대표·부대표 포함): 합창단 소개 조직도에 표시되는 사람 수와 같게 셉니다.
 // '회원 정보로 자동 표시'면 승인된 운영진 + 학부모 대표·부대표, 아니면 예전(고정) 조직도 인원
 export async function getStaffCount() {
-  const entries = (await getOrgChartSource()) === "auto" ? await getOrgChart() : LEGACY_ORG_ENTRIES;
+  const { entries } = await getPublicOrgEntries();
   const people = new Set(entries.map((e) => e.name));
   return people.size > 0 ? people.size : null;
+}
+
+// 합창단 소개 조직도 (홈 화면 인원 수도 같은 기준)
+// - 강사진(단장·부지휘자·반주자·이론선생님·사무국장 등)은 강사진 소개 DB(0028)
+// - 학부모 대표·부대표 등은 '회원 정보로 자동'이면 회원 정보, 아니면 예전 조직도
+// - 강사진 소개 DB 를 읽지 못하면 예전 방식 그대로
+export async function getPublicOrgEntries(): Promise<{ entries: OrgEntry[]; auto: boolean; headLabel?: string }> {
+  const [source, faculty] = await Promise.all([getOrgChartSource(), getFacultyRows()]);
+  const auto = source === "auto";
+  const base = auto ? await getOrgChart() : LEGACY_ORG_ENTRIES;
+  if (!faculty?.length) return { entries: base, auto };
+  const fromFaculty = facultyOrgEntries(faculty);
+  const names = new Set(fromFaculty.map((e) => e.name));
+  // 자동 표시: 승인됐지만 아직 강사진 소개에 없는 강사도 조직도에 남김
+  const others = base.filter((e) => !isFacultyRole(e.role) || (auto && !names.has(e.name)));
+  // 맨 위 칸 제목: 강사진 소개의 단장 직함 (예: 단장 · 상임지휘자)
+  const headLabel = faculty.find((r) => r.role.startsWith("단장"))?.role;
+  return { entries: sortOrgEntries([...fromFaculty, ...others]), auto, headLabel };
 }
 
 // 홈·합창단 소개 수치 (최상위 관리자 입력값, 0026). 읽지 못하면 빈 값 → 자동값·기본값으로 표시
@@ -199,15 +218,17 @@ export const getSiteLogo = cache(async (): Promise<SiteLogo> => {
 });
 
 // 강사진 소개 약력 (0028). 읽지 못하면 null → 예전(고정) 약력으로 표시
-export async function getFacultyRows(): Promise<FacultyRow[] | null> {
+// 첫 화면에서 반 구성·인원 수가 함께 부르므로 요청마다 한 번만 읽음
+export const getFacultyRows = cache(async (): Promise<FacultyRow[] | null> => {
   await connection();
   if (!isSupabaseConfigured) return null;
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("faculty_bios")
-    .select("id, name, role, class_name, sort_order, sections, website")
+    // 전체 칸: 사진 칸(0029)이 아직 없어도 읽히도록
+    .select("*")
     .order("sort_order")
     .order("id");
   if (error) return null;
   return (data ?? []) as FacultyRow[];
-}
+});
