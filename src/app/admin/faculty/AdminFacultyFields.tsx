@@ -1,5 +1,5 @@
 import { CLASS_OPTIONS } from "@/lib/application-fields";
-import { FACULTY_ROLES } from "@/lib/staff-bio";
+import { FacultyRoleField } from "./FacultyRoleField";
 
 // 최상위 관리자만: 이름·역할·담당 반·순서
 export function AdminFacultyFields({
@@ -13,25 +13,7 @@ export function AdminFacultyFields({
         <label htmlFor="name" className="label">이름</label>
         <input id="name" name="name" required maxLength={50} defaultValue={row?.name ?? ""} className="input" />
       </div>
-      <div>
-        <label htmlFor="role" className="label">
-          역할 <span className="font-normal text-ink-soft">(강사진 소개에 표시되는 직함)</span>
-        </label>
-        <input
-          id="role"
-          name="role"
-          required
-          maxLength={30}
-          list="faculty-roles"
-          defaultValue={row?.role ?? ""}
-          className="input"
-        />
-        <datalist id="faculty-roles">
-          {["단장 · 상임지휘자", ...FACULTY_ROLES].map((r) => (
-            <option key={r} value={r} />
-          ))}
-        </datalist>
-      </div>
+      <FacultyRoleField role={row?.role} />
       <div>
         <label htmlFor="class_name" className="label">담당 반</label>
         <select id="class_name" name="class_name" defaultValue={row?.class_name ?? ""} className="input">

@@ -3,10 +3,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { saveOwnFacultyBio } from "@/app/actions/faculty";
 import { FacultyBioForm } from "@/components/FacultyBioForm";
+import { FacultyPhotoUploader } from "@/components/FacultyPhotoUploader";
 import { PageHeader } from "@/components/PageHeader";
 import { requireUser } from "@/lib/auth";
 import { canEditOwnFaculty, findOwnFacultyRow } from "@/lib/faculty-own";
-import { isFacultyRole, normalizeBio } from "@/lib/staff-bio";
+import { facultyPhotoUrl, isFacultyRole, normalizeBio } from "@/lib/staff-bio";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "강사 프로필 수정", robots: { index: false } };
@@ -43,6 +44,17 @@ export default async function StaffBioPage() {
             <li>이름·역할·담당 반은 최상위 관리자만 바꿀 수 있습니다.</li>
           </ul>
         </section>
+
+        {approved && (
+          <section className="card mt-5">
+            <h2 className="mb-3 text-sm font-semibold text-navy">사진</h2>
+            {row ? (
+              <FacultyPhotoUploader id={row.id} name={profile.guardian_name} photoUrl={facultyPhotoUrl(row.photo_path)} />
+            ) : (
+              <p className="text-sm text-ink-soft">아래 약력을 먼저 저장하면 사진을 올릴 수 있습니다.</p>
+            )}
+          </section>
+        )}
 
         <section className="card mt-5">
           {approved ? (

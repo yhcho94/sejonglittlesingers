@@ -3,10 +3,10 @@ import Link from "next/link";
 import { OrgChart } from "@/components/OrgChart";
 import { PageHeader } from "@/components/PageHeader";
 import { mailHref, mapHref, site, smsHref } from "@/lib/site";
-import { getActiveSingerCount, getOrgChart, getOrgChartSource, getSiteStats } from "@/lib/content";
+import { getActiveSingerCount, getPublicOrgEntries, getSiteStats } from "@/lib/content";
 import { statValue, type SiteStatKey } from "@/lib/site-stats";
 import { EVENT_ALBUMS } from "@/lib/event-albums";
-import { LEGACY_ORG_ENTRIES, organization } from "@/lib/staff";
+import { organization } from "@/lib/staff";
 
 export const metadata: Metadata = {
   title: "합창단 소개",
@@ -41,10 +41,9 @@ function Heading({ eyebrow, title }: { eyebrow: string; title: string }) {
 
 export default async function AboutPage() {
   // 단원 수는 DB 의 현재 활동 단원 수 (읽지 못하면 소개 글의 수치)
-  const [singerCount, orgSource, siteStats] = await Promise.all([getActiveSingerCount(), getOrgChartSource(), getSiteStats()]);
-  // 조직도: 최상위 관리자가 '회원 정보로 자동'으로 바꾸기 전까지는 예전 조직도
-  const orgAuto = orgSource === "auto";
-  const orgEntries = orgAuto ? await getOrgChart() : LEGACY_ORG_ENTRIES;
+  const [singerCount, org, siteStats] = await Promise.all([getActiveSingerCount(), getPublicOrgEntries(), getSiteStats()]);
+  // 조직도: 강사진은 강사진 소개 DB, 학부모 대표 등은 '회원 정보로 자동'이면 회원 정보·아니면 예전 조직도
+  const { entries: orgEntries, auto: orgAuto, headLabel: orgHeadLabel } = org;
   // 강사진·운영진 수: 아래 조직도에 나오는 인원 (학부모 대표·부대표 포함, 홈 화면과 같은 기준)
   const orgPeople = new Set(orgEntries.map((e) => e.name)).size;
   const autoValues: Partial<Record<SiteStatKey, number | null>> = { singers: singerCount, staff: orgPeople };
@@ -186,7 +185,7 @@ export default async function AboutPage() {
       <section className="section-y">
         <div className="container-page">
           <Heading eyebrow="Organization" title={`${organization.year} 조직도`} />
-          <OrgChart entries={orgEntries} showBlanks={orgAuto} />
+          <OrgChart entries={orgEntries} showBlanks={orgAuto} headLabel={orgHeadLabel} />
           <Link href="/faculty" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-navy">
             지휘자 · 강사진 소개 보기 <span aria-hidden>→</span>
           </Link>

@@ -7,6 +7,7 @@ export type StaffMember = {
   role: string;
   className?: string; // 담당 반
   website?: string; // 개인 홈페이지
+  photo?: string; // 사진 주소 (강사진 소개 DB, 0029)
   sections: BioSection[];
 };
 

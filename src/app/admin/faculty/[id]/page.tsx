@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { adminDeleteFaculty, adminSaveFaculty } from "@/app/actions/faculty";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { FacultyBioForm } from "@/components/FacultyBioForm";
+import { FacultyPhotoUploader } from "@/components/FacultyPhotoUploader";
 import { requireAdmin } from "@/lib/auth";
-import { normalizeBio } from "@/lib/staff-bio";
+import { facultyPhotoUrl, normalizeBio } from "@/lib/staff-bio";
 import { createClient } from "@/lib/supabase/server";
 import { AdminFacultyFields } from "../AdminFacultyFields";
 
@@ -15,7 +16,7 @@ export default async function AdminFacultyEditPage({ params }: PageProps<"/admin
   const supabase = await createClient();
   const { data: row } = await supabase
     .from("faculty_bios")
-    .select("id, name, role, class_name, sort_order, sections, website, updated_at")
+    .select("*")
     .eq("id", id)
     .maybeSingle();
   if (!row) notFound();
@@ -28,6 +29,10 @@ export default async function AdminFacultyEditPage({ params }: PageProps<"/admin
         </Link>
       </p>
       <h1 className="mb-6 text-2xl font-bold text-navy">{row.name} 약력 수정</h1>
+      <section className="card mb-5 max-w-3xl">
+        <h2 className="mb-3 text-sm font-semibold text-navy">사진</h2>
+        <FacultyPhotoUploader id={row.id} name={row.name} photoUrl={facultyPhotoUrl(row.photo_path)} />
+      </section>
       <section className="card max-w-3xl">
         <FacultyBioForm key={row.updated_at} bio={normalizeBio(row)} action={adminSaveFaculty} id={row.id}>
           <AdminFacultyFields row={row} />
