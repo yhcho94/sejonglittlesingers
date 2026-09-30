@@ -144,7 +144,7 @@ export default async function MyPage({ searchParams }: PageProps<"/mypage">) {
             <div className="mt-6 border-t border-line pt-4">
               <h3 className="mb-2 text-sm font-semibold text-navy">강사 프로필</h3>
               <p className="mb-3 text-xs text-ink-soft">
-                강사진 소개에 나오는 학력·경력 등을 직접 입력하고 고칠 수 있습니다. 비워 둔 항목은 표시되지 않습니다.
+                강사진 소개에 나오는 학력·경력 등을 직접 고칠 수 있습니다. 비워 둔 항목은 표시되지 않습니다.
               </p>
               <Link href="/mypage/profile" className="btn-primary inline-block px-3 py-1.5 text-sm">
                 강사 프로필 수정

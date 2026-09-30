@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
-import { getFacultyBios } from "@/lib/content";
+import { getFacultyRows } from "@/lib/content";
 import { buildFaculty } from "@/lib/faculty";
 import { organization, type BioSection, type StaffMember } from "@/lib/staff";
 
@@ -10,9 +10,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/faculty" },
 };
 
-// 예전 약력 + 선생님이 마이페이지 → 강사 프로필에서 직접 입력한 내용 (비운 항목은 표시 안 함)
+// 약력은 관리자 → 강사진 소개, 선생님 본인은 마이페이지 → 강사 프로필에서 수정 (비운 항목은 표시 안 함)
 export default async function FacultyPage() {
-  const { conductor, groups: staffGroups } = buildFaculty(await getFacultyBios());
+  const { conductor, groups: staffGroups } = buildFaculty(await getFacultyRows());
   return (
     <>
       <PageHeader
@@ -23,36 +23,33 @@ export default async function FacultyPage() {
 
       <section className="section-y bg-ivory">
         <div className="container-page">
-          <article className="border border-line bg-white">
-            <div className="flex flex-wrap items-end justify-between gap-4 bg-navy px-4 py-5 text-white md:px-6 md:py-6">
-              <div>
-                <p className="eyebrow text-gold">{conductor.role}</p>
-                <h2 className="mt-1 font-[family-name:var(--font-serif)] text-2xl font-semibold md:text-3xl">
-                  {conductor.name}
-                </h2>
+          {conductor && (
+            <article className="border border-line bg-white">
+              <div className="flex flex-wrap items-end justify-between gap-4 bg-navy px-4 py-5 text-white md:px-6 md:py-6">
+                <div>
+                  <p className="eyebrow text-gold">{conductor.role}</p>
+                  <h2 className="mt-1 font-[family-name:var(--font-serif)] text-2xl font-semibold md:text-3xl">
+                    {conductor.name}
+                  </h2>
+                </div>
+                {conductor.website && (
+                  <a
+                    href={conductor.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-ghost-light px-4 py-2 text-xs"
+                  >
+                    개인 홈페이지 ↗
+                  </a>
+                )}
               </div>
-              {conductor.website && (
-                <a
-                  href={conductor.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost-light px-4 py-2 text-xs"
-                >
-                  개인 홈페이지 ↗
-                </a>
-              )}
-            </div>
-            {conductor.intro && (
-              <p className="whitespace-pre-line border-b border-line px-4 py-4 text-sm leading-relaxed text-ink md:px-6">
-                {conductor.intro}
-              </p>
-            )}
-            <div className="grid gap-x-8 gap-y-4 p-4 md:grid-cols-2 md:p-6">
-              {conductor.sections.map((section) => (
-                <BioList key={section.title} section={section} />
-              ))}
-            </div>
-          </article>
+              <div className="grid gap-x-8 gap-y-4 p-4 md:grid-cols-2 md:p-6">
+                {conductor.sections.map((section) => (
+                  <BioList key={section.title} section={section} />
+                ))}
+              </div>
+            </article>
+          )}
 
           {staffGroups.map((group) => (
             <div key={group.title} className="mt-7">
@@ -64,9 +61,6 @@ export default async function FacultyPage() {
                 {group.members.map((member) => (
                   <article key={member.name} className="border border-line bg-white p-4 md:p-5">
                     <StaffHeading member={member} />
-                    {member.intro && (
-                      <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink">{member.intro}</p>
-                    )}
                     <div className="mt-3 space-y-4">
                       {member.sections.map((section) => (
                         <BioList key={section.title} section={section} />

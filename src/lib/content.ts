@@ -3,7 +3,7 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { LEGACY_ORG_ENTRIES } from "@/lib/staff";
-import type { FacultyBioRow } from "@/lib/faculty";
+import type { FacultyRow } from "@/lib/faculty";
 import { DEFAULT_LOGO, parseSiteLogo, type SiteLogo } from "@/lib/site-logo";
 import { parseSiteStats, type SiteStats } from "@/lib/site-stats";
 import type { AuditionSong } from "@/lib/audition-songs";
@@ -198,12 +198,16 @@ export const getSiteLogo = cache(async (): Promise<SiteLogo> => {
   return error ? DEFAULT_LOGO : parseSiteLogo(data?.value);
 });
 
-// 강사진 소개: 승인된 선생님이 직접 입력한 강사 프로필 (0028). 읽지 못하면 빈 목록 → 예전 약력만 표시
-export async function getFacultyBios(): Promise<FacultyBioRow[]> {
+// 강사진 소개 약력 (0028). 읽지 못하면 null → 예전(고정) 약력으로 표시
+export async function getFacultyRows(): Promise<FacultyRow[] | null> {
   await connection();
-  if (!isSupabaseConfigured) return [];
+  if (!isSupabaseConfigured) return null;
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("faculty_bios");
-  if (error) return [];
-  return (data ?? []) as FacultyBioRow[];
+  const { data, error } = await supabase
+    .from("faculty_bios")
+    .select("id, name, role, class_name, sort_order, sections, website")
+    .order("sort_order")
+    .order("id");
+  if (error) return null;
+  return (data ?? []) as FacultyRow[];
 }
