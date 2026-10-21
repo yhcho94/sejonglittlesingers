@@ -5,7 +5,7 @@ import { useActionState, useState } from "react";
 import { submitApplication } from "@/app/actions/applications";
 import { FormMessage, SubmitButton } from "@/components/form";
 import { MediaConsentFields } from "@/components/MediaConsentFields";
-import { AUDITION_EMAIL, AUDITION_GUIDE, CLASS_OPTIONS, GENDERS, GUARDIAN_RELATIONS } from "@/lib/application-fields";
+import { AUDITION_EMAIL, CLASS_OPTIONS, GENDERS, GUARDIAN_RELATIONS } from "@/lib/application-fields";
 import { JOIN_SOURCES } from "@/lib/join-source";
 
 export function ApplyForm() {
@@ -222,23 +222,17 @@ export function ApplyForm() {
         <MediaConsentFields />
       </fieldset>
 
-      <section className="rounded-sm border border-gold/60 bg-gold-soft/50 p-4 text-sm">
-        <h2 className="font-semibold text-navy">오디션 동영상 제출 안내</h2>
-        <p className="mt-1">
-          신청서를 제출한 뒤 오디션 동영상을 <strong>{AUDITION_EMAIL}</strong> 로 보내 주세요. 영상까지 받아야 심사가 시작됩니다.
+      <section className="rounded-sm border border-gold/60 bg-gold-soft/50 p-4 text-sm leading-relaxed">
+        <h2 className="font-semibold text-navy">🎵 오디션 동영상 제출 안내</h2>
+        <p className="mt-2">반주에 맞춰 자유곡 1곡을 부르는 모습을 촬영하여 이메일로 보내 주세요.</p>
+        <p className="mt-2">
+          📩 제출 이메일:{" "}
+          <a href={`mailto:${AUDITION_EMAIL}`} className="font-semibold text-navy underline">
+            {AUDITION_EMAIL}
+          </a>
         </p>
-        <p className="mt-1">
-          오디션 곡은 자유곡입니다. 참고 곡과 반주는{" "}
-          <Link href="/join#audition-songs" target="_blank" className="font-medium text-navy underline">
-            입단 안내 → 오디션 자유곡
-          </Link>
-          에서 듣고 내려받을 수 있습니다.
-        </p>
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-ink-soft">
-          {AUDITION_GUIDE.map((line) => (
-            <li key={line}>{line}</li>
-          ))}
-        </ul>
+        <p className="mt-2 text-ink-soft">※ 메일 제목에 지원자 이름과 생년월일을 기재해 주세요.</p>
+        <p className="mt-1 text-ink-soft">※ 지원서와 동영상이 모두 접수되어야 심사가 진행됩니다.</p>
       </section>
 
       <FormMessage state={state} />
