@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FaqList } from "@/components/FaqList";
 import { PageHeader } from "@/components/PageHeader";
+import { joinPageText } from "@/lib/join-page";
 import { AuditionSongList } from "@/components/AuditionSongList";
-import { AUDITION_EMAIL } from "@/lib/application-fields";
 import { getRecruitment, listAuditionSongs, listPublishedFaqs } from "@/lib/content";
 import { site, smsHref } from "@/lib/site";
 
@@ -13,16 +13,23 @@ export const metadata: Metadata = {
   alternates: { canonical: "/join" },
 };
 
-// 이 사이트의 실제 신청·심사 흐름과 같습니다.
-const STEPS = [
-  { title: "온라인 입단 신청", body: "회원가입 없이 보호자 정보와 자녀(단원) 정보를 입력해 신청서를 제출합니다." },
-  { title: "오디션 동영상 제출", body: `자유곡 한 곡을 1절 부른 영상을 ${AUDITION_EMAIL} 로 보냅니다.` },
-  { title: "심사", body: "선생님들이 신청서와 동영상을 보고 심사합니다." },
-  { title: "결과 안내", body: "심사 결과를 보호자 연락처로 전화·문자·카카오톡으로 알려 드립니다." },
-];
+// 문구 안의 이메일 주소를 메일 보내기 링크로
+function withEmailLinks(text: string) {
+  return text.split(/([\w.+-]+@[\w-]+\.[\w.-]+)/g).map((part, i) =>
+    i % 2 ? (
+      <a key={i} href={`mailto:${part}`} className="font-medium text-navy underline">
+        {part}
+      </a>
+    ) : (
+      part
+    ),
+  );
+}
 
 export default async function JoinPage() {
   const [recruitment, faqs, songs] = await Promise.all([getRecruitment(), listPublishedFaqs(), listAuditionSongs()]);
+  // 소개 문구·지원 절차·오디션 곡 안내: 관리자 → 입단 안내에서 수정 (비어 있으면 기본 문구)
+  const text = joinPageText(recruitment);
 
   const overview = [
     { label: "모집 대상", value: recruitment?.target },
@@ -33,7 +40,7 @@ export default async function JoinPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Audition" title="입단 안내" description="노래를 사랑하는 어린이 단원을 기다립니다." />
+      <PageHeader eyebrow="Audition" title="입단 안내" description={text.page_intro} />
 
       <div className="mx-auto max-w-4xl space-y-9 px-4 py-8">
         {recruitment?.is_open && (
@@ -76,12 +83,12 @@ export default async function JoinPage() {
 
         <section>
           <h2 className="mb-5 text-xl font-semibold text-navy">지원 절차</h2>
-          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {STEPS.map((step, i) => (
-              <li key={step.title} className="card relative">
+          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {text.steps.map((step, i) => (
+              <li key={i} className="card relative">
                 <span className="eyebrow text-gold-deep">Step {i + 1}</span>
                 <p className="mt-2 font-bold">{step.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{step.body}</p>
+                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft">{withEmailLinks(step.body)}</p>
               </li>
             ))}
           </ol>
@@ -89,14 +96,8 @@ export default async function JoinPage() {
 
         {songs.length > 0 && (
           <section id="audition-songs" className="scroll-mt-24">
-            <h2 className="mb-2 text-xl font-semibold text-navy">오디션 자유곡</h2>
-            <p className="mb-4 text-sm text-ink-soft">
-              부르고 싶은 노래 한 곡을 자유롭게 골라 1절을 부르는 모습을 휴대폰으로 찍어{" "}
-              <a href={`mailto:${AUDITION_EMAIL}`} className="font-medium text-navy underline">
-                {AUDITION_EMAIL}
-              </a>{" "}
-              로 보내 주세요. 아래 곡과 반주를 참고해도 좋습니다. 반주는 다른 기기로 틀어 주세요.
-            </p>
+            <h2 className="mb-2 text-xl font-semibold text-navy">{text.songs_title}</h2>
+            <p className="mb-4 whitespace-pre-line text-sm text-ink-soft">{withEmailLinks(text.songs_intro)}</p>
             <div className="rounded-sm border border-line bg-white px-4 md:px-6">
               <AuditionSongList songs={songs} />
             </div>
