@@ -2,7 +2,7 @@
 export const ADMIN_AREAS = [
   { key: "applications", label: "입단 신청" },
   { key: "singers", label: "단원 관리" },
-  { key: "recruitment", label: "입단 안내·FAQ·지정곡" },
+  { key: "recruitment", label: "입단 안내·FAQ·오디션 곡" },
   { key: "concerts", label: "공연 일정" },
   { key: "gallery", label: "사진 갤러리" },
   { key: "notices", label: "공지사항" },

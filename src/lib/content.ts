@@ -18,7 +18,8 @@ export async function getRecruitment(): Promise<Recruitment | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("recruitment")
-    .select("is_open, period, target, schedule, place, fee, audition, classes, notes, updated_at")
+    // 전체 칸: 0030 문구 칸이 아직 없어도 읽히도록
+    .select("*")
     .eq("id", 1)
     .maybeSingle<Recruitment>();
   return data;

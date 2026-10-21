@@ -13,7 +13,7 @@ import {
 } from "@/lib/audition-songs";
 import { createClient } from "@/lib/supabase/client";
 
-// 오디션 지정곡 5칸: 곡명 + 반주 링크(유튜브 등) 또는 반주 음원(mp3·m4a) 파일
+// 오디션 자유곡 참고 곡 5칸: 곡명 + 반주 링크(유튜브 등) 또는 반주 음원(mp3·m4a) 파일
 export function AuditionSongsForm({ songs }: { songs: AuditionSong[] }) {
   const [state, action] = useActionState(saveAuditionSongs, undefined);
   return (
@@ -26,7 +26,7 @@ export function AuditionSongsForm({ songs }: { songs: AuditionSong[] }) {
         문제가 없는 음원만 올려 주세요.
       </p>
       <FormMessage state={state} />
-      <SubmitButton pendingText="저장 중...">지정곡 저장</SubmitButton>
+      <SubmitButton pendingText="저장 중...">참고 곡 저장</SubmitButton>
     </form>
   );
 }
@@ -50,12 +50,12 @@ function SongRow({ slot, song }: { slot: number; song?: AuditionSong }) {
     setBusy(false);
     if (error) return setMessage("올리지 못했습니다. 잠시 후 다시 시도해 주세요.");
     setFile(path);
-    setMessage("올렸습니다. 아래 [지정곡 저장]을 눌러야 반영됩니다.");
+    setMessage("올렸습니다. 아래 [참고 곡 저장]을 눌러야 반영됩니다.");
   }
 
   return (
     <fieldset className="rounded-sm border border-line p-4">
-      <legend className="px-1 text-sm font-bold text-navy">지정곡 {slot}</legend>
+      <legend className="px-1 text-sm font-bold text-navy">참고 곡 {slot}</legend>
       <div className="grid gap-3 md:grid-cols-2">
         <div>
           <label htmlFor={`title_${slot}`} className="label">곡명</label>

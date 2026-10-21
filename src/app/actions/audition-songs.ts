@@ -17,13 +17,13 @@ function field(formData: FormData, key: string, max: number) {
   return value ? value.slice(0, max) : null;
 }
 
-// 지정곡 5칸을 한 번에 저장. 곡명을 비우면 그 칸을 지우고, 바뀌거나 지운 반주 음원 파일은 저장소에서도 삭제합니다.
+// 자유곡 참고 곡 5칸을 한 번에 저장. 곡명을 비우면 그 칸을 지우고, 바뀌거나 지운 반주 음원 파일은 저장소에서도 삭제합니다.
 export async function saveAuditionSongs(_prev: FormState, formData: FormData): Promise<FormState> {
   const supabase = await adminClient();
   if (!supabase) return { error: "관리자 권한이 필요합니다." };
 
   const { data: before, error: readError } = await supabase.from("audition_songs").select("slot, file_path");
-  if (readError) return { error: "지정곡 표를 읽지 못했습니다. (0018 SQL 실행 필요)" };
+  if (readError) return { error: "참고 곡 표를 읽지 못했습니다. (0018 SQL 실행 필요)" };
   const oldFiles = new Map((before ?? []).map((r) => [r.slot as number, r.file_path as string | null]));
 
   const upserts = [];
@@ -58,5 +58,5 @@ export async function saveAuditionSongs(_prev: FormState, formData: FormData): P
 
   revalidatePath("/join");
   revalidatePath("/admin/recruitment");
-  return { success: `지정곡 ${upserts.length}곡을 저장했습니다.` };
+  return { success: `참고 곡 ${upserts.length}곡을 저장했습니다.` };
 }

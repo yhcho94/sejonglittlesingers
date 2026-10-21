@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { adminFor } from "@/lib/auth";
 import type { AdminGate } from "@/lib/admin-perms";
 import { fromKstInputValue } from "@/lib/format";
+import { JOIN_STEPS_MAX } from "@/lib/join-page";
 import type { ApplicationStatus, FormState } from "@/lib/types";
 
 // 서버 액션은 외부에서 직접 호출될 수 있으므로 매번 관리자 여부를 확인합니다. (DB 의 RLS 가 한 번 더 막습니다)
@@ -129,6 +130,15 @@ function optionalText(formData: FormData, key: string, max: number) {
   return value ? value.slice(0, max) : null;
 }
 
+// 지원 절차: 단계 이름이 있는 줄만 (이름 40자, 설명 300자). 하나도 없으면 null → 기본 절차
+function joinStepsFromForm(formData: FormData) {
+  const steps = Array.from({ length: JOIN_STEPS_MAX }, (_, i) => ({
+    title: String(formData.get(`step_title_${i}`) ?? "").trim().slice(0, 40),
+    body: String(formData.get(`step_body_${i}`) ?? "").trim().slice(0, 300),
+  })).filter((s) => s.title);
+  return steps.length ? steps : null;
+}
+
 export async function saveRecruitment(_prev: FormState, formData: FormData): Promise<FormState> {
   const admin = await adminClient("recruitment");
   if (!admin) return DENIED;
@@ -145,10 +155,15 @@ export async function saveRecruitment(_prev: FormState, formData: FormData): Pro
       audition: optionalText(formData, "audition", 2000),
       classes: optionalText(formData, "classes", 2000),
       notes: optionalText(formData, "notes", 4000),
+      // 입단 안내 페이지 문구 (0030). 비우면 기본 문구
+      page_intro: optionalText(formData, "page_intro", 200),
+      steps: joinStepsFromForm(formData),
+      songs_title: optionalText(formData, "songs_title", 50),
+      songs_intro: optionalText(formData, "songs_intro", 1000),
     })
     .eq("id", 1);
 
-  if (error) return { error: "저장하지 못했습니다." };
+  if (error) return { error: "저장하지 못했습니다. (입단 안내 문구는 0030 SQL 실행이 필요합니다)" };
   revalidatePath("/", "layout");
   return { success: "입단 안내를 저장했습니다." };
 }

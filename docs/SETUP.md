@@ -37,6 +37,7 @@
    - `0027_site_logo.sql`: 머리글·바닥글 로고를 최상위 관리자가 고르거나 새로 올림 (관리자 → 로고, 저장소 `site-assets`)
    - `0028_faculty_bios.sql`: 강사진 소개 약력을 DB 로 (지금 약력을 기본값으로 넣음) — 최상위 관리자는 관리자 → 강사진 소개, 조직도 게시가 승인된 선생님은 마이페이지 → 강사 프로필에서 수정
    - `0029_faculty_photos.sql`: 강사진 소개 사진 — 최상위 관리자와 선생님 본인이 올림 (공개 저장소 `faculty-photos`)
+   - `0030_join_page_text.sql`: 입단 안내의 소개 문구·지원 절차·오디션 곡 안내를 관리자 → 입단 안내에서 수정
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.

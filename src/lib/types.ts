@@ -93,6 +93,11 @@ export type Recruitment = {
   classes: string | null;
   notes: string | null;
   updated_at: string;
+  // 0030: 입단 안내 페이지 문구 (없으면 기본 문구)
+  page_intro?: string | null;
+  steps?: unknown;
+  songs_title?: string | null;
+  songs_intro?: string | null;
 };
 
 export type Faq = {

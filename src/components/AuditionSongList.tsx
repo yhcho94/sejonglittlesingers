@@ -1,6 +1,6 @@
 import { auditionSongFileUrl, type AuditionSong } from "@/lib/audition-songs";
 
-// 입단 오디션 지정곡: 곡명 + 반주 듣기(음원 재생·내려받기, 반주 링크)
+// 입단 오디션 자유곡 참고 곡: 곡명 + 반주 듣기(음원 재생·내려받기, 반주 링크)
 export function AuditionSongList({ songs }: { songs: AuditionSong[] }) {
   return (
     <ol className="divide-y divide-line">
