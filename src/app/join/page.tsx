@@ -9,14 +9,14 @@ import { site, smsHref } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "입단 안내",
-  description: "세종리틀싱어즈 단원 모집 안내: 모집 대상, 반 구성(울림반·화음반·선율반), 오디션 지정곡과 온라인 입단 신청 방법.",
+  description: "세종리틀싱어즈 단원 모집 안내: 모집 대상, 반 구성(울림반·화음반·선율반), 오디션 자유곡과 온라인 입단 신청 방법.",
   alternates: { canonical: "/join" },
 };
 
 // 이 사이트의 실제 신청·심사 흐름과 같습니다.
 const STEPS = [
   { title: "온라인 입단 신청", body: "회원가입 없이 보호자 정보와 자녀(단원) 정보를 입력해 신청서를 제출합니다." },
-  { title: "오디션 동영상 제출", body: `지정곡 중 한 곡을 반주에 맞춰 1절 부른 영상을 ${AUDITION_EMAIL} 로 보냅니다.` },
+  { title: "오디션 동영상 제출", body: `자유곡 한 곡을 1절 부른 영상을 ${AUDITION_EMAIL} 로 보냅니다.` },
   { title: "심사", body: "선생님들이 신청서와 동영상을 보고 심사합니다." },
   { title: "결과 안내", body: "심사 결과를 보호자 연락처로 전화·문자·카카오톡으로 알려 드립니다." },
 ];
@@ -89,13 +89,13 @@ export default async function JoinPage() {
 
         {songs.length > 0 && (
           <section id="audition-songs" className="scroll-mt-24">
-            <h2 className="mb-2 text-xl font-semibold text-navy">오디션 지정곡</h2>
+            <h2 className="mb-2 text-xl font-semibold text-navy">오디션 자유곡</h2>
             <p className="mb-4 text-sm text-ink-soft">
-              아래 곡 중 한 곡을 골라 반주에 맞춰 1절을 부르는 모습을 휴대폰으로 찍어{" "}
+              부르고 싶은 노래 한 곡을 자유롭게 골라 1절을 부르는 모습을 휴대폰으로 찍어{" "}
               <a href={`mailto:${AUDITION_EMAIL}`} className="font-medium text-navy underline">
                 {AUDITION_EMAIL}
               </a>{" "}
-              로 보내 주세요. 반주는 다른 기기로 틀어 주세요.
+              로 보내 주세요. 아래 곡과 반주를 참고해도 좋습니다. 반주는 다른 기기로 틀어 주세요.
             </p>
             <div className="rounded-sm border border-line bg-white px-4 md:px-6">
               <AuditionSongList songs={songs} />
