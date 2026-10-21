@@ -3,10 +3,13 @@ export function PageHeader({
   title,
   description,
   eyebrow,
+  children,
 }: {
   title: string;
   description?: string;
   eyebrow?: string;
+  // 소개 문구 아래에 덧붙일 내용 (예: 입단 신청 접수 시기)
+  children?: React.ReactNode;
 }) {
   return (
     <div className="border-b border-line bg-ivory">
@@ -23,6 +26,11 @@ export function PageHeader({
           >
             {description}
           </p>
+        )}
+        {children && (
+          <div style={{ "--rise-delay": "360ms" } as React.CSSProperties} className="animate-rise mt-5 max-w-2xl">
+            {children}
+          </div>
         )}
       </div>
     </div>
