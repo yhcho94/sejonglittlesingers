@@ -7,6 +7,7 @@ import { facultyOrgEntries, sortOrgEntries, type FacultyRow, type OrgEntry } fro
 import { isFacultyRole } from "@/lib/staff-bio";
 import { DEFAULT_LOGO, parseSiteLogo, type SiteLogo } from "@/lib/site-logo";
 import { parseSiteStats, type SiteStats } from "@/lib/site-stats";
+import { DEFAULT_MUSIC, parseMusicSettings, type MusicSettings, type MusicTrack } from "@/lib/site-music";
 import type { AuditionSong } from "@/lib/audition-songs";
 import type { Concert, Faq, Press, Recruitment } from "@/lib/types";
 
@@ -216,6 +217,27 @@ export const getSiteLogo = cache(async (): Promise<SiteLogo> => {
     .eq("key", "site_logo")
     .maybeSingle<{ value: string }>();
   return error ? DEFAULT_LOGO : parseSiteLogo(data?.value);
+});
+
+// 배경음악 설정 + 곡 목록 (0033). 읽지 못하면 꺼짐
+// 로그인한 최상위 관리자에게는 '사용 안 함' 곡도 함께 옴 (공개 화면은 is_active 로 한 번 더 거름)
+export const getSiteMusic = cache(async (): Promise<{ settings: MusicSettings; tracks: MusicTrack[] }> => {
+  await connection();
+  if (!isSupabaseConfigured) return { settings: DEFAULT_MUSIC, tracks: [] };
+  const supabase = await createClient();
+  const [setting, list] = await Promise.all([
+    supabase.from("site_settings").select("value").eq("key", "site_music").maybeSingle<{ value: string }>(),
+    supabase
+      .from("site_music_tracks")
+      .select("id, title, file_path, sort_order, is_active")
+      .order("sort_order")
+      .order("id")
+      .returns<MusicTrack[]>(),
+  ]);
+  return {
+    settings: setting.error ? DEFAULT_MUSIC : parseMusicSettings(setting.data?.value),
+    tracks: list.error ? [] : (list.data ?? []),
+  };
 });
 
 // 강사진 소개 약력 (0028). 읽지 못하면 null → 예전(고정) 약력으로 표시
