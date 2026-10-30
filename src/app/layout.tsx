@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Noto_Serif_KR } from "next/font/google";
 // 본문 글꼴: 프리텐다드 (SIL OFL, 글자 범위별로 나눠 필요한 부분만 내려받음)
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import { FloatingContact } from "@/components/FloatingContact";
+import { SiteMusic } from "@/components/SiteMusic";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { site } from "@/lib/site";
@@ -85,6 +86,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">{children}</main>
         <Footer />
         <FloatingContact />
+        <SiteMusic />
       </body>
     </html>
   );

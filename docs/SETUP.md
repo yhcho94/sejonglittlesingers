@@ -40,6 +40,7 @@
    - `0030_join_page_text.sql`: 입단 안내의 소개 문구·지원 절차·오디션 곡 안내를 관리자 → 입단 안내에서 수정
    - `0031_gallery_album_links.sql`: 사진 갤러리 앨범에 장소·블로그 글 주소 (공개 앨범은 공연·행사 사진첩에 함께 표시)
    - `0032_event_albums_to_db.sql`: 공연·행사 사진첩(블로그 사진 18개 앨범·35장)을 사진 갤러리 DB로 옮김 → 관리자 → 사진 갤러리에서 수정·삭제
+   - `0033_site_music.sql`: 홈페이지 배경음악 (관리자 → 배경음악에서 켜기·음량·플레이리스트)
 3. 성공하면 Table Editor 에 `profiles`, `notices`, `applications`, `recruitment`, `faqs`, `concerts` 테이블이,
    Storage 에 `application-photos` 버킷(비공개)이 생깁니다.
 4. 모든 파일은 **여러 번 실행해도 안전**합니다. 이미 있는 것은 건너뛰고 빠진 것만 만들므로, 테이블이 빠졌거나 중간에 오류가 났다면 0001 → 0002 를 다시 실행하면 됩니다.
