@@ -1,5 +1,6 @@
 import { setMemberName, setMemberType, setParentRep } from "@/app/actions/admin-roles";
 import { ConfirmButton } from "@/components/ConfirmButton";
+import { ResetPasswordButton } from "@/app/admin/_members/ResetPasswordButton";
 import { SubmitButton } from "@/components/form";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
 import { requireAdmin } from "@/lib/auth";
@@ -145,6 +146,7 @@ export default async function ParentMembersPage() {
                           </ConfirmButton>
                         </form>
                       )}
+                      <ResetPasswordButton id={m.id} name={m.guardian_name} email={m.email} />
                       {!isSelf && <DeleteMemberButton member={m} />}
                     </div>
                   </td>

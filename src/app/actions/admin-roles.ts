@@ -1,12 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { createClient as createStatelessClient } from "@supabase/supabase-js";
 import { ADMIN_AREAS } from "@/lib/admin-perms";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
 import { staffClassFromForm, staffRoleFromForm } from "@/lib/member-types";
 import { SITE_STAT_FIELDS, SITE_STAT_MAX } from "@/lib/site-stats";
 import { adminFor, getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseKey, supabaseUrl } from "@/lib/supabase/env";
+import { siteOrigin } from "@/lib/site-origin";
 import type { FormState } from "@/lib/types";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -169,4 +172,25 @@ export async function saveSiteStats(_prev: FormState, formData: FormData): Promi
   revalidatePath("/about");
   revalidatePath("/admin/site-stats");
   return { success: "저장했습니다. 첫 화면과 합창단 소개에 바로 반영됩니다." };
+}
+
+// 최상위 관리자: 회원에게 비밀번호 재설정 메일 보내기
+// 관리자가 비밀번호를 직접 정하거나 알지 않도록, 회원 본인이 메일의 링크로 새 비밀번호를 정합니다. (메일 = 회원에게 통보)
+// 관리자 브라우저에 로그인 정보가 섞이지 않도록 쿠키 없는 클라이언트로 보냅니다.
+export async function adminSendPasswordReset(_prev: FormState, formData: FormData): Promise<FormState> {
+  const current = await adminFor("members");
+  const targetId = String(formData.get("id") ?? "");
+  if (!current || !UUID_RE.test(targetId)) return { error: "최상위 관리자만 보낼 수 있습니다." };
+  const supabase = await createClient();
+  const { data: member } = await supabase.from("profiles").select("email").eq("id", targetId).maybeSingle<{ email: string | null }>();
+  if (!member?.email) return { error: "회원 이메일을 찾지 못했습니다." };
+  const mailer = createStatelessClient(supabaseUrl, supabaseKey, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
+  const { error } = await mailer.auth.resetPasswordForEmail(member.email, {
+    redirectTo: `${siteOrigin()}/auth/callback?next=/reset-password`,
+  });
+  if (error?.status === 429) return { error: "방금 보낸 메일이 있습니다. 잠시 후 다시 시도해 주세요." };
+  if (error) return { error: "메일을 보내지 못했습니다. Supabase 메일 발송(SMTP) 설정을 확인해 주세요." };
+  return { success: "재설정 메일을 보냈습니다." };
 }
