@@ -15,6 +15,8 @@ async function adminClient() {
 
 function refresh(albumId?: number) {
   revalidatePath("/gallery", "layout");
+  // 첫 화면 '무대 위의 순간들'에도 공개 앨범이 나옴
+  revalidatePath("/");
   revalidatePath("/admin/gallery", "layout");
   if (albumId) revalidatePath(`/admin/gallery/${albumId}`);
 }
@@ -28,20 +30,27 @@ export async function saveAlbum(_prev: FormState, formData: FormData): Promise<F
   if (!title || title.length > 200) return { error: "앨범 제목을 200자 이내로 입력해 주세요." };
   if (takenOn && !/^\d{4}-\d{2}-\d{2}$/.test(takenOn)) return { error: "날짜를 확인해 주세요." };
 
+  const postUrl = String(formData.get("post_url") ?? "").trim();
+  if (postUrl && (postUrl.length > 500 || !/^https?:\/\/[^\s<>"]+$/.test(postUrl))) {
+    return { error: "블로그 글 주소는 https:// 로 시작하는 주소로 입력해 주세요." };
+  }
   const values = {
     title,
     taken_on: takenOn || null,
     description: String(formData.get("description") ?? "").trim().slice(0, 2000) || null,
     is_published: formData.get("is_published") === "on",
+    // 0031: 장소 · 블로그 글 주소
+    venue: String(formData.get("venue") ?? "").trim().slice(0, 100) || null,
+    post_url: postUrl || null,
   };
   if (id && Number.isSafeInteger(id)) {
     const { error } = await supabase.from("gallery_albums").update(values).eq("id", id);
-    if (error) return { error: "저장하지 못했습니다." };
+    if (error) return { error: "저장하지 못했습니다. (장소·블로그 주소는 0031 SQL 실행이 필요합니다)" };
     refresh(id);
     return { success: "저장했습니다." };
   }
   const { data, error } = await supabase.from("gallery_albums").insert(values).select("id").single();
-  if (error) return { error: "저장하지 못했습니다. 0010_gallery.sql 실행 여부를 확인해 주세요." };
+  if (error) return { error: "저장하지 못했습니다. (0031 SQL 실행 여부를 확인해 주세요)" };
   refresh();
   redirect(`/admin/gallery/${data.id}`);
 }

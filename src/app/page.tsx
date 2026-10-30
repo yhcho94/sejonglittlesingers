@@ -8,7 +8,8 @@ import { NoticeList } from "@/components/NoticeList";
 import { VisitorCounter } from "@/components/VisitorCounter";
 import { CLASS_OPTIONS } from "@/lib/application-fields";
 import { getActiveSingerCount, getFacultyRows, getRecruitment, getSiteStats, getStaffCount, listConcerts, listPublishedPress, pressSource } from "@/lib/content";
-import { EVENT_ALBUMS } from "@/lib/event-albums";
+import type { EventAlbum } from "@/lib/event-albums";
+import { listEventAlbums } from "@/lib/gallery";
 import { SITE_STAT_FIELDS, isCountable, statValue } from "@/lib/site-stats";
 import { getHistory } from "@/lib/history-merged";
 import { listPublishedNotices } from "@/lib/notices";
@@ -87,11 +88,15 @@ const HERO_SLIDES: HeroSlide[] = [
 ];
 
 
-// 사진첩 미리보기: 최근 행사의 단체사진 6장 (3:2 틀에 잘 맞는 가로 사진만)
-const MOMENTS = EVENT_ALBUMS.flatMap((a) => {
-  const photo = a.photos.find((p) => p.width / p.height >= 1.3 && p.width / p.height <= 1.7);
-  return photo ? [{ id: a.id, title: a.title, date: a.date, photo }] : [];
-}).slice(0, 6);
+// 사진첩 미리보기: 최근 행사 6개 (관리자가 올린 공개 앨범 + 블로그 사진첩, 3:2 틀에 잘 맞는 가로 사진 우선)
+function momentsOf(albums: EventAlbum[]) {
+  return albums
+    .flatMap((a) => {
+      const photo = a.photos.find((p) => p.width / p.height >= 1.3 && p.width / p.height <= 1.7) ?? (a.href ? a.photos[0] : undefined);
+      return photo ? [{ id: a.id, title: a.title, date: a.date, photo }] : [];
+    })
+    .slice(0, 6);
+}
 
 // 공연 이력에서 장소가 있는 최근 무대 3개 (최신순, 끝난 공연 일정 포함)
 async function recentStages() {
@@ -128,7 +133,7 @@ function SectionTitle({
 }
 
 export default async function HomePage() {
-  const [notices, concerts, recruitment, press, RECENT_STAGES, singerCount, staffCount, siteStats, facultyRows] = await Promise.all([
+  const [notices, concerts, recruitment, press, RECENT_STAGES, singerCount, staffCount, siteStats, facultyRows, eventAlbums] = await Promise.all([
     listPublishedNotices(4),
     listConcerts("upcoming", 3),
     getRecruitment(),
@@ -138,7 +143,9 @@ export default async function HomePage() {
     getStaffCount(),
     getSiteStats(),
     getFacultyRows(),
+    listEventAlbums(),
   ]);
+  const MOMENTS = momentsOf(eventAlbums);
   // 반 구성: 단장·반별 부지휘자 (강사진 소개 DB, 읽지 못하면 예전 약력)
   const faculty = homeFaculty(facultyRows);
   // 소개 수치: 최상위 관리자 입력값 > 자동값(명부 집계·조직도 인원) > 기본값

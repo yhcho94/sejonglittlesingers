@@ -10,6 +10,9 @@ export type GalleryAlbum = {
   description: string | null;
   is_published: boolean;
   cover_photo_id: number | null;
+  // 0031: 장소 · 블로그 글 주소 (없으면 null)
+  venue?: string | null;
+  post_url?: string | null;
 };
 
 export type GalleryPhoto = {

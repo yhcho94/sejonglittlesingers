@@ -1,8 +1,19 @@
 // 공연·행사 사진첩: 합창단 공식 블로그(blog.naver.com/sejonglittlesingers) 게시물의 사진 중에서 고른 것입니다.
 // 행사마다 ① 참가 단원 전체가 보이는 단체사진 ② 현장·아이들 표정 사진, 최대 2장. 사진은 편집하지 않고 크기만 줄였습니다.
 // focus: 사진 틀에 맞춰 잘릴 때 얼굴이 남도록 정한 초점 (CSS object-position)
-export type EventPhoto = { src: string; width: number; height: number; focus: string; alt: string };
-export type EventAlbum = { id: string; title: string; date: string; venue: string | null; post: string; photos: EventPhoto[] };
+// full: 크게 볼 때 쓰는 원본 크기 사진 (관리자가 올린 앨범). 없으면 src
+export type EventPhoto = { src: string; width: number; height: number; focus: string; alt: string; full?: string };
+// post: 블로그 글 주소 (없으면 링크 안 보임) · href/total: 관리자가 올린 앨범의 전체 사진 보기
+export type EventAlbum = {
+  id: string;
+  title: string;
+  date: string;
+  venue: string | null;
+  post: string | null;
+  photos: EventPhoto[];
+  href?: string;
+  total?: number;
+};
 
 export const EVENT_ALBUMS: EventAlbum[] = [
   {
