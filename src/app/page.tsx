@@ -92,7 +92,7 @@ const HERO_SLIDES: HeroSlide[] = [
 function momentsOf(albums: EventAlbum[]) {
   return albums
     .flatMap((a) => {
-      const photo = a.photos.find((p) => p.width / p.height >= 1.3 && p.width / p.height <= 1.7) ?? (a.href ? a.photos[0] : undefined);
+      const photo = a.photos.find((p) => p.width / p.height >= 1.3 && p.width / p.height <= 1.7) ?? (a.total ? a.photos[0] : undefined);
       return photo ? [{ id: a.id, title: a.title, date: a.date, photo }] : [];
     })
     .slice(0, 6);

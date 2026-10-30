@@ -4,6 +4,7 @@ import { OrgChart } from "@/components/OrgChart";
 import { SubmitButton } from "@/components/form";
 import { getOrgChart, getOrgChartSource } from "@/lib/content";
 import { ConfirmButton } from "@/components/ConfirmButton";
+import { ResetPasswordButton } from "@/app/admin/_members/ResetPasswordButton";
 import { areaLabels } from "@/lib/admin-perms";
 import { requireAdmin } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
@@ -253,6 +254,7 @@ export default async function StaffMembersPage() {
                             </ConfirmButton>
                           </form>
                         )}
+                        <ResetPasswordButton id={m.id} name={m.guardian_name} email={m.email} />
                         {!isSelf && <DeleteMemberButton member={m} />}
                       </div>
                       {ready && !isSelf && m.role !== "admin" && !m.admin_requested_at && (

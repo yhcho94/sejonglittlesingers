@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { adminFor } from "@/lib/auth";
-import { GALLERY_BUCKET } from "@/lib/gallery";
+import { GALLERY_BUCKET, isSitePhoto } from "@/lib/gallery-shared";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/lib/types";
 
@@ -61,7 +61,8 @@ export async function deleteAlbum(formData: FormData) {
   const id = Number(formData.get("id"));
   if (!Number.isSafeInteger(id)) return;
   const { data: photos } = await supabase.from("gallery_photos").select("path, thumb_path").eq("album_id", id);
-  const files = (photos ?? []).flatMap((p) => [p.path, p.thumb_path]);
+  // 블로그 사진첩에서 옮겨 온 사진(/images/events/…)은 사이트 파일이라 저장소에서 지울 것이 없음
+  const files = (photos ?? []).flatMap((p) => [p.path, p.thumb_path]).filter((f) => !isSitePhoto(f));
   if (files.length) await supabase.storage.from(GALLERY_BUCKET).remove(files);
   await supabase.from("gallery_albums").delete().eq("id", id);
   refresh();
@@ -123,7 +124,8 @@ export async function deleteGalleryPhoto(formData: FormData) {
     .select("album_id, path, thumb_path")
     .maybeSingle();
   if (data) {
-    await supabase.storage.from(GALLERY_BUCKET).remove([data.path, data.thumb_path]);
+    const files = [data.path, data.thumb_path].filter((f) => !isSitePhoto(f));
+    if (files.length) await supabase.storage.from(GALLERY_BUCKET).remove(files);
     refresh(data.album_id);
   }
 }
