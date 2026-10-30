@@ -38,9 +38,17 @@ export default async function AlbumPage({ params }: PageProps<"/gallery/[id]">) 
         <div className="container-page">
           <div className="mb-6 flex items-center justify-between text-sm">
             <Link href="/gallery" className="text-ink-soft hover:text-navy">
-              ← 전체 앨범
+              ← 사진 갤러리
             </Link>
-            <span className="text-ink-soft">사진 {photos.length}장</span>
+            <span className="flex flex-wrap items-center justify-end gap-x-4 text-ink-soft">
+              {album.venue && <span>{album.venue}</span>}
+              <span>사진 {photos.length}장</span>
+              {album.post_url && (
+                <a href={album.post_url} target="_blank" rel="noopener noreferrer" className="text-navy underline-offset-4 hover:underline">
+                  블로그 글 보기 ↗
+                </a>
+              )}
+            </span>
           </div>
           <PhotoGrid
             title={album.title}

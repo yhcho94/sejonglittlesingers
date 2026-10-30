@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Lightbox } from "@/components/Lightbox";
 import type { EventAlbum, EventPhoto } from "@/lib/event-albums";
@@ -19,7 +20,12 @@ export function EventAlbums({ albums }: { albums: EventAlbum[] }) {
   const flat = useMemo(
     () =>
       albums.flatMap((a) =>
-        a.photos.map((p, i) => ({ id: `${a.id}-${i}`, src: p.src, alt: p.alt, caption: `${a.title} · ${dateLabel(a.date)}` })),
+        a.photos.map((p, i) => ({
+          id: `${a.id}-${i}`,
+          src: p.full ?? p.src,
+          alt: p.alt,
+          caption: a.date ? `${a.title} · ${dateLabel(a.date)}` : a.title,
+        })),
       ),
     [albums],
   );
@@ -37,14 +43,23 @@ export function EventAlbums({ albums }: { albums: EventAlbum[] }) {
               <p className="eyebrow text-gold-deep">{dateLabel(a.date)}</p>
               <h3 className="mt-1.5 text-lg leading-snug font-bold text-navy">{a.title}</h3>
               {a.venue && <p className="mt-1 text-sm text-ink-soft">{a.venue}</p>}
-              <a
-                href={a.post}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-block text-xs text-ink-soft underline-offset-4 hover:text-navy hover:underline"
-              >
-                블로그 글 보기 ↗
-              </a>
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                {a.href && (
+                  <Link href={a.href} className="font-medium text-navy underline-offset-4 hover:underline">
+                    사진 {a.total}장 모두 보기 →
+                  </Link>
+                )}
+                {a.post && (
+                  <a
+                    href={a.post}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-ink-soft underline-offset-4 hover:text-navy hover:underline"
+                  >
+                    블로그 글 보기 ↗
+                  </a>
+                )}
+              </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {a.photos.map((p) => {
